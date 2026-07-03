@@ -1,0 +1,64 @@
+/* home.css — Inicio autenticado (placeholder del dashboard). */
+
+.home-page {
+  padding-block: var(--space-5) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+.greeting-text h1 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-1);
+}
+
+.level-badge {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 240px;
+}
+.level-num {
+  font-weight: var(--fw-bold);
+  color: var(--brand);
+}
+.level-bar {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.level-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--brand), var(--accent-blue));
+  transition: width 600ms var(--ease);
+}
+.level-caption {
+  font-size: var(--fs-xs);
+}
+
+.soon {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+.soon-emoji {
+  font-size: 2rem;
+}
+
+@media (max-width: 560px) {
+  .greeting {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .level-badge {
+    min-width: 0;
+  }
+}

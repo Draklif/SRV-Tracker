@@ -6,6 +6,9 @@ const helmet = require('helmet');
 
 const config = require('./config');
 const routes = require('./routes');
+const sessionMiddleware = require('./middlewares/session');
+const loadUser = require('./middlewares/loadUser');
+const { csrfToken } = require('./middlewares/csrf');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
 
@@ -46,6 +49,12 @@ function createApp() {
       maxAge: config.isProd ? '7d' : 0,
     })
   );
+
+  // Sesión → carga de usuario → token CSRF. En este orden porque loadUser y el
+  // token CSRF dependen de la sesión, y las vistas necesitan `user` y `csrfToken`.
+  app.use(sessionMiddleware);
+  app.use(loadUser);
+  app.use(csrfToken);
 
   // Valores disponibles en todas las vistas.
   app.locals.appName = 'Tracker';

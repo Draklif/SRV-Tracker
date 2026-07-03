@@ -2,10 +2,12 @@
 
 const express = require('express');
 const homeController = require('../controllers/homeController');
+const authRoutes = require('./web/authRoutes');
+const profileRoutes = require('./web/profileRoutes');
 
 /**
  * Router raíz: monta todos los sub-routers de la app.
- * A medida que crezcan los dominios se irán añadiendo aquí (auth, habits, …).
+ * A medida que crezcan los dominios se irán añadiendo aquí (habits, social, …).
  */
 const router = express.Router();
 
@@ -14,7 +16,11 @@ router.get('/healthz', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });
 
-// Landing pública.
-router.get('/', homeController.landing);
+// Inicio (landing pública o home del usuario autenticado).
+router.get('/', homeController.index);
+
+// Dominios.
+router.use('/', authRoutes);
+router.use('/profile', profileRoutes);
 
 module.exports = router;

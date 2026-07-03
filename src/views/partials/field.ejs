@@ -1,0 +1,23 @@
+<%
+  const f = Object.assign(
+    { type: 'text', value: '', error: null, required: false, autocomplete: null, placeholder: '', hint: null },
+    field
+  );
+%>
+<div class="field <%= f.error ? 'field-invalid' : '' %>">
+  <label for="<%= f.name %>"><%= f.label %><% if (f.required) { %> <span class="req">*</span><% } %></label>
+  <input
+    id="<%= f.name %>"
+    name="<%= f.name %>"
+    type="<%= f.type %>"
+    value="<%= f.value || '' %>"
+    <%= f.required ? 'required' : '' %>
+    <% if (f.autocomplete) { %>autocomplete="<%= f.autocomplete %>"<% } %>
+    <% if (f.placeholder) { %>placeholder="<%= f.placeholder %>"<% } %>
+  />
+  <% if (f.error) { %>
+  <small class="field-error"><%= f.error %></small>
+  <% } else if (f.hint) { %>
+  <small class="field-hint"><%= f.hint %></small>
+  <% } %>
+</div>

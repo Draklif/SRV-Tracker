@@ -1,0 +1,55 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/auth.css'] }) %>
+
+<main class="auth-page">
+  <div class="auth-card card card-glass">
+    <a class="brand auth-brand" href="/">
+      <span class="brand-mark">🌱</span><span class="brand-name"><%= appName %></span>
+    </a>
+    <h1>Crea tu cuenta</h1>
+    <p class="text-muted auth-sub">Da el primer paso. A tu ritmo, sin presión.</p>
+
+    <%- include('../partials/flash') %>
+
+    <form method="post" action="/register" class="form" novalidate>
+      <%- include('../partials/csrf-field') %>
+
+      <%- include('../partials/field', { field: {
+        name: 'inviteCode', label: 'Código de invitación', value: inviteCode,
+        error: errors.inviteCode, required: true, placeholder: 'XXXX-XXXX-XXXX-XXXX'
+      } }) %>
+
+      <%- include('../partials/field', { field: {
+        name: 'username', label: 'Usuario', value: values.username,
+        error: errors.username, required: true, autocomplete: 'username',
+        hint: '3–20 caracteres: letras, números y guion bajo'
+      } }) %>
+
+      <%- include('../partials/field', { field: {
+        name: 'displayName', label: 'Nombre para mostrar', value: values.displayName,
+        error: errors.displayName, autocomplete: 'nickname', placeholder: 'Cómo quieres que te vean'
+      } }) %>
+
+      <%- include('../partials/field', { field: {
+        name: 'email', label: 'Email (opcional)', type: 'email', value: values.email,
+        error: errors.email, autocomplete: 'email', hint: 'Solo para recuperar tu cuenta más adelante'
+      } }) %>
+
+      <%- include('../partials/field', { field: {
+        name: 'password', label: 'Contraseña', type: 'password',
+        error: errors.password, required: true, autocomplete: 'new-password',
+        hint: 'Mínimo 8 caracteres'
+      } }) %>
+
+      <%- include('../partials/field', { field: {
+        name: 'passwordConfirm', label: 'Repite la contraseña', type: 'password',
+        error: errors.passwordConfirm, required: true, autocomplete: 'new-password'
+      } }) %>
+
+      <button class="btn btn-primary btn-block" type="submit">Crear cuenta</button>
+    </form>
+
+    <p class="auth-alt">¿Ya tienes cuenta? <a class="link" href="/login">Entra aquí</a></p>
+  </div>
+</main>
+
+<%- include('../partials/foot') %>

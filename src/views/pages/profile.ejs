@@ -1,0 +1,104 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/profile.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container profile-page">
+  <%- include('../partials/flash') %>
+
+  <header class="profile-header card">
+    <%- include('../partials/avatar', { avatarUser: user, size: 'lg' }) %>
+    <div class="profile-id">
+      <h1><%= user.display_name %></h1>
+      <p class="text-muted">@<%= user.username %></p>
+      <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    <!-- Datos del perfil -->
+    <section class="card">
+      <h2>Tu perfil</h2>
+      <form method="post" action="/profile" class="form" novalidate>
+        <%- include('../partials/csrf-field') %>
+
+        <%- include('../partials/field', { field: {
+          name: 'displayName', label: 'Nombre para mostrar', value: values.displayName,
+          error: profileErrors.displayName, required: true
+        } }) %>
+
+        <div class="field <%= profileErrors.bio ? 'field-invalid' : '' %>">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="3" maxlength="160"
+            placeholder="Una frase sobre ti…"><%= values.bio %></textarea>
+          <% if (profileErrors.bio) { %>
+          <small class="field-error"><%= profileErrors.bio %></small>
+          <% } %>
+        </div>
+
+        <div class="field">
+          <label for="timezone">Zona horaria</label>
+          <select id="timezone" name="timezone">
+            <% timezones.forEach((tz) => { %>
+            <option value="<%= tz %>" <%= values.timezone === tz ? 'selected' : '' %>><%= tz %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="theme">Tema</label>
+          <select id="theme" name="theme">
+            <% themes.forEach((t) => { %>
+            <option value="<%= t %>" <%= values.theme === t ? 'selected' : '' %>>
+              <%= t === 'dark' ? '🌙 Oscuro' : '☀️ Claro' %>
+            </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+      </form>
+    </section>
+
+    <!-- Avatar -->
+    <section class="card">
+      <h2>Avatar</h2>
+      <div class="avatar-editor">
+        <%- include('../partials/avatar', { avatarUser: user, size: 'lg' }) %>
+        <form method="post" action="/profile/avatar" enctype="multipart/form-data" class="form avatar-form">
+          <%- include('../partials/csrf-field') %>
+          <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg,image/webp,image/gif" />
+          <small class="field-hint">PNG, JPG, WEBP o GIF · máx. 2 MB</small>
+          <button class="btn btn-ghost" type="submit">Subir avatar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contraseña -->
+    <section class="card">
+      <h2>Cambiar contraseña</h2>
+      <form method="post" action="/profile/password" class="form" novalidate>
+        <%- include('../partials/csrf-field') %>
+
+        <%- include('../partials/field', { field: {
+          name: 'currentPassword', label: 'Contraseña actual', type: 'password',
+          error: passwordErrors.currentPassword, required: true, autocomplete: 'current-password'
+        } }) %>
+
+        <%- include('../partials/field', { field: {
+          name: 'newPassword', label: 'Nueva contraseña', type: 'password',
+          error: passwordErrors.newPassword, required: true, autocomplete: 'new-password',
+          hint: 'Mínimo 8 caracteres'
+        } }) %>
+
+        <%- include('../partials/field', { field: {
+          name: 'newPasswordConfirm', label: 'Repite la nueva', type: 'password',
+          error: passwordErrors.newPasswordConfirm, required: true, autocomplete: 'new-password'
+        } }) %>
+
+        <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
+      </form>
+    </section>
+  </div>
+</main>
+
+<%- include('../partials/foot') %>

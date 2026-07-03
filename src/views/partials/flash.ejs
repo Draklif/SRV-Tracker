@@ -1,0 +1,12 @@
+<% if (flash && flash.length) { %>
+<div class="flash-stack" role="status" aria-live="polite">
+  <% flash.forEach((msg) => { %>
+  <div class="flash flash-<%= msg.type %>">
+    <span class="flash-icon">
+      <%= msg.type === 'success' ? '✅' : msg.type === 'warn' ? '🌤️' : 'ℹ️' %>
+    </span>
+    <span><%= msg.message %></span>
+  </div>
+  <% }) %>
+</div>
+<% } %>

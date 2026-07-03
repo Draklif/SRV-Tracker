@@ -1,0 +1,46 @@
+/* flash.css — Mensajes flash (banners efímeros). Tono siempre amable. */
+
+.flash-stack {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.flash {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  animation: flash-in 260ms var(--ease);
+}
+.flash-icon {
+  font-size: 1.1rem;
+}
+
+.flash-success {
+  background: var(--brand-soft);
+  border-color: rgba(72, 199, 142, 0.4);
+}
+.flash-info {
+  background: rgba(74, 163, 255, 0.12);
+  border-color: rgba(74, 163, 255, 0.35);
+}
+.flash-warn {
+  background: rgba(255, 203, 87, 0.14);
+  border-color: rgba(255, 203, 87, 0.4);
+}
+
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

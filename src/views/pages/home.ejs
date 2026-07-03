@@ -1,0 +1,34 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/home.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container home-page">
+  <%- include('../partials/flash') %>
+
+  <section class="greeting card card-glass">
+    <div class="greeting-text">
+      <h1>Hola, <%= user.display_name %> 🌱</h1>
+      <p class="text-muted">Cada pequeño paso cuenta. Nos alegra tenerte por aquí.</p>
+    </div>
+    <div class="level-badge">
+      <span class="level-num">Nivel <%= progress.level %></span>
+      <div class="level-bar">
+        <span class="level-fill" style="width: <%= progress.percent %>%"></span>
+      </div>
+      <span class="level-caption text-muted">
+        <%= progress.xp %> XP · <%= progress.toNext %> para el nivel <%= progress.level + 1 %>
+      </span>
+    </div>
+  </section>
+
+  <section class="soon card">
+    <span class="soon-emoji">🏗️</span>
+    <h2>Tu dashboard está en camino</h2>
+    <p class="text-muted">
+      Muy pronto verás aquí tus hábitos, tu progreso del día y la actividad de tus amigos.
+      Por ahora, puedes personalizar tu <a class="link" href="/profile">perfil</a>.
+    </p>
+  </section>
+</main>
+
+<%- include('../partials/foot') %>

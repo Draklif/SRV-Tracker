@@ -1,0 +1,14 @@
+<%
+  const au = typeof avatarUser !== 'undefined' ? avatarUser : user;
+  const sz = typeof size !== 'undefined' ? size : 'md';
+  const label = au.display_name || au.username || '?';
+  const initial = label.trim().charAt(0).toUpperCase();
+  const palette = ['#48c78e', '#4aa3ff', '#a78bfa', '#ff7a6b', '#ffcb57', '#ff8fc8'];
+  const seed = (au.username || label).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const bg = palette[seed % palette.length];
+%>
+<% if (au.avatar_path) { %>
+<img class="avatar avatar-<%= sz %>" src="<%= au.avatar_path %>" alt="Avatar de <%= label %>" />
+<% } else { %>
+<span class="avatar avatar-<%= sz %> avatar-initials" style="background: <%= bg %>"><%= initial %></span>
+<% } %>

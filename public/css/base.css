@@ -91,6 +91,13 @@ a.link:hover {
   padding: 0.85em 1.7em;
   font-size: var(--fs-lg);
 }
+.btn-sm {
+  padding: 0.5em 1em;
+  font-size: var(--fs-sm);
+}
+.btn-block {
+  width: 100%;
+}
 
 /* ---- Cards ---- */
 .card {

@@ -1,0 +1,23 @@
+<header class="app-nav">
+  <div class="app-nav-inner container">
+    <a class="brand" href="/">
+      <span class="brand-mark">🌱</span>
+      <span class="brand-name"><%= appName %></span>
+    </a>
+
+    <nav class="app-nav-links" aria-label="Principal">
+      <a href="/" class="nav-link">Inicio</a>
+      <a href="/profile" class="nav-link">Perfil</a>
+    </nav>
+
+    <div class="app-nav-user">
+      <a href="/profile" class="nav-avatar" title="Tu perfil">
+        <%- include('avatar', { avatarUser: user, size: 'sm' }) %>
+      </a>
+      <form method="post" action="/logout" class="logout-form">
+        <%- include('csrf-field') %>
+        <button class="btn btn-ghost btn-sm" type="submit">Salir</button>
+      </form>
+    </div>
+  </div>
+</header>
