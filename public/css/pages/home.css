@@ -1,9 +1,9 @@
-/* home.css — Inicio autenticado (placeholder del dashboard). */
+/* home.css — Inicio autenticado. Cartel de bienvenida + nivel al estilo HUD. */
 
 .home-page {
-  padding-block: var(--space-5) var(--space-8);
+  padding-block: var(--space-6) var(--space-8);
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
 .greeting {
@@ -12,32 +12,43 @@
   justify-content: space-between;
   gap: var(--space-5);
   flex-wrap: wrap;
+  transform: rotate(var(--tilt));
 }
 .greeting-text h1 {
   font-size: var(--fs-2xl);
   margin-bottom: var(--space-1);
+  text-shadow: 3px 3px 0 var(--brand-glow);
 }
 
 .level-badge {
   display: grid;
   gap: var(--space-2);
-  min-width: 240px;
+  min-width: 260px;
 }
 .level-num {
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-lg);
   color: var(--brand);
 }
 .level-bar {
-  height: 12px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  height: 14px;
   background: var(--surface-2);
+  border: 2px solid var(--border-strong);
   overflow: hidden;
+  transform: skewX(var(--skew));
 }
 .level-fill {
   display: block;
   height: 100%;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--brand), var(--accent-blue));
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--brand) 0 10px,
+    var(--brand-strong) 10px 20px
+  );
   transition: width 600ms var(--ease);
 }
 .level-caption {
@@ -48,12 +59,20 @@
   display: grid;
   gap: var(--space-2);
   justify-items: start;
+  transform: rotate(calc(var(--tilt) * -0.6));
 }
 .soon-emoji {
   font-size: 2rem;
 }
+.soon h2 {
+  font-size: var(--fs-xl);
+}
 
 @media (max-width: 560px) {
+  .greeting,
+  .soon {
+    transform: none;
+  }
   .greeting {
     flex-direction: column;
     align-items: stretch;

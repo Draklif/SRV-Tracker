@@ -1,46 +1,48 @@
-/* flash.css — Mensajes flash (banners efímeros). Tono siempre amable. */
+/* flash.css — Banners efímeros: pancartas inclinadas de tinta. Tono amable. */
 
 .flash-stack {
   display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
 }
 
 .flash {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  font-weight: var(--fw-bold);
   font-size: var(--fs-sm);
-  animation: flash-in 260ms var(--ease);
+  border-radius: var(--radius-sm);
+  transform: skewX(calc(var(--skew) / 2));
+  box-shadow: var(--shadow-ink-sm);
+  animation: flash-in 300ms var(--ease-snap);
 }
 .flash-icon {
   font-size: 1.1rem;
 }
 
 .flash-success {
-  background: var(--brand-soft);
-  border-color: rgba(72, 199, 142, 0.4);
+  background: var(--brand);
+  color: #fff;
 }
 .flash-info {
-  background: rgba(74, 163, 255, 0.12);
-  border-color: rgba(74, 163, 255, 0.35);
+  background: var(--ink);
+  color: var(--paper);
+  border-left: 6px solid var(--cyan);
 }
 .flash-warn {
-  background: rgba(255, 203, 87, 0.14);
-  border-color: rgba(255, 203, 87, 0.4);
+  background: var(--yellow);
+  color: #131316;
 }
 
 @keyframes flash-in {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: skewX(calc(var(--skew) / 2)) translateX(-24px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: skewX(calc(var(--skew) / 2)) translateX(0);
   }
 }

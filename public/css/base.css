@@ -1,21 +1,26 @@
-/* base.css — Estilos base de elementos y componentes reutilizables. */
+/* base.css — Elementos base y componentes reutilizables. Estética P5:
+   tipografía display pesada, botones inclinados, paneles con sombra dura. */
 
 body {
   font-family: var(--font-sans);
   font-size: var(--fs-base);
   font-weight: var(--fw-regular);
   color: var(--text);
-  background: var(--bg);
+  background-color: var(--bg);
   background-image: var(--bg-gradient);
+  background-size: var(--bg-size);
   background-attachment: fixed;
 }
 
 h1,
 h2,
 h3 {
-  font-weight: var(--fw-bold);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
 }
 
 h1 {
@@ -30,7 +35,10 @@ h3 {
 
 a.link {
   color: var(--brand);
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-bold);
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 3px;
 }
 a.link:hover {
   color: var(--brand-strong);
@@ -47,83 +55,131 @@ a.link:hover {
   color: var(--text-muted);
 }
 
-/* ---- Botones ---- */
+/* Resalte firma: texto blanco sobre bloque de marca inclinado. */
+.hl {
+  display: inline-block;
+  padding: 0 0.25em;
+  background: var(--brand);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  transform: skewX(var(--skew));
+}
+
+/* ---- Botones: parallelogramos con sombra dura ---- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: 0.7em 1.3em;
-  border-radius: var(--radius-pill);
-  font-weight: var(--fw-bold);
-  font-size: var(--fs-base);
-  border: 1px solid transparent;
+  padding: 0.65em 1.5em;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: var(--fs-sm);
+  transform: skewX(var(--skew));
   transition: transform var(--transition), box-shadow var(--transition),
-    background-color var(--transition), border-color var(--transition);
+    background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 .btn:hover {
-  transform: translateY(-2px);
+  transform: skewX(var(--skew)) translate(-2px, -2px);
 }
 .btn:active {
-  transform: translateY(0);
+  transform: skewX(var(--skew)) translate(2px, 2px);
+  box-shadow: none;
 }
 
 .btn-primary {
   background: var(--brand);
-  color: var(--on-brand);
-  box-shadow: var(--shadow-sm);
+  color: #fff;
+  box-shadow: var(--shadow-ink-sm);
 }
 .btn-primary:hover {
   background: var(--brand-strong);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-ink);
 }
 
 .btn-ghost {
-  background: var(--surface-2);
+  background: transparent;
   color: var(--text);
-  border-color: var(--border);
+  border-color: var(--text);
 }
 .btn-ghost:hover {
-  border-color: var(--border-strong);
+  background: var(--text);
+  color: var(--surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-lg {
-  padding: 0.85em 1.7em;
-  font-size: var(--fs-lg);
+  padding: 0.8em 1.9em;
+  font-size: var(--fs-base);
 }
 .btn-sm {
-  padding: 0.5em 1em;
-  font-size: var(--fs-sm);
+  padding: 0.45em 1em;
+  font-size: var(--fs-xs);
 }
 .btn-block {
   width: 100%;
 }
 
-/* ---- Cards ---- */
+/* ---- Cards: paneles con borde de tinta y sombra de recorte ---- */
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   padding: var(--space-5);
 }
 
+/* Variante "glass" ahora es panel sólido con leve blur (P5 no es vidrio). */
 .card-glass {
   background: var(--surface-glass);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--border-strong);
 }
 
-/* ---- Chips / badges ---- */
+/* Panel de papel invertido (menú flotante). Crema en AMBOS temas, tinta navy. */
+.panel-paper {
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+/* ---- Chips: etiquetas inclinadas de marca ---- */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: 0.3em 0.75em;
+  padding: 0.28em 0.85em;
+  background: var(--brand);
+  color: #fff;
   border-radius: var(--radius-pill);
-  background: var(--brand-soft);
-  color: var(--brand);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  transform: skewX(var(--skew));
+  box-shadow: var(--shadow-ink-sm);
+}
+
+/* Rotaciones decorativas (solo elementos no-formulario). */
+.tilt-l {
+  transform: rotate(var(--tilt));
+}
+.tilt-r {
+  transform: rotate(calc(var(--tilt) * -1));
+}
+
+/* En móvil, reservar espacio para la barra de navegación inferior. */
+@media (max-width: 560px) {
+  body:has(.bottom-nav) {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  }
 }

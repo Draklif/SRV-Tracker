@@ -11,6 +11,7 @@ module.exports = function loadUser(req, res, next) {
   req.user = null;
   res.locals.user = null;
   res.locals.flash = consumeFlash(req);
+  res.locals.currentPath = req.path;
 
   const userId = req.session && req.session.userId;
   if (userId) {

@@ -1,4 +1,4 @@
-/* landing.css — Página pública de bienvenida. */
+/* landing.css — Página pública. Composición diagonal tipo Persona. */
 
 .landing-nav {
   display: flex;
@@ -11,33 +11,41 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
   font-size: var(--fs-lg);
 }
 .brand-mark {
+  color: var(--brand);
+  font-style: normal;
   font-size: 1.5rem;
+  transform: rotate(-12deg);
 }
 
 .landing-nav-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-/* ---- Hero ---- */
+/* ---- Hero: mitad copy, mitad panel de papel inclinado ---- */
 .hero {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: var(--space-7);
   align-items: center;
   padding-block: var(--space-7) var(--space-8);
+  position: relative;
 }
 
 .hero-copy .chip {
   margin-bottom: var(--space-4);
 }
 .hero h1 {
-  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  font-size: clamp(2.4rem, 7vw, 4rem);
   margin-bottom: var(--space-4);
+  text-shadow: 4px 4px 0 var(--brand-glow);
 }
 .hero-sub {
   font-size: var(--fs-lg);
@@ -46,18 +54,25 @@
 }
 .hero-cta {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
+/* Panel de muestra: papel blanco con tinta, girado como carta lanzada. */
 .hero-card {
+  border-radius: var(--radius-lg);
   display: grid;
   gap: var(--space-4);
-  transform: rotate(1.5deg);
-  transition: transform var(--transition);
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5);
+  transform: rotate(2.5deg);
+  transition: transform 220ms var(--ease-snap);
 }
 .hero-card:hover {
-  transform: rotate(0deg) translateY(-4px);
+  transform: rotate(0.5deg) translateY(-4px);
 }
 
 .mini-habit {
@@ -66,13 +81,14 @@
   gap: var(--space-3);
 }
 .mini-icon {
-  font-size: 1.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 1.5rem;
   width: 2.6rem;
   height: 2.6rem;
   display: grid;
   place-items: center;
-  background: var(--surface-2);
-  border-radius: var(--radius);
+  background: var(--ink);
+  transform: rotate(-4deg);
 }
 .mini-body {
   flex: 1;
@@ -86,35 +102,59 @@
   font-weight: var(--fw-bold);
   font-size: var(--fs-sm);
 }
+.mini-top .text-muted {
+  color: rgba(19, 26, 41, 0.6);
+}
+.mini-top .chip {
+  box-shadow: none;
+  font-size: 0.7rem;
+}
 
-/* Barra de progreso reutilizable. */
+/* Barra de progreso: tajo rojo con rayas diagonales. */
 .progress {
-  height: 10px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  height: 12px;
+  background: #ddd9cc;
   overflow: hidden;
+  transform: skewX(var(--skew));
 }
 .progress-fill {
   display: block;
   height: 100%;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--brand), var(--accent-blue));
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--brand) 0 10px,
+    var(--brand-strong) 10px 20px
+  );
   transition: width 600ms var(--ease);
 }
 
-/* ---- Features ---- */
+/* ---- Features: tres carteles ligeramente girados ---- */
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
   padding-block: var(--space-6);
 }
 .feature {
   display: grid;
   gap: var(--space-2);
+  transition: transform 200ms var(--ease-snap);
+}
+.feature:nth-child(odd) {
+  transform: rotate(var(--tilt));
+}
+.feature:nth-child(even) {
+  transform: rotate(calc(var(--tilt) * -1));
+}
+.feature:hover {
+  transform: rotate(0deg) translateY(-4px);
 }
 .feature-icon {
   font-size: 2rem;
+}
+.feature h3 {
+  font-size: var(--fs-lg);
 }
 
 .landing-footer {
@@ -127,14 +167,17 @@
 @media (max-width: 820px) {
   .hero {
     grid-template-columns: 1fr;
-    gap: var(--space-5);
+    gap: var(--space-6);
     padding-block: var(--space-6);
   }
   .hero-card {
     order: -1;
-    transform: none;
+    transform: rotate(1deg);
   }
   .features {
     grid-template-columns: 1fr;
+  }
+  .feature:nth-child(n) {
+    transform: none;
   }
 }

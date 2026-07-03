@@ -2,7 +2,7 @@
 <html lang="es" data-theme="<%= typeof theme !== 'undefined' ? theme : 'dark' %>">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
     <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
     <meta name="csrf-token" content="<%= csrfToken %>" />
@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/css/components/flash.css" />
     <link rel="stylesheet" href="/css/components/avatar.css" />
     <link rel="stylesheet" href="/css/components/nav.css" />
+    <link rel="stylesheet" href="/css/components/bottom-nav.css" />
     <% (typeof styles !== 'undefined' ? styles : []).forEach((href) => { %>
     <link rel="stylesheet" href="<%= href %>" />
     <% }) %>

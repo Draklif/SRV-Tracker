@@ -1,13 +1,12 @@
-/* nav.css — Barra de navegación de la app (usuarios autenticados). */
+/* nav.css — Barra de navegación. Tinta navy + tajo de marca, en ambos temas. */
 
 .app-nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--surface-glass);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--border);
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 3px solid var(--brand);
 }
 
 .app-nav-inner {
@@ -21,28 +20,42 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
   font-size: var(--fs-lg);
+  color: var(--paper);
 }
 .app-nav .brand-mark {
-  font-size: 1.4rem;
+  color: var(--brand);
+  font-size: 1.3rem;
+  font-style: normal;
+  transform: rotate(-12deg);
 }
 
 .app-nav-links {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin-left: var(--space-4);
 }
 .nav-link {
-  padding: 0.4em 0.9em;
-  border-radius: var(--radius-pill);
-  font-weight: var(--fw-medium);
-  color: var(--text-muted);
-  transition: background-color var(--transition), color var(--transition);
+  padding: 0.3em 0.9em;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.03em;
+  color: rgba(246, 244, 237, 0.6);
+  transform: skewX(var(--skew));
+  transition: background-color var(--transition), color var(--transition),
+    transform var(--transition);
 }
 .nav-link:hover {
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--brand);
+  color: #fff;
+  transform: skewX(var(--skew)) translateY(-1px);
 }
 
 .app-nav-user {
@@ -51,13 +64,26 @@
   align-items: center;
   gap: var(--space-3);
 }
+/* El botón ghost vive sobre fondo negro: forzamos tinta clara. */
+.app-nav .btn-ghost {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+.app-nav .btn-ghost:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
 .nav-avatar {
   display: inline-flex;
-  border-radius: 50%;
   transition: transform var(--transition);
 }
+/* La nav es negra en ambos temas: el borde del avatar siempre claro. */
+.app-nav .avatar {
+  border-color: var(--paper);
+}
 .nav-avatar:hover {
-  transform: scale(1.06);
+  transform: rotate(4deg) scale(1.08);
 }
 
 @media (max-width: 560px) {

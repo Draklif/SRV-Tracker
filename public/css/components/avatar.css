@@ -1,19 +1,23 @@
-/* avatar.css — Avatar como imagen o inicial en círculo de color. */
+/* avatar.css — Retratos angulares tipo recorte: cuadrado girado con tinta. */
 
 .avatar {
   display: inline-grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   object-fit: cover;
   flex-shrink: 0;
   color: #fff;
-  font-weight: var(--fw-bold);
-  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  border: 2px solid var(--text);
+  box-shadow: var(--shadow-ink-sm);
+  transform: rotate(-3deg);
   user-select: none;
 }
 
 .avatar-initials {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 .avatar-sm {

@@ -1,0 +1,58 @@
+/* bottom-nav.css — Barra de pestañas inferior. Solo móvil: en escritorio la
+   navegación vive arriba. Preparada para crecer (grid de columnas iguales). */
+
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .bottom-nav {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 60;
+    height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--ink);
+    border-top: 3px solid var(--brand);
+  }
+
+  .bottom-nav-item {
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    padding-top: var(--space-2);
+    color: rgba(246, 244, 237, 0.55);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    transition: color var(--transition), transform var(--transition);
+    /* Target táctil generoso: toda la celda es clicable. */
+    min-height: 44px;
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  .bottom-nav-item.is-active {
+    color: var(--paper);
+  }
+  .bottom-nav-item.is-active .bottom-nav-icon {
+    transform: translateY(-1px) scale(1.12);
+  }
+  .bottom-nav-item:active {
+    transform: scale(0.96);
+  }
+
+  .bottom-nav-label {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.62rem;
+  }
+}

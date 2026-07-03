@@ -1,18 +1,23 @@
 /* profile.css — Página de perfil. */
 
 .profile-page {
-  padding-block: var(--space-5) var(--space-8);
+  padding-block: var(--space-6) var(--space-8);
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-5);
+  transform: rotate(var(--tilt));
 }
 .profile-id h1 {
   font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+.profile-id .text-muted {
+  font-weight: var(--fw-bold);
 }
 .profile-bio {
   margin-top: var(--space-2);
@@ -22,19 +27,22 @@
 .profile-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-5);
+  gap: var(--space-6);
   align-items: start;
 }
 
 .profile-grid h2 {
   font-size: var(--fs-lg);
   margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 3px solid var(--brand);
+  display: inline-block;
 }
 
 .avatar-editor {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-5);
   flex-wrap: wrap;
 }
 .avatar-form {
@@ -47,12 +55,22 @@
   color: var(--text-muted);
 }
 .avatar-form input[type='file']::file-selector-button {
+  border-radius: var(--radius-sm);
   margin-right: var(--space-3);
   padding: 0.5em 1em;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
+  border: 2px solid var(--text);
+  background: transparent;
   color: var(--text);
   cursor: pointer;
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+}
+
+@media (max-width: 560px) {
+  .profile-header {
+    transform: none;
+  }
 }

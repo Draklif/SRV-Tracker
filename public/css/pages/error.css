@@ -1,4 +1,4 @@
-/* error.css — Página de error (404 / 500). Tono amable, nunca culposo. */
+/* error.css — Página de error (404 / 500). Dramática pero amable. */
 
 .error-page {
   min-height: 80vh;
@@ -13,6 +13,7 @@
   display: grid;
   gap: var(--space-4);
   justify-items: center;
+  transform: rotate(var(--tilt));
 }
 
 .error-emoji {
@@ -20,7 +21,10 @@
 }
 
 .error-card h1 {
-  font-size: var(--fs-3xl);
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  color: var(--brand);
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.65);
+  line-height: 1;
 }
 
 .error-stack {
@@ -30,7 +34,13 @@
   overflow-x: auto;
   font-size: var(--fs-xs);
   background: var(--surface-2);
+  border: 2px solid var(--border);
   padding: var(--space-3);
-  border-radius: var(--radius);
   color: var(--text-muted);
+}
+
+@media (max-width: 560px) {
+  .error-card {
+    transform: none;
+  }
 }
