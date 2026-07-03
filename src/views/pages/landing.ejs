@@ -1,0 +1,78 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/landing.css'] }) %>
+
+<header class="landing-nav container">
+  <a class="brand" href="/">
+    <span class="brand-mark">🌱</span>
+    <span class="brand-name"><%= appName %></span>
+  </a>
+  <nav class="landing-nav-actions">
+    <a class="btn btn-ghost" href="/login">Entrar</a>
+    <a class="btn btn-primary" href="/register">Crear cuenta</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero container">
+    <div class="hero-copy">
+      <span class="chip">Hábitos, a tu ritmo</span>
+      <h1>Construye constancia,<br />sin culpa.</h1>
+      <p class="hero-sub text-muted">
+        Un rincón acogedor para seguir tus hábitos junto a tus amigos. Sin castigos, sin
+        rachas perdidas para siempre. Solo pequeños pasos que suman.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="/register">Empezar</a>
+        <a class="btn btn-ghost btn-lg" href="/login">Ya tengo cuenta</a>
+      </div>
+    </div>
+
+    <div class="hero-card card card-glass" aria-hidden="true">
+      <div class="mini-habit">
+        <span class="mini-icon">💧</span>
+        <div class="mini-body">
+          <div class="mini-top">
+            <span>Agua</span><span class="text-muted">1800 / 2500 ml</span>
+          </div>
+          <div class="progress"><span class="progress-fill" style="width: 72%"></span></div>
+        </div>
+      </div>
+      <div class="mini-habit">
+        <span class="mini-icon">📖</span>
+        <div class="mini-body">
+          <div class="mini-top"><span>Lectura</span><span class="chip">🔥 12 días</span></div>
+          <div class="progress"><span class="progress-fill" style="width: 100%"></span></div>
+        </div>
+      </div>
+      <div class="mini-habit">
+        <span class="mini-icon">😊</span>
+        <div class="mini-body">
+          <div class="mini-top"><span>Ánimo</span><span>😀 😀 😀 😀 ☆</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features container">
+    <article class="card feature">
+      <span class="feature-icon">🎯</span>
+      <h3>Hábitos a tu medida</h3>
+      <p class="text-muted">Checkbox, cantidad, tiempo, escala o número. Con icono, color y meta.</p>
+    </article>
+    <article class="card feature">
+      <span class="feature-icon">✨</span>
+      <h3>XP y logros</h3>
+      <p class="text-muted">Sube de nivel y colecciona insignias. Nunca pierdes XP por fallar.</p>
+    </article>
+    <article class="card feature">
+      <span class="feature-icon">🫶</span>
+      <h3>Con tus amigos</h3>
+      <p class="text-muted">Un feed cálido para celebrar los avances de los demás con reacciones.</p>
+    </article>
+  </section>
+</main>
+
+<footer class="landing-footer container text-muted">
+  <span>Tracker · hecho con cariño para volver, no para presionar.</span>
+</footer>
+
+<%- include('../partials/foot') %>

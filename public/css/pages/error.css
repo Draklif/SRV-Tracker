@@ -1,0 +1,36 @@
+/* error.css — Página de error (404 / 500). Tono amable, nunca culposo. */
+
+.error-page {
+  min-height: 80vh;
+  display: grid;
+  place-items: center;
+  padding-block: var(--space-7);
+}
+
+.error-card {
+  text-align: center;
+  max-width: 480px;
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+}
+
+.error-emoji {
+  font-size: 3rem;
+}
+
+.error-card h1 {
+  font-size: var(--fs-3xl);
+}
+
+.error-stack {
+  margin-top: var(--space-3);
+  text-align: left;
+  width: 100%;
+  overflow-x: auto;
+  font-size: var(--fs-xs);
+  background: var(--surface-2);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+}

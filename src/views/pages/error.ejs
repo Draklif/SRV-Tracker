@@ -1,0 +1,15 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/error.css'] }) %>
+
+<main class="container error-page">
+  <div class="card card-glass error-card">
+    <span class="error-emoji">🌿</span>
+    <h1><%= status %></h1>
+    <p class="text-muted"><%= message %></p>
+    <a class="btn btn-primary" href="/">Volver al inicio</a>
+    <% if (typeof stack !== 'undefined' && stack) { %>
+    <pre class="error-stack"><%= stack %></pre>
+    <% } %>
+  </div>
+</main>
+
+<%- include('../partials/foot') %>

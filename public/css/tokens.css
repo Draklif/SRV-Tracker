@@ -1,0 +1,104 @@
+/* tokens.css — Design tokens: la única fuente de color, espacio, radio y tipografía.
+   Dark mode por defecto (:root). El tema claro se activa con [data-theme="light"]. */
+
+:root {
+  /* ---- Paleta de marca (cálida, colorida, acogedora) ---- */
+  --brand: #48c78e; /* verde amable tipo Duolingo/Animal Crossing */
+  --brand-strong: #2fa877;
+  --brand-soft: rgba(72, 199, 142, 0.14);
+
+  --accent-blue: #4aa3ff;
+  --accent-purple: #a78bfa;
+  --accent-coral: #ff7a6b;
+  --accent-yellow: #ffcb57;
+  --accent-pink: #ff8fc8;
+
+  /* ---- Superficies (dark por defecto) ---- */
+  --bg: #14161d;
+  --bg-gradient: radial-gradient(1200px 600px at 80% -10%, #1d2233 0%, #14161d 60%);
+  --surface: #1c1f2a;
+  --surface-2: #232733;
+  --surface-glass: rgba(28, 31, 42, 0.72);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  /* ---- Texto ---- */
+  --text: #eef1f6;
+  --text-muted: #a4acbd;
+  --text-faint: #6f7789;
+  --on-brand: #06231a;
+
+  /* ---- Semánticos (siempre en positivo; no usamos rojo de "fallaste") ---- */
+  --success: #48c78e;
+  --info: #4aa3ff;
+  --warn: #ffcb57;
+
+  /* ---- Radios ---- */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---- Sombras suaves ---- */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.38);
+  --glass-blur: 14px;
+
+  /* ---- Espaciado (escala de 4) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* ---- Tipografía ---- */
+  --font-sans: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.88rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.15rem;
+  --fs-xl: 1.4rem;
+  --fs-2xl: 1.9rem;
+  --fs-3xl: 2.6rem;
+  --lh: 1.55;
+  --fw-regular: 400;
+  --fw-medium: 600;
+  --fw-bold: 800;
+
+  /* ---- Transiciones / animación ---- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition: 180ms var(--ease);
+
+  --container: 1080px;
+}
+
+:root[data-theme='light'] {
+  --bg: #f5f6fb;
+  --bg-gradient: radial-gradient(1200px 600px at 80% -10%, #eaf6f0 0%, #f5f6fb 55%);
+  --surface: #ffffff;
+  --surface-2: #f0f2f8;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --border: rgba(20, 22, 29, 0.08);
+  --border-strong: rgba(20, 22, 29, 0.16);
+
+  --text: #1d2230;
+  --text-muted: #5a6274;
+  --text-faint: #9aa2b4;
+  --on-brand: #06231a;
+
+  --shadow-sm: 0 2px 6px rgba(20, 22, 29, 0.06);
+  --shadow: 0 8px 24px rgba(20, 22, 29, 0.1);
+  --shadow-lg: 0 18px 48px rgba(20, 22, 29, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition: 0ms;
+  }
+}

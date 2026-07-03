@@ -1,0 +1,140 @@
+/* landing.css — Página pública de bienvenida. */
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-lg);
+}
+.brand-mark {
+  font-size: 1.5rem;
+}
+
+.landing-nav-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ---- Hero ---- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-7);
+  align-items: center;
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.hero-copy .chip {
+  margin-bottom: var(--space-4);
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  margin-bottom: var(--space-4);
+}
+.hero-sub {
+  font-size: var(--fs-lg);
+  max-width: 46ch;
+  margin-bottom: var(--space-5);
+}
+.hero-cta {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.hero-card {
+  display: grid;
+  gap: var(--space-4);
+  transform: rotate(1.5deg);
+  transition: transform var(--transition);
+}
+.hero-card:hover {
+  transform: rotate(0deg) translateY(-4px);
+}
+
+.mini-habit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.mini-icon {
+  font-size: 1.6rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+.mini-body {
+  flex: 1;
+  display: grid;
+  gap: var(--space-2);
+}
+.mini-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+}
+
+/* Barra de progreso reutilizable. */
+.progress {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--brand), var(--accent-blue));
+  transition: width 600ms var(--ease);
+}
+
+/* ---- Features ---- */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+}
+.feature {
+  display: grid;
+  gap: var(--space-2);
+}
+.feature-icon {
+  font-size: 2rem;
+}
+
+.landing-footer {
+  padding-block: var(--space-7);
+  text-align: center;
+  font-size: var(--fs-sm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 820px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    padding-block: var(--space-6);
+  }
+  .hero-card {
+    order: -1;
+    transform: none;
+  }
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
