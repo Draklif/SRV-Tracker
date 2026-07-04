@@ -10,6 +10,34 @@
     <meta name="csrf-token" content="<%= csrfToken %>" />
     <% } %>
     <title><%= typeof title !== 'undefined' ? title : appName %></title>
+
+    <%
+      // Previews sociales (Open Graph / Twitter Card). Por defecto muestran la
+      // marca; una página puede sobreescribir con `ogTitle` / `ogDescription`.
+      const _ogTitle = typeof ogTitle !== 'undefined' ? ogTitle : appName;
+      const _ogDesc = typeof ogDescription !== 'undefined' ? ogDescription
+        : (typeof siteDescription !== 'undefined' ? siteDescription : '');
+      const _ogBase = typeof baseUrl !== 'undefined' ? baseUrl : '';
+      const _ogImage = _ogBase + '/og-image.png';
+    %>
+    <meta name="description" content="<%= _ogDesc %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="<%= appName %>" />
+    <meta property="og:title" content="<%= _ogTitle %>" />
+    <meta property="og:description" content="<%= _ogDesc %>" />
+    <% if (typeof canonicalUrl !== 'undefined') { %>
+    <meta property="og:url" content="<%= canonicalUrl %>" />
+    <% } %>
+    <meta property="og:image" content="<%= _ogImage %>" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="<%= appName %>" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= _ogTitle %>" />
+    <meta name="twitter:description" content="<%= _ogDesc %>" />
+    <meta name="twitter:image" content="<%= _ogImage %>" />
+
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/base.css" />

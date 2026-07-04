@@ -66,8 +66,19 @@ function createApp() {
   app.use(loadUser);
   app.use(csrfToken);
 
+  // URL base y canónica para el <head> (og:url, og:image). Detrás de Caddy,
+  // `trust proxy` hace que req.protocol sea https en producción. Se puede fijar
+  // una URL canónica con PUBLIC_URL (config.site.url).
+  app.use((req, res, next) => {
+    const base = config.site.url || `${req.protocol}://${req.get('host')}`;
+    res.locals.baseUrl = base;
+    res.locals.canonicalUrl = base + req.originalUrl;
+    next();
+  });
+
   // Valores disponibles en todas las vistas.
-  app.locals.appName = 'Tracker';
+  app.locals.appName = config.site.name;
+  app.locals.siteDescription = config.site.description;
   app.locals.habitColors = constants.HABIT_COLORS;
   app.locals.habitTypeMeta = constants.HABIT_TYPE_META;
   app.locals.habitColorKeys = constants.HABIT_COLOR_KEYS;

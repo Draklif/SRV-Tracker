@@ -34,6 +34,17 @@ const config = {
 
   defaultTimezone: process.env.DEFAULT_TIMEZONE || 'America/Mexico_City',
 
+  // Metadatos del sitio para el <head> y las previews sociales (Open Graph).
+  site: {
+    name: 'Tracker',
+    description:
+      process.env.SITE_DESCRIPTION ||
+      'Rastreador de hábitos gamificado y acogedor para compartir con tus amigos.',
+    // URL pública canónica (con https), ej. https://tracker.midominio.com.
+    // Si se deja vacía, se deriva del host de la petición.
+    url: (process.env.PUBLIC_URL || '').replace(/\/+$/, ''),
+  },
+
   paths: {
     uploads: path.resolve(rootDir, 'public/uploads'),
     avatars: path.resolve(rootDir, 'public/uploads/avatars'),
