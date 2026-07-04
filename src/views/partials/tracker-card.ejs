@@ -18,7 +18,7 @@
   <div class="tc-top">
     <span class="tc-icon"><%= habit.icon %></span>
     <div class="tc-info">
-      <h3 class="tc-name"><%= habit.name %></h3>
+      <h3 class="tc-name"><a href="/habits/<%= habit.id %>/history" class="tc-name-link"><%= habit.name %></a></h3>
       <span class="tc-streak" data-streak-wrap <%= current > 0 ? '' : 'hidden' %>>
         🔥 <b data-streak><%= current %></b> <span class="tc-streak-unit">días</span>
       </span>

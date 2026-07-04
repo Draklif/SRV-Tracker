@@ -1,0 +1,36 @@
+<%
+  const p = event.payload;
+  const who = event.display_name;
+  let story = '';
+  if (event.type === 'habit_completed') {
+    story = `completó <b>${p.icon || ''} ${p.habitName}</b>`;
+  } else if (event.type === 'streak_milestone') {
+    story = `alcanzó <b>🔥 ${p.days} días</b> de ${p.habitName}`;
+  } else if (event.type === 'level_up') {
+    story = `subió al <b>nivel ${p.level}</b> ⭐`;
+  } else if (event.type === 'achievement_unlocked') {
+    story = `desbloqueó <b>${p.icon || '🏆'} ${p.name}</b>`;
+  } else {
+    story = 'hizo algo genial';
+  }
+  const reactions = event.reactions || [];
+  const byEmoji = Object.fromEntries(reactions.map((r) => [r.emoji, r]));
+%>
+<article class="feed-item card" data-event-id="<%= event.id %>">
+  <%- include('avatar', { avatarUser: event, size: 'sm' }) %>
+  <div class="fi-body">
+    <p class="fi-text"><b><%= who %></b> <%- story %></p>
+    <span class="fi-time text-muted"><%= timeAgo(event.created_at) %></span>
+    <div class="fi-reactions">
+      <% reactionEmojis.forEach((emoji) => {
+        const r = byEmoji[emoji];
+        const count = r ? r.count : 0;
+        const mine = r ? r.mine : false; %>
+      <button class="fi-react<%= mine ? ' is-mine' : '' %><%= count > 0 ? ' has-count' : '' %>"
+        data-react="<%= emoji %>" aria-pressed="<%= mine %>">
+        <span><%= emoji %></span><span class="fi-count" data-count><%= count > 0 ? count : '' %></span>
+      </button>
+      <% }) %>
+    </div>
+  </div>
+</article>

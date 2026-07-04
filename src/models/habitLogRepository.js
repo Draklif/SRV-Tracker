@@ -23,6 +23,19 @@ const statements = {
     'SELECT log_date FROM habit_logs WHERE habit_id = ? AND completed = 1 ORDER BY log_date'
   ),
   remove: db.prepare('DELETE FROM habit_logs WHERE habit_id = ? AND log_date = ?'),
+  byHabitSince: db.prepare(
+    'SELECT * FROM habit_logs WHERE habit_id = ? AND log_date >= ? ORDER BY log_date'
+  ),
+  recentByHabit: db.prepare(
+    'SELECT * FROM habit_logs WHERE habit_id = ? ORDER BY log_date DESC LIMIT ?'
+  ),
+  statsByHabit: db.prepare(`
+    SELECT COUNT(*) AS total,
+           SUM(completed) AS done,
+           AVG(CASE WHEN value_num IS NOT NULL THEN value_num END) AS avg_value,
+           MAX(value_num) AS max_value
+    FROM habit_logs WHERE habit_id = ?
+  `),
 };
 
 function upsert(row) {
@@ -46,4 +59,25 @@ function remove(habitId, date) {
   statements.remove.run(habitId, date);
 }
 
-module.exports = { upsert, get, findByUserAndDate, completedDates, remove };
+function findByHabitSince(habitId, fromDate) {
+  return statements.byHabitSince.all(habitId, fromDate);
+}
+
+function findRecentByHabit(habitId, limit) {
+  return statements.recentByHabit.all(habitId, limit);
+}
+
+function statsByHabit(habitId) {
+  return statements.statsByHabit.get(habitId);
+}
+
+module.exports = {
+  upsert,
+  get,
+  findByUserAndDate,
+  completedDates,
+  remove,
+  findByHabitSince,
+  findRecentByHabit,
+  statsByHabit,
+};

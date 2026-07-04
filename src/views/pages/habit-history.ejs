@@ -1,0 +1,131 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/history.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<%
+  const colorHex = habitColors[habit.color] || habitColors.blue;
+  const meta = habitTypeMeta[habit.type];
+%>
+<main class="container history-page" style="--habit-color: <%= colorHex %>">
+  <%- include('../partials/flash') %>
+
+  <header class="history-head">
+    <a class="back-link" href="/">← Volver</a>
+    <div class="history-title">
+      <span class="hh-icon"><%= habit.icon %></span>
+      <div>
+        <h1><%= habit.name %></h1>
+        <span class="habit-type"><%= meta ? meta.label : habit.type %></span>
+        <% if (habit.target_daily) { %>
+        <span class="hh-target text-muted">Meta: <%= habit.target_daily %><%= habit.unit ? ' ' + habit.unit : '' %></span>
+        <% } %>
+      </div>
+    </div>
+  </header>
+
+  <!-- Estadísticas -->
+  <section class="stats-row">
+    <div class="stat-tile card">
+      <span class="stat-num">🔥 <%= stats.current %></span>
+      <span class="stat-label">Racha actual</span>
+    </div>
+    <div class="stat-tile card">
+      <span class="stat-num">🏆 <%= stats.longest %></span>
+      <span class="stat-label">Mejor racha</span>
+    </div>
+    <% if (stats.average != null) { %>
+    <div class="stat-tile card">
+      <span class="stat-num"><%= stats.average %></span>
+      <span class="stat-label">Promedio<%= habit.unit ? ' (' + habit.unit + ')' : '' %></span>
+    </div>
+    <div class="stat-tile card">
+      <span class="stat-num"><%= stats.record %></span>
+      <span class="stat-label">Récord<%= habit.unit ? ' (' + habit.unit + ')' : '' %></span>
+    </div>
+    <% } else { %>
+    <div class="stat-tile card">
+      <span class="stat-num"><%= stats.done %></span>
+      <span class="stat-label">Días completados</span>
+    </div>
+    <div class="stat-tile card">
+      <span class="stat-num"><%= stats.totalLogs %></span>
+      <span class="stat-label">Registros totales</span>
+    </div>
+    <% } %>
+  </section>
+
+  <!-- Calendario de actividad -->
+  <section class="card">
+    <h2 class="hh-section-title">Calendario</h2>
+    <%- include('../partials/heatmap', { heatmap, shortDate }) %>
+    <div class="hm-legend text-muted">
+      <span>Menos</span>
+      <span class="hm-cell lvl-0"></span><span class="hm-cell lvl-1"></span>
+      <span class="hm-cell lvl-2"></span><span class="hm-cell lvl-3"></span>
+      <span class="hm-cell lvl-4"></span>
+      <span>Más</span>
+    </div>
+  </section>
+
+  <!-- Gráfica de los últimos 30 días -->
+  <% if (chart) { %>
+  <section class="card">
+    <h2 class="hh-section-title">Últimos 30 días</h2>
+    <%
+      const W = 640, H = 170, PAD = 6;
+      const span = (chart.max - chart.floor) || 1;
+      const yFor = (v) => H - PAD - ((v - chart.floor) / span) * (H - PAD * 2);
+      const xStep = W / chart.points.length;
+    %>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 <%= W %> <%= H %>" class="chart" role="img"
+        aria-label="Gráfica de <%= habit.name %> de los últimos 30 días">
+        <% if (chart.target && chart.target <= chart.max) { %>
+        <line x1="0" y1="<%= yFor(chart.target) %>" x2="<%= W %>" y2="<%= yFor(chart.target) %>" class="chart-target" />
+        <% } %>
+        <% if (chart.style === 'bars') { %>
+          <% chart.points.forEach((p, i) => { if (p.value != null) { %>
+          <rect x="<%= (i * xStep + 2).toFixed(1) %>" y="<%= yFor(p.value).toFixed(1) %>"
+            width="<%= (xStep - 4).toFixed(1) %>" height="<%= (H - PAD - yFor(p.value)).toFixed(1) %>"
+            rx="2" class="chart-bar" />
+          <% } }) %>
+        <% } else { %>
+          <polyline class="chart-line" points="<%=
+            chart.points.filter((p) => p.value != null)
+              .map((p) => `${(chart.points.indexOf(p) * xStep + xStep / 2).toFixed(1)},${yFor(p.value).toFixed(1)}`)
+              .join(' ')
+          %>" />
+          <% chart.points.forEach((p, i) => { if (p.value != null) { %>
+          <circle cx="<%= (i * xStep + xStep / 2).toFixed(1) %>" cy="<%= yFor(p.value).toFixed(1) %>" r="3.5" class="chart-dot" />
+          <% } }) %>
+        <% } %>
+      </svg>
+      <div class="chart-labels text-muted">
+        <span><%= shortDate(chart.points[0].date) %></span>
+        <span>máx <%= chart.max %><%= habit.unit ? ' ' + habit.unit : '' %></span>
+        <span><%= shortDate(chart.points[chart.points.length - 1].date) %></span>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Últimos registros -->
+  <section class="card">
+    <h2 class="hh-section-title">Últimos registros</h2>
+    <% if (recent.length === 0) { %>
+    <p class="text-muted">Todavía no hay registros. Cuando empieces, aquí verás tu camino 🌱</p>
+    <% } else { %>
+    <ul class="recent-list" role="list">
+      <% recent.forEach((log) => { %>
+      <li class="recent-item">
+        <span class="recent-date"><%= shortDate(log.log_date) %></span>
+        <span class="recent-value"><%= formatLogValue(habit, log) %></span>
+        <% if (log.completed) { %><span class="recent-check">✓</span><% } %>
+      </li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </section>
+</main>
+
+<%- include('../partials/foot') %>

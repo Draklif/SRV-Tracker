@@ -164,6 +164,12 @@
   text-transform: none;
   letter-spacing: 0;
 }
+.tc-name-link {
+  transition: color var(--transition);
+}
+.tc-name-link:hover {
+  color: var(--habit-color);
+}
 /* Racha: mini-cartel inclinado. */
 .tc-streak {
   display: inline-block;
@@ -341,6 +347,25 @@
 }
 .tc-textarea .btn {
   justify-self: start;
+}
+
+/* ---- Actividad de amigos ---- */
+.friends-activity {
+  display: grid;
+  gap: var(--space-3);
+}
+.fa-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.fa-list {
+  display: grid;
+  gap: var(--space-2);
+}
+.fa-list .feed-item {
+  padding: var(--space-3) var(--space-4);
 }
 
 /* ---- Accesos rápidos ---- */

@@ -2,6 +2,7 @@
 
 const habitService = require('./habitService');
 const streakService = require('./streakService');
+const activityService = require('./activityService');
 const habitLogRepository = require('../models/habitLogRepository');
 const { todayFor } = require('../utils/date');
 const { levelProgress } = require('../utils/level');
@@ -36,6 +37,7 @@ function assemble(user) {
     habits: items,
     dayProgress: dayProgressFrom(items),
     level: levelProgress(user.xp),
+    activity: activityService.feed(user.id, 5),
   };
 }
 

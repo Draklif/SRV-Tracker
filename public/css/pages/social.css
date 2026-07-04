@@ -1,0 +1,66 @@
+/* social.css — Página del feed de amigos (los items viven en components/feed.css). */
+
+.social-page {
+  padding-block: var(--space-6) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+  max-width: 680px;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.page-head h1 {
+  font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.live-dot span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brand);
+  animation: live-pulse 2s infinite;
+}
+
+.feed {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.feed-empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-7) var(--space-4);
+}
+.feed-empty .empty-emoji {
+  font-size: 2.6rem;
+}
+.feed-empty h2 {
+  font-size: var(--fs-xl);
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--brand-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}

@@ -1,0 +1,23 @@
+<%# Heatmap tipo mapa de commits. Espera `heatmap` {weeks, monthLabels}. %>
+<div class="heatmap-scroll">
+  <div class="heatmap" style="--weeks: <%= heatmap.weeks.length %>">
+    <div class="hm-months">
+      <% heatmap.monthLabels.forEach((m) => { %>
+      <span class="hm-month" style="--w: <%= m.week %>"><%= m.label %></span>
+      <% }) %>
+    </div>
+    <div class="hm-daylabels">
+      <span></span><span>M</span><span></span><span>J</span><span></span><span>S</span><span></span>
+    </div>
+    <div class="hm-grid">
+      <% heatmap.weeks.forEach((week) => { %>
+      <div class="hm-week">
+        <% week.forEach((day) => { %>
+        <span class="hm-cell lvl-<%= day.level %><%= day.future ? ' is-future' : '' %>"
+          title="<%= shortDate(day.date) %>"></span>
+        <% }) %>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</div>

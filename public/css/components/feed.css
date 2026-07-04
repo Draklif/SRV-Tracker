@@ -1,0 +1,76 @@
+/* feed.css — Item del feed de actividad (compartido: dashboard y /social). */
+
+.feed-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  align-items: flex-start;
+}
+.feed-item-new {
+  animation: feed-in 420ms var(--ease-snap);
+}
+
+.fi-body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+.fi-text {
+  line-height: 1.45;
+}
+.fi-time {
+  font-size: var(--fs-xs);
+}
+
+.fi-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+.fi-reactions:empty {
+  display: none;
+}
+.fi-react {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.25em 0.55em;
+  font-size: var(--fs-sm);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  opacity: 0.55;
+  transition: all var(--transition);
+}
+.fi-react:hover {
+  opacity: 1;
+  background: var(--surface-2);
+  transform: translateY(-1px) scale(1.06);
+}
+.fi-react.has-count {
+  opacity: 1;
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+.fi-react.is-mine {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+.fi-count {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  min-width: 0.6em;
+}
+
+@keyframes feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) rotate(-0.6deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}

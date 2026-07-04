@@ -31,6 +31,7 @@
     <% } else { %>
     <button class="icon-btn move" data-action="up" title="Subir" aria-label="Subir">▲</button>
     <button class="icon-btn move" data-action="down" title="Bajar" aria-label="Bajar">▼</button>
+    <a class="icon-btn" href="/habits/<%= habit.id %>/history" title="Historial" aria-label="Ver historial">📊</a>
     <button class="icon-btn" data-action="edit" title="Editar" aria-label="Editar hábito">✏️</button>
     <button class="icon-btn" data-action="archive" title="Archivar" aria-label="Archivar hábito">🗄️</button>
     <% } %>

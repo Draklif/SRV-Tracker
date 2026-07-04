@@ -6,6 +6,9 @@ const authRoutes = require('./web/authRoutes');
 const profileRoutes = require('./web/profileRoutes');
 const habitRoutes = require('./web/habitRoutes');
 const habitApiRoutes = require('./api/habitApiRoutes');
+const socialApiRoutes = require('./api/socialApiRoutes');
+const socialController = require('../controllers/socialController');
+const requireAuth = require('../middlewares/requireAuth');
 
 /**
  * Router raíz: monta todos los sub-routers de la app.
@@ -25,8 +28,10 @@ router.get('/', homeController.index);
 router.use('/', authRoutes);
 router.use('/profile', profileRoutes);
 router.use('/habits', habitRoutes);
+router.get('/social', requireAuth, socialController.page);
 
 // API JSON.
 router.use('/api/habits', habitApiRoutes);
+router.use('/api', socialApiRoutes);
 
 module.exports = router;

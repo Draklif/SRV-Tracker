@@ -86,8 +86,11 @@ function log(habitId, user, input) {
     return { log: logRow, streak };
   });
 
-  // Los subscribers (gamificación, y en el futuro feed/aldea) reaccionan aquí.
-  const ctx = { user, habit, log: result.log, streak: result.streak, date, rewards: null };
+  // Los subscribers (gamificación, feed, y en el futuro aldea) reaccionan aquí.
+  const newlyCompleted = Boolean(
+    state && state.completed && !(existing && existing.completed)
+  );
+  const ctx = { user, habit, log: result.log, streak: result.streak, date, newlyCompleted, rewards: null };
   bus.emit(EVENTS.HABIT_LOGGED, ctx);
 
   return { habit, date, log: result.log, streak: result.streak, rewards: ctx.rewards };

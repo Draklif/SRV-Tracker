@@ -44,10 +44,28 @@
   </section>
   <% } %>
 
+  <% if (activity.length) { %>
+  <section class="friends-activity">
+    <div class="fa-head">
+      <h2 class="section-title">Amigos</h2>
+      <a class="link" href="/social">Ver todo →</a>
+    </div>
+    <div class="fa-list">
+      <% activity.forEach((event) => { %>
+      <%- include('../partials/feed-item', { event, reactionEmojis: [], timeAgo }) %>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
   <section class="quick-links">
     <a class="quick-link card" href="/habits">
       <span class="ql-icon">🎯</span>
       <span class="ql-label">Gestionar hábitos</span>
+    </a>
+    <a class="quick-link card" href="/social">
+      <span class="ql-icon">🫶</span>
+      <span class="ql-label">Amigos</span>
     </a>
     <a class="quick-link card" href="/profile">
       <span class="ql-icon">👤</span>

@@ -1,6 +1,7 @@
 'use strict';
 
 const dashboardService = require('../services/dashboardService');
+const { timeAgo } = require('../utils/format');
 
 /**
  * Página de inicio: landing pública para invitados, o el dashboard con el
@@ -11,7 +12,7 @@ function index(req, res) {
     return res.render('pages/landing', { title: 'Tracker — hábitos, a tu ritmo' });
   }
   const data = dashboardService.assemble(req.user);
-  return res.render('pages/home', { title: 'Inicio', ...data });
+  return res.render('pages/home', { title: 'Inicio', ...data, timeAgo });
 }
 
 module.exports = { index };

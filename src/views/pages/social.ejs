@@ -1,0 +1,28 @@
+<% const pageScripts = ['/js/api.js', '/js/toast.js', '/js/social.js']; %>
+<%- include('../partials/head', { title, styles: ['/css/pages/social.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container social-page">
+  <%- include('../partials/flash') %>
+
+  <header class="page-head">
+    <h1>Amigos</h1>
+    <span class="live-dot" title="Feed en vivo"><span></span> En vivo</span>
+  </header>
+
+  <section class="feed" id="feed" data-last-id="<%= lastId %>" data-user-id="<%= user.id %>">
+    <% if (events.length === 0) { %>
+    <div class="feed-empty card">
+      <span class="empty-emoji">🫶</span>
+      <h2>Todo tranquilo por aquí</h2>
+      <p class="text-muted">Cuando tú o tus amigos completen hábitos, lo verás aquí al instante.</p>
+    </div>
+    <% } %>
+    <% events.forEach((event) => { %>
+    <%- include('../partials/feed-item', { event, reactionEmojis, timeAgo }) %>
+    <% }) %>
+  </section>
+</main>
+
+<%- include('../partials/foot', { scripts: pageScripts }) %>
