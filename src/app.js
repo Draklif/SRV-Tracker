@@ -24,6 +24,11 @@ function createApp() {
 
   const app = express();
 
+  // Detrás de Caddy (reverse proxy con TLS): confiar en el primer salto para
+  // leer X-Forwarded-Proto. Sin esto, Express ve la conexión como HTTP y no
+  // envía la cookie de sesión `secure`, rompiendo login/registro (CSRF).
+  if (config.isProd) app.set('trust proxy', 1);
+
   // Vistas EJS.
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
