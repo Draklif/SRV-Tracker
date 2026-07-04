@@ -104,7 +104,9 @@
   box-shadow: var(--shadow-sm);
 }
 .res-icon {
-  font-size: 2rem;
+  display: inline-flex;
+  color: var(--brand);
+  line-height: 0;
 }
 .res-total {
   font-family: var(--font-display);

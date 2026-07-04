@@ -407,6 +407,12 @@
 .type-emoji {
   font-size: 1.3rem;
 }
+/* Los recursos usan iconos SVG (no emoji) con el color de marca. */
+.res-svg {
+  display: inline-flex;
+  color: var(--brand);
+  line-height: 0;
+}
 .type-label {
   font-family: var(--font-display);
   font-style: italic;

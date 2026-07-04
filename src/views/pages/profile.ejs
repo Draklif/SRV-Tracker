@@ -35,7 +35,7 @@
     <div class="res-grid">
       <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
       <div class="res-tile" title="<%= m.desc %>">
-        <span class="res-icon"><%= m.icon %></span>
+        <span class="res-icon"><%- include('../partials/icon', { name: key, size: 30 }) %></span>
         <span class="res-total"><%= resources[key] || 0 %></span>
         <span class="res-name"><%= m.label %></span>
       </div>

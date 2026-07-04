@@ -36,7 +36,7 @@
         <div class="type-picker resource-picker">
           <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
           <button type="button" class="type-option resource-option" data-resource="<%= key %>">
-            <span class="type-emoji"><%= m.icon %></span>
+            <span class="type-emoji res-svg"><%- include('icon', { name: key, size: 24 }) %></span>
             <span class="type-label"><%= m.label %></span>
             <span class="type-desc"><%= m.desc %></span>
           </button>
