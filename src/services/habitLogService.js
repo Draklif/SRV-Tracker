@@ -4,6 +4,8 @@ const habitService = require('./habitService');
 const streakService = require('./streakService');
 const habitLogRepository = require('../models/habitLogRepository');
 const withTransaction = require('../database/withTransaction');
+const bus = require('../events/eventBus');
+const EVENTS = require('../events/events');
 const { HABIT_TYPES } = require('../config/constants');
 const { todayFor } = require('../utils/date');
 const { ValidationError } = require('../utils/errors');
@@ -56,12 +58,13 @@ function computeState(habit, input, existing) {
 
 /**
  * Registra un avance de hábito para HOY (en la tz del usuario), recalcula la
- * racha y devuelve el nuevo estado. La escritura del log y la racha van en una
+ * racha y emite `habit.logged` en el bus (los subscribers escriben sus
+ * recompensas en el contexto). La escritura del log y la racha van en una
  * misma transacción para mantener la coherencia.
  */
-function log(habitId, userId, timezone, input) {
-  const habit = habitService.getOwned(habitId, userId); // valida propiedad
-  const date = todayFor(timezone);
+function log(habitId, user, input) {
+  const habit = habitService.getOwned(habitId, user.id); // valida propiedad
+  const date = todayFor(user.timezone);
   const existing = habitLogRepository.get(habitId, date);
   const state = computeState(habit, input, existing);
 
@@ -72,7 +75,7 @@ function log(habitId, userId, timezone, input) {
     } else {
       logRow = habitLogRepository.upsert({
         habit_id: habitId,
-        user_id: userId,
+        user_id: user.id,
         log_date: date,
         value_num: state.value_num,
         value_text: state.value_text,
@@ -83,7 +86,11 @@ function log(habitId, userId, timezone, input) {
     return { log: logRow, streak };
   });
 
-  return { habit, date, log: result.log, streak: result.streak };
+  // Los subscribers (gamificación, y en el futuro feed/aldea) reaccionan aquí.
+  const ctx = { user, habit, log: result.log, streak: result.streak, date, rewards: null };
+  bus.emit(EVENTS.HABIT_LOGGED, ctx);
+
+  return { habit, date, log: result.log, streak: result.streak, rewards: ctx.rewards };
 }
 
 module.exports = { log };

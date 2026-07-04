@@ -1,7 +1,10 @@
 'use strict';
 
 const habitRepository = require('../models/habitRepository');
+const bus = require('../events/eventBus');
+const EVENTS = require('../events/events');
 const { HABIT_TYPES } = require('../config/constants');
+const { todayFor } = require('../utils/date');
 const { ValidationError, NotFoundError, ForbiddenError } = require('../utils/errors');
 
 /** Fila cruda → objeto de hábito con `settings` ya parseado. */
@@ -66,11 +69,11 @@ function getOwned(id, userId) {
   return map(habit);
 }
 
-function create(userId, data) {
+function create(user, data) {
   validateBusiness(data);
   const columns = deriveColumns(data);
   const row = habitRepository.create({
-    user_id: userId,
+    user_id: user.id,
     name: data.name,
     icon: data.icon,
     color: data.color,
@@ -78,9 +81,14 @@ function create(userId, data) {
     unit: columns.unit,
     target_daily: columns.target_daily,
     settings: JSON.stringify(buildSettings(data)),
-    sort_order: habitRepository.nextSortOrder(userId),
+    sort_order: habitRepository.nextSortOrder(user.id),
   });
-  return map(row);
+  const habit = map(row);
+
+  const ctx = { user, habit, date: todayFor(user.timezone), rewards: null };
+  bus.emit(EVENTS.HABIT_CREATED, ctx);
+
+  return { habit, rewards: ctx.rewards };
 }
 
 /** Actualiza un hábito. El tipo es inmutable (protege el histórico). */

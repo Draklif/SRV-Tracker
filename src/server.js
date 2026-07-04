@@ -10,6 +10,8 @@ const { runMigrations } = require('./database/migrate');
  */
 function start() {
   runMigrations();
+  // Catálogo de logros: idempotente, garantiza que exista tras cada deploy.
+  require('./database/seeds/achievements').seedAchievements();
 
   const app = createApp();
   const server = app.listen(config.port, () => {

@@ -12,7 +12,29 @@
       <p class="text-muted">@<%= user.username %></p>
       <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
     </div>
+    <div class="profile-level">
+      <span class="chip">Nivel <%= level.level %></span>
+      <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+    </div>
   </header>
+
+  <!-- Logros e insignias -->
+  <section class="card achievements-section">
+    <h2>Logros</h2>
+    <% const unlockedCount = achievements.filter((a) => a.unlocked_at).length; %>
+    <p class="text-muted ach-summary"><%= unlockedCount %> de <%= achievements.length %> desbloqueados</p>
+    <div class="ach-grid">
+      <% achievements.forEach((a) => { %>
+      <div class="ach-badge<%= a.unlocked_at ? ' is-unlocked' : '' %> tier-<%= a.tier %>"
+        title="<%= a.description %>">
+        <span class="ach-icon"><%= a.icon %></span>
+        <span class="ach-name"><%= a.name %></span>
+        <span class="ach-desc"><%= a.description %></span>
+        <% if (a.unlocked_at) { %><span class="ach-check">✓</span><% } %>
+      </div>
+      <% }) %>
+    </div>
+  </section>
 
   <div class="profile-grid">
     <!-- Datos del perfil -->

@@ -17,9 +17,9 @@ const page = (req, res) => {
 /** POST /api/habits — crear. Devuelve el hábito y su tarjeta ya renderizada. */
 const create = asyncHandler(async (req, res) => {
   const data = habitSchema.parse(req.body);
-  const habit = habitService.create(req.user.id, data);
+  const { habit, rewards } = habitService.create(req.user, data);
   const html = await renderPartial(res, 'partials/habit-card', { habit });
-  res.status(201).json({ habit, html });
+  res.status(201).json({ habit, html, rewards });
 });
 
 /** PATCH /api/habits/:id — editar. */

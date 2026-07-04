@@ -5,6 +5,8 @@ const path = require('path');
 
 const config = require('../config');
 const userService = require('../services/userService');
+const achievementService = require('../services/achievementService');
+const { levelProgress } = require('../utils/level');
 const { profileSchema, passwordChangeSchema, TIMEZONES, THEMES } = require('../validators/profileValidators');
 const asyncHandler = require('../utils/asyncHandler');
 const { toFieldErrors } = require('../utils/validation');
@@ -17,6 +19,8 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     title: 'Tu perfil',
     timezones: TIMEZONES,
     themes: THEMES,
+    achievements: achievementService.listForUser(req.user.id),
+    level: levelProgress(req.user.xp),
     profileErrors,
     passwordErrors,
     values: values || {

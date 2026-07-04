@@ -27,6 +27,7 @@ const statements = {
     UPDATE users SET avatar_path = @avatarPath, updated_at = datetime('now') WHERE id = @id
   `),
   touchActive: db.prepare("UPDATE users SET last_active_at = datetime('now') WHERE id = ?"),
+  addXp: db.prepare('UPDATE users SET xp = xp + @amount WHERE id = @id'),
 };
 
 function create({ username, passwordHash, email, displayName, timezone }) {
@@ -60,6 +61,11 @@ function touchLastActive(id) {
   statements.touchActive.run(id);
 }
 
+/** Suma XP al contador denormalizado (la verdad vive en xp_events). */
+function addXp(id, amount) {
+  statements.addXp.run({ id, amount });
+}
+
 module.exports = {
   create,
   findById,
@@ -68,4 +74,5 @@ module.exports = {
   updatePassword,
   updateAvatar,
   touchLastActive,
+  addXp,
 };

@@ -205,6 +205,12 @@
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--habit-color) 40%, transparent);
 }
 
+/* Contenedor de controles: respiración entre progreso, botones y editor. */
+.tc-control {
+  display: grid;
+  gap: var(--space-3);
+}
+
 /* Cantidad / tiempo */
 .tc-progress-row {
   display: flex;
@@ -218,7 +224,6 @@
   background: var(--surface-2);
   border: 1.5px solid var(--border);
   overflow: hidden;
-  transform: skewX(var(--skew));
 }
 .progress-fill {
   display: block;

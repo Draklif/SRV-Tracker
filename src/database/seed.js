@@ -37,6 +37,7 @@ function seedInitialInvite() {
 function seed() {
   runMigrations();
   seedInitialInvite();
+  require('./seeds/achievements').seedAchievements();
   console.log('[seed] Listo.');
 }
 

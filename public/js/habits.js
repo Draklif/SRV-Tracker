@@ -175,6 +175,7 @@
         : await window.api.post('/api/habits', payload);
       applyCard(result.html, id);
       closeModal();
+      if (result.rewards && window.toast) window.toast.rewards(result.rewards);
     } catch (err) {
       showError(err);
     } finally {

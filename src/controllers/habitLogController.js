@@ -9,12 +9,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const log = asyncHandler(async (req, res) => {
   const input = logSchema.parse(req.body);
   const habitId = Number(req.params.id);
-  const { log: logRow, streak, date } = habitLogService.log(
-    habitId,
-    req.user.id,
-    req.user.timezone,
-    input
-  );
+  const { log: logRow, streak, date, rewards } = habitLogService.log(habitId, req.user, input);
   const dayProgress = dashboardService.dayProgress(req.user.id, date);
 
   res.json({
@@ -24,6 +19,7 @@ const log = asyncHandler(async (req, res) => {
     completed: logRow ? Boolean(logRow.completed) : false,
     streak: { current: streak.current_streak, longest: streak.longest_streak },
     dayProgress,
+    rewards, // XP, subida de nivel y logros para los toasts (null si no aplica)
   });
 });
 

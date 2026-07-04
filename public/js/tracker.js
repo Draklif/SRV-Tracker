@@ -98,6 +98,19 @@
     box.querySelector('[data-day-msg]').textContent = dayMessage(dp);
   }
 
+  /** Actualiza la barra de nivel del saludo con el progreso recibido. */
+  function updateLevel(progress) {
+    if (!progress) return;
+    const num = document.querySelector('[data-level-num]');
+    const fill = document.querySelector('[data-level-fill]');
+    const caption = document.querySelector('[data-level-caption]');
+    if (num) num.textContent = `Nivel ${progress.level}`;
+    if (fill) fill.style.width = progress.percent + '%';
+    if (caption) {
+      caption.textContent = `${progress.xp} XP · ${progress.toNext} para el nivel ${progress.level + 1}`;
+    }
+  }
+
   async function send(card, btn, body) {
     const id = card.dataset.habitId;
     btn.disabled = true;
@@ -105,6 +118,10 @@
       const res = await window.api.post(`/api/habits/${id}/log`, body);
       updateCard(card, res);
       updateDayProgress(res.dayProgress);
+      if (res.rewards) {
+        updateLevel(res.rewards.progress);
+        if (window.toast) window.toast.rewards(res.rewards);
+      }
     } catch (err) {
       alert(err.message);
     } finally {
