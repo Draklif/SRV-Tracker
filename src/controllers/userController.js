@@ -6,6 +6,7 @@ const path = require('path');
 const config = require('../config');
 const userService = require('../services/userService');
 const achievementService = require('../services/achievementService');
+const inviteService = require('../services/inviteService');
 const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
 const { NotFoundError } = require('../utils/errors');
@@ -24,6 +25,8 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     themes: THEMES,
     achievements: achievementService.listForUser(req.user.id),
     level: levelProgress(req.user.xp),
+    activeInvite: inviteService.getActiveForUser(req.user.id),
+    inviteTtlMinutes: inviteService.INVITE_TTL_MINUTES,
     profileErrors,
     passwordErrors,
     values: values || {
@@ -72,6 +75,12 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 });
 
+const generateInvite = asyncHandler(async (req, res) => {
+  inviteService.generateForUser(req.user.id);
+  addFlash(req, 'success', 'Nuevo código de invitación listo. Caduca en 1 hora ⏳');
+  return res.redirect('/profile');
+});
+
 const uploadAvatar = asyncHandler(async (req, res) => {
   if (!req.file) {
     addFlash(req, 'info', 'Elige una imagen para tu avatar.');
@@ -108,4 +117,4 @@ const showFriend = (req, res) => {
   });
 };
 
-module.exports = { showProfile, updateProfile, changePassword, uploadAvatar, showFriend };
+module.exports = { showProfile, updateProfile, changePassword, generateInvite, uploadAvatar, showFriend };

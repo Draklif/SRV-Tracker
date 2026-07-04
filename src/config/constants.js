@@ -93,6 +93,9 @@ const LEVEL_CURVE = Object.freeze({
   base: 50, // xpForLevel(n) = base * n^2
 });
 
+/** Vida de un código de invitación generado por un usuario (minutos). */
+const INVITE_TTL_MINUTES = 60;
+
 /** Roles de usuario. */
 const ROLES = Object.freeze({
   MEMBER: 'member',
@@ -118,6 +121,7 @@ module.exports = {
   REACTIONS,
   XP_RULES,
   LEVEL_CURVE,
+  INVITE_TTL_MINUTES,
   ROLES,
   ACTIVITY_TYPES,
 };

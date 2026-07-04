@@ -14,6 +14,7 @@ router.use(requireAuth);
 router.get('/', userController.showProfile);
 router.post('/', verifyCsrf, userController.updateProfile);
 router.post('/password', verifyCsrf, userController.changePassword);
+router.post('/invite', verifyCsrf, userController.generateInvite);
 
 // El avatar es multipart: multer parsea primero (incluido el campo _csrf),
 // luego verificamos CSRF.

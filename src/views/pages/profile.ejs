@@ -119,6 +119,34 @@
         <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
       </form>
     </section>
+
+    <!-- Invitaciones: cada persona puede invitar a alguien más -->
+    <section class="card invite-section">
+      <h2>Invitar a alguien</h2>
+      <p class="text-muted invite-intro">
+        Genera un código y compártelo. Caduca en <%= inviteTtlMinutes >= 60 ? '1 hora' : `${inviteTtlMinutes} min` %>,
+        al usarse o al generar uno nuevo.
+      </p>
+
+      <% if (activeInvite) { %>
+      <div class="invite-active" data-expires-at="<%= activeInvite.expires_at %>">
+        <code class="invite-code"><%= activeInvite.code %></code>
+        <button type="button" class="btn btn-ghost btn-sm invite-copy" data-code="<%= activeInvite.code %>">
+          Copiar
+        </button>
+        <p class="invite-expiry text-muted" aria-live="polite"></p>
+      </div>
+      <% } else { %>
+      <p class="text-muted invite-empty">No tienes ningún código activo.</p>
+      <% } %>
+
+      <form method="post" action="/profile/invite" class="form invite-form">
+        <%- include('../partials/csrf-field') %>
+        <button class="btn btn-primary" type="submit">
+          <%= activeInvite ? 'Generar otro código' : 'Generar código' %>
+        </button>
+      </form>
+    </section>
   </div>
 </main>
 

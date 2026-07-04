@@ -158,6 +158,44 @@
   display: inline-block;
 }
 
+/* ---- Invitaciones ---- */
+.invite-intro {
+  font-size: var(--fs-sm);
+  margin-bottom: var(--space-4);
+}
+.invite-active {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--surface-2);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  transition: opacity var(--transition);
+}
+.invite-active.is-expired {
+  opacity: 0.5;
+}
+.invite-code {
+  font-family: var(--font-mono, monospace);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-lg);
+  letter-spacing: 0.06em;
+  color: var(--brand-strong);
+  word-break: break-all;
+}
+.invite-expiry {
+  flex-basis: 100%;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  margin: 0;
+}
+.invite-empty {
+  margin-bottom: var(--space-4);
+}
+
 @media (max-width: 560px) {
   .profile-header {
     transform: none;
