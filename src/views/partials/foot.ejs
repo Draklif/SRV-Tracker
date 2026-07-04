@@ -1,4 +1,6 @@
-    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { %>
+    <!-- toast.js va siempre: los mensajes flash se muestran como toasts. -->
+    <script src="/js/toast.js" defer></script>
+    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (src === '/js/toast.js') return; %>
     <script src="<%= src %>" defer></script>
     <% }) %>
   </body>

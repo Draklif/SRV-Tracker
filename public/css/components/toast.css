@@ -59,6 +59,24 @@
   font-style: italic;
 }
 
+/* Mensajes flash del servidor, como toasts efímeros. */
+.toast-success {
+  background: var(--brand);
+  color: #fff;
+  border-left-color: var(--ink);
+}
+.toast-warn {
+  background: var(--yellow);
+  color: #131316;
+  border-left-color: var(--ink);
+}
+.toast-info {
+  border-left-color: var(--cyan);
+}
+.toast-flash-icon {
+  font-size: 1.1rem;
+}
+
 .toast-achievement {
   background: var(--paper);
   color: var(--ink);

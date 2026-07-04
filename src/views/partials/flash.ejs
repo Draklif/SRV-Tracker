@@ -1,12 +1,6 @@
 <% if (flash && flash.length) { %>
-<div class="flash-stack" role="status" aria-live="polite">
-  <% flash.forEach((msg) => { %>
-  <div class="flash flash-<%= msg.type %>">
-    <span class="flash-icon">
-      <%= msg.type === 'success' ? '✅' : msg.type === 'warn' ? '🌤️' : 'ℹ️' %>
-    </span>
-    <span><%= msg.message %></span>
-  </div>
-  <% }) %>
-</div>
+<%# Datos, no código: la CSP (script-src 'self') no ejecuta esto. toast.js lo
+    lee y muestra cada mensaje como un toast efímero. Escapamos '<' para no
+    romper la etiqueta ni permitir inyección. %>
+<script type="application/json" id="flash-data"><%- JSON.stringify(flash).replace(/</g, '\\u003c') %></script>
 <% } %>

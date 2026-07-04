@@ -89,5 +89,38 @@
     }
   }
 
+  function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : s;
+    return d.innerHTML;
+  }
+
+  /**
+   * Muestra los mensajes flash del servidor (guardados en `#flash-data` como
+   * JSON) como toasts efímeros. Se ejecuta con `defer`, así que el DOM ya está
+   * parseado y el bloque de datos está disponible.
+   */
+  function initFlash() {
+    const node = document.getElementById('flash-data');
+    if (!node) return;
+    let messages;
+    try {
+      messages = JSON.parse(node.textContent);
+    } catch (e) {
+      return;
+    }
+    const icons = { success: '✅', warn: '🌤️', info: 'ℹ️' };
+    (messages || []).forEach((m) => {
+      const type = m.type === 'success' || m.type === 'warn' ? m.type : 'info';
+      show(null, {
+        type,
+        html:
+          `<span class="toast-flash-icon">${icons[type] || icons.info}</span>` +
+          `<span>${escapeHtml(m.message)}</span>`,
+      });
+    });
+  }
+
   window.toast = { show, achievement, confetti, rewards };
+  initFlash();
 })();
