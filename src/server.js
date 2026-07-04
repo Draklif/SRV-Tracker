@@ -1,18 +1,20 @@
 'use strict';
 
-const createApp = require('./app');
 const config = require('./config');
 const logger = require('./utils/logger');
 const { runMigrations } = require('./database/migrate');
 
+// Debe correr antes de `require('./app')`: los repositorios preparan sus
+// statements SQL al cargarse, así que las tablas ya deben existir.
+runMigrations();
+require('./database/seeds/achievements').seedAchievements();
+
+const createApp = require('./app');
+
 /**
- * Punto de entrada. Aplica migraciones pendientes y levanta el servidor HTTP.
+ * Punto de entrada. Levanta el servidor HTTP una vez migrada la base de datos.
  */
 function start() {
-  runMigrations();
-  // Catálogo de logros: idempotente, garantiza que exista tras cada deploy.
-  require('./database/seeds/achievements').seedAchievements();
-
   const app = createApp();
   const server = app.listen(config.port, () => {
     logger.info(`Tracker escuchando en http://localhost:${config.port} (${config.env})`);
