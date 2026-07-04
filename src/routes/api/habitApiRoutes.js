@@ -2,6 +2,7 @@
 
 const express = require('express');
 const habitController = require('../../controllers/habitController');
+const habitLogController = require('../../controllers/habitLogController');
 const requireAuth = require('../../middlewares/requireAuth');
 const { verifyCsrf } = require('../../middlewares/csrf');
 
@@ -15,5 +16,8 @@ router.post('/reorder', habitController.reorder);
 router.patch('/:id', habitController.update);
 router.delete('/:id', habitController.archive);
 router.post('/:id/restore', habitController.restore);
+
+// Registro diario.
+router.post('/:id/log', habitLogController.log);
 
 module.exports = router;

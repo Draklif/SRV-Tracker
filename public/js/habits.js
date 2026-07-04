@@ -24,7 +24,11 @@
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    el('habit-name').focus();
+    // Enfocar lo primero útil: el selector de tipo al crear, el nombre al editar.
+    const target = el('habit-details').hidden
+      ? document.querySelector('.type-option')
+      : el('habit-name');
+    if (target) target.focus();
   }
 
   function closeModal() {
@@ -40,6 +44,7 @@
     el('habit-icon').value = '⭐';
     el('habit-type').value = '';
     syncColorSelection('blue');
+    syncIconSelection('⭐');
     document.querySelectorAll('.type-option').forEach((b) => b.classList.remove('is-selected'));
   }
 
@@ -48,6 +53,9 @@
     el('habit-modal-title').textContent = 'Nuevo hábito';
     el('type-picker-wrap').hidden = false;
     el('type-fixed-wrap').hidden = true;
+    // Los detalles aparecen al elegir tipo (paso 01 → 02).
+    el('habit-details').hidden = true;
+    el('habit-save').disabled = true;
     toggleDynamicFields(null);
     openModal();
   }
@@ -60,12 +68,15 @@
     el('type-fixed-wrap').hidden = false;
     el('type-fixed-label').textContent = typeMeta[cfg.type] ? typeMeta[cfg.type].label : cfg.type;
 
+    el('habit-details').hidden = false;
+    el('habit-save').disabled = false;
     el('habit-id').value = cfg.id;
     el('habit-type').value = cfg.type;
     el('habit-name').value = cfg.name;
     el('habit-icon').value = cfg.icon;
     el('habit-color').value = cfg.color;
     syncColorSelection(cfg.color);
+    syncIconSelection(cfg.icon);
     if (cfg.unit) el('habit-unit').value = cfg.unit;
     if (cfg.targetDaily != null) el('habit-target').value = cfg.targetDaily;
     const s = cfg.settings || {};
@@ -92,11 +103,21 @@
       b.classList.toggle('is-selected', b.dataset.type === type);
     });
     toggleDynamicFields(type);
+    // Revelar el paso 02 y habilitar guardar.
+    el('habit-details').hidden = false;
+    el('habit-save').disabled = false;
+    el('habit-name').focus();
   }
 
   function syncColorSelection(color) {
     document.querySelectorAll('.swatch').forEach((b) => {
       b.classList.toggle('is-selected', b.dataset.color === color);
+    });
+  }
+
+  function syncIconSelection(emoji) {
+    document.querySelectorAll('.icon-choice').forEach((b) => {
+      b.classList.toggle('is-selected', b.dataset.emoji === emoji);
     });
   }
 
@@ -241,8 +262,11 @@
   document.querySelectorAll('.icon-choice').forEach((btn) => {
     btn.addEventListener('click', () => {
       el('habit-icon').value = btn.dataset.emoji;
+      syncIconSelection(btn.dataset.emoji);
     });
   });
+  // Si el usuario escribe su propio emoji, desmarcar la cuadrícula.
+  el('habit-icon').addEventListener('input', () => syncIconSelection(el('habit-icon').value.trim()));
   document.querySelectorAll('.swatch').forEach((btn) => {
     btn.addEventListener('click', () => {
       el('habit-color').value = btn.dataset.color;

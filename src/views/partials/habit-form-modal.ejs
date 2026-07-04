@@ -1,10 +1,10 @@
 <!-- Modal de creación/edición de hábito. Controlado por habits.js. -->
 <div class="modal" id="habit-modal" hidden aria-hidden="true">
   <div class="modal-backdrop" data-action="close"></div>
-  <div class="modal-panel card" role="dialog" aria-modal="true" aria-labelledby="habit-modal-title">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="habit-modal-title">
     <header class="modal-head">
-      <h2 id="habit-modal-title">Nuevo hábito</h2>
-      <button class="icon-btn" data-action="close" aria-label="Cerrar">✕</button>
+      <h2 id="habit-modal-title" class="modal-title">Nuevo hábito</h2>
+      <button class="modal-close" data-action="close" aria-label="Cerrar">✕</button>
     </header>
 
     <form id="habit-form" class="form" novalidate>
@@ -12,9 +12,9 @@
       <input type="hidden" id="habit-type" />
       <input type="hidden" id="habit-color" value="blue" />
 
-      <!-- Selector de tipo (solo al crear; el tipo es inmutable) -->
-      <div class="field" id="type-picker-wrap">
-        <label>Tipo</label>
+      <!-- Paso 1: tipo (solo al crear; el tipo es inmutable al editar) -->
+      <div class="form-step" id="type-picker-wrap">
+        <span class="step-tag">01 · Tipo</span>
         <div class="type-picker">
           <% Object.entries(habitTypeMeta).forEach(([key, m]) => { %>
           <button type="button" class="type-option" data-type="<%= key %>">
@@ -27,63 +27,70 @@
       </div>
 
       <!-- Tipo fijo mostrado al editar -->
-      <div class="field" id="type-fixed-wrap" hidden>
-        <label>Tipo</label>
+      <div class="form-step" id="type-fixed-wrap" hidden>
+        <span class="step-tag">Tipo</span>
         <div class="type-fixed"><span id="type-fixed-label"></span></div>
       </div>
 
-      <div class="field">
-        <label for="habit-name">Nombre</label>
-        <input id="habit-name" type="text" maxlength="40" placeholder="Ej. Beber agua" />
-      </div>
+      <!-- Paso 2: detalles (aparece al elegir tipo) -->
+      <div class="form-step" id="habit-details" hidden>
+        <span class="step-tag">02 · Detalles</span>
 
-      <div class="field">
-        <label>Icono</label>
-        <div class="icon-picker">
-          <input id="habit-icon" type="text" maxlength="8" class="icon-input" value="⭐" aria-label="Icono" />
-          <div class="icon-grid">
-            <% habitIcons.forEach((emo) => { %>
-            <button type="button" class="icon-choice" data-emoji="<%= emo %>"><%= emo %></button>
-            <% }) %>
+        <div class="details-grid">
+          <div class="field">
+            <label for="habit-name">Nombre</label>
+            <input id="habit-name" type="text" maxlength="40" placeholder="Ej. Beber agua" />
           </div>
-        </div>
-      </div>
 
-      <div class="field">
-        <label>Color</label>
-        <div class="color-swatches">
-          <% habitColorKeys.forEach((key) => { %>
-          <button type="button" class="swatch" data-color="<%= key %>"
-            style="--swatch: <%= habitColors[key] %>" aria-label="<%= key %>"></button>
-          <% }) %>
-        </div>
-      </div>
+          <div class="field">
+            <label>Icono</label>
+            <div class="icon-picker">
+              <input id="habit-icon" type="text" maxlength="8" class="icon-input" value="⭐" aria-label="Icono" />
+              <div class="icon-grid">
+                <% habitIcons.forEach((emo) => { %>
+                <button type="button" class="icon-choice" data-emoji="<%= emo %>"><%= emo %></button>
+                <% }) %>
+              </div>
+            </div>
+          </div>
 
-      <!-- Campos dinámicos según el tipo -->
-      <div class="field" data-field="unit" hidden>
-        <label for="habit-unit">Unidad</label>
-        <input id="habit-unit" type="text" maxlength="12" placeholder="ml, pasos, kcal…" />
-      </div>
+          <div class="field">
+            <label>Color</label>
+            <div class="color-swatches">
+              <% habitColorKeys.forEach((key) => { %>
+              <button type="button" class="swatch" data-color="<%= key %>"
+                style="--swatch: <%= habitColors[key] %>" aria-label="<%= key %>"></button>
+              <% }) %>
+            </div>
+          </div>
 
-      <div class="field" data-field="target" hidden>
-        <label for="habit-target">Meta diaria</label>
-        <input id="habit-target" type="number" min="0" step="any" placeholder="Ej. 2500" />
-      </div>
+          <!-- Campos dinámicos según el tipo -->
+          <div class="field" data-field="unit" hidden>
+            <label for="habit-unit">Unidad</label>
+            <input id="habit-unit" type="text" maxlength="12" placeholder="ml, pasos, kcal…" />
+          </div>
 
-      <div class="field" data-field="quickAdd" hidden>
-        <label for="habit-quickadd">Botones rápidos</label>
-        <input id="habit-quickadd" type="text" placeholder="250, 500" />
-        <small class="field-hint">Valores separados por coma para sumar rápido</small>
-      </div>
+          <div class="field" data-field="target" hidden>
+            <label for="habit-target">Meta diaria</label>
+            <input id="habit-target" type="number" min="0" step="any" placeholder="Ej. 2500" />
+          </div>
 
-      <div class="field field-row" data-field="scale" hidden>
-        <div>
-          <label for="habit-scalemin">Escala mín.</label>
-          <input id="habit-scalemin" type="number" min="0" max="10" value="1" />
-        </div>
-        <div>
-          <label for="habit-scalemax">Escala máx.</label>
-          <input id="habit-scalemax" type="number" min="1" max="10" value="5" />
+          <div class="field" data-field="quickAdd" hidden>
+            <label for="habit-quickadd">Botones rápidos</label>
+            <input id="habit-quickadd" type="text" placeholder="250, 500" />
+            <small class="field-hint">Valores separados por coma para sumar rápido</small>
+          </div>
+
+          <div class="field field-row" data-field="scale" hidden>
+            <div>
+              <label for="habit-scalemin">Escala mín.</label>
+              <input id="habit-scalemin" type="number" min="0" max="10" value="1" />
+            </div>
+            <div>
+              <label for="habit-scalemax">Escala máx.</label>
+              <input id="habit-scalemax" type="number" min="1" max="10" value="5" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -91,7 +98,7 @@
 
       <div class="modal-foot">
         <button type="button" class="btn btn-ghost" data-action="close">Cancelar</button>
-        <button type="submit" class="btn btn-primary" id="habit-save">Guardar</button>
+        <button type="submit" class="btn btn-primary" id="habit-save" disabled>Guardar</button>
       </div>
     </form>
   </div>

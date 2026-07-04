@@ -1,4 +1,4 @@
-/* habits.css — Página de gestión de hábitos: tarjetas, modal y selectores. */
+/* habits.css — Gestión de hábitos: tarjetas y modal, estética Persona cozy. */
 
 .habits-page {
   padding-block: var(--space-6) var(--space-8);
@@ -18,7 +18,7 @@
   text-shadow: 3px 3px 0 var(--brand-glow);
 }
 
-/* ---- Lista y tarjetas ---- */
+/* ---- Lista y tarjetas (los items "se deslizan" al hover, como un menú P5) ---- */
 .habit-list {
   display: grid;
   gap: var(--space-3);
@@ -31,31 +31,32 @@
   padding: var(--space-3) var(--space-4);
   background: var(--surface);
   border: var(--card-border);
-  border-left: 6px solid var(--habit-color, var(--brand));
+  border-left: 8px solid var(--habit-color, var(--brand));
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition), box-shadow var(--transition);
 }
 .habit-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  transform: translateX(6px);
+  box-shadow: -3px 4px 0 color-mix(in srgb, var(--habit-color) 45%, transparent);
 }
 .habit-card.is-archived {
-  opacity: 0.7;
+  opacity: 0.65;
   border-left-color: var(--text-faint);
 }
 
 .habit-icon {
   flex-shrink: 0;
-  width: 46px;
-  height: 46px;
+  width: 50px;
+  height: 50px;
   display: grid;
   place-items: center;
-  font-size: 1.5rem;
-  background: color-mix(in srgb, var(--habit-color) 22%, transparent);
+  font-size: 1.6rem;
+  background: color-mix(in srgb, var(--habit-color) 24%, transparent);
   border: 2px solid var(--habit-color);
   border-radius: var(--radius-sm);
-  transform: rotate(-3deg);
+  transform: rotate(-4deg);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--habit-color) 40%, transparent);
 }
 
 .habit-main {
@@ -77,10 +78,22 @@
   gap: var(--space-2);
   font-size: var(--fs-sm);
   color: var(--text-muted);
+  margin-top: 2px;
 }
+/* Etiqueta de tipo: mini-cartel inclinado del color del hábito. */
 .habit-type {
-  font-weight: var(--fw-bold);
-  color: var(--habit-color);
+  display: inline-block;
+  padding: 0.05em 0.6em;
+  background: var(--habit-color);
+  color: #fff;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+  transform: skewX(var(--skew));
 }
 .habit-meta .dot {
   opacity: 0.5;
@@ -93,8 +106,8 @@
 }
 
 .icon-btn {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border-radius: var(--radius-sm);
@@ -104,8 +117,9 @@
     transform var(--transition);
 }
 .icon-btn:hover {
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--brand);
+  color: #fff;
+  transform: rotate(-4deg);
 }
 .icon-btn:active {
   transform: scale(0.9);
@@ -139,7 +153,8 @@
   border-bottom: 2px solid var(--border);
 }
 
-/* ---- Modal ---- */
+/* ============================ MODAL ============================ */
+
 .modal {
   position: fixed;
   inset: 0;
@@ -148,43 +163,106 @@
   place-items: center;
   padding: var(--space-4);
 }
-.modal[hidden] {
-  display: none;
-}
+/* Backdrop: tinta con rayas diagonales, muy Persona. */
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(9, 13, 24, 0.62);
+  background: repeating-linear-gradient(
+      -35deg,
+      rgba(246, 244, 237, 0.03) 0 2px,
+      transparent 2px 14px
+    ),
+    rgba(9, 13, 24, 0.78);
   backdrop-filter: blur(3px);
   animation: fade-in 160ms var(--ease);
 }
 .modal-panel {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  padding: var(--space-5);
+  background: var(--surface);
+  border: var(--card-border);
+  border-top: 6px solid var(--brand);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  animation: pop-in 200ms var(--ease-snap);
+  padding: var(--space-5);
+  animation: panel-in 240ms var(--ease-snap);
 }
+
 .modal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
-.modal-head h2 {
+.modal-title {
   font-size: var(--fs-xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
 }
+.modal-close {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transform: rotate(-4deg);
+  transition: all var(--transition);
+}
+.modal-close:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: rotate(0deg);
+}
+
 .modal-foot {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-3);
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
+}
+.modal-foot .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: skewX(var(--skew));
+  box-shadow: none;
 }
 
-/* ---- Selector de tipo ---- */
+/* ---- Pasos del formulario ---- */
+.form-step {
+  display: grid;
+  gap: var(--space-3);
+}
+.step-tag {
+  justify-self: start;
+  padding: 0.2em 0.9em;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  border-radius: var(--radius-sm);
+  transform: skewX(var(--skew));
+  box-shadow: var(--shadow-ink-sm);
+}
+#habit-details {
+  animation: step-in 260ms var(--ease-snap);
+}
+.details-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* ---- Selector de tipo: carteles ---- */
 .type-picker {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -199,21 +277,28 @@
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color var(--transition), transform var(--transition),
-    background-color var(--transition);
+    background-color var(--transition), box-shadow var(--transition);
 }
 .type-option:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) rotate(-0.5deg);
   border-color: var(--border-strong);
 }
 .type-option.is-selected {
   border-color: var(--brand);
   background: var(--brand-soft);
+  transform: rotate(-1deg);
+  box-shadow: 3px 3px 0 var(--brand-glow);
 }
 .type-emoji {
   font-size: 1.3rem;
 }
 .type-label {
-  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.02em;
 }
 .type-desc {
   font-size: var(--fs-xs);
@@ -221,9 +306,10 @@
 }
 
 .type-fixed {
-  padding: 0.6em 0.9em;
-  background: var(--surface-2);
-  border: 2px solid var(--border);
+  justify-self: start;
+  padding: 0.5em 1em;
+  background: var(--brand-soft);
+  border: 2px solid var(--brand);
   border-radius: var(--radius-sm);
   font-weight: var(--fw-bold);
 }
@@ -231,12 +317,16 @@
 /* ---- Selector de icono ---- */
 .icon-picker {
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
 }
 .icon-input {
-  width: 3.2em !important;
+  width: 3em !important;
+  height: 3em;
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.25rem !important;
+  transform: rotate(-4deg);
 }
 .icon-grid {
   display: grid;
@@ -251,34 +341,41 @@
   background: var(--surface-2);
   border: 2px solid transparent;
   border-radius: var(--radius-sm);
-  transition: border-color var(--transition), transform var(--transition);
+  transition: border-color var(--transition), transform var(--transition),
+    background-color var(--transition);
 }
 .icon-choice:hover {
   border-color: var(--brand);
-  transform: scale(1.08);
+  transform: scale(1.1) rotate(-4deg);
+}
+.icon-choice.is-selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  transform: scale(1.1) rotate(-4deg);
 }
 
-/* ---- Swatches de color ---- */
+/* ---- Swatches de color: fichas cuadradas giradas ---- */
 .color-swatches {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 .swatch {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   background: var(--swatch);
-  border: 3px solid transparent;
+  border: 2.5px solid transparent;
   box-shadow: var(--shadow-ink-sm);
-  transition: transform var(--transition);
+  transform: rotate(-6deg);
+  transition: transform var(--transition), border-color var(--transition);
 }
 .swatch:hover {
-  transform: scale(1.12);
+  transform: rotate(0deg) scale(1.12);
 }
 .swatch.is-selected {
   border-color: var(--text);
-  transform: scale(1.12);
+  transform: rotate(0deg) scale(1.18);
 }
 
 /* ---- Fila de dos campos (escala) ---- */
@@ -300,14 +397,24 @@
     opacity: 1;
   }
 }
-@keyframes pop-in {
+@keyframes panel-in {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(20px) rotate(0.6deg) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -315,11 +422,35 @@
   .type-picker {
     grid-template-columns: 1fr;
   }
+  /* En móvil el modal es una hoja inferior. */
   .modal {
-    padding: var(--space-2);
+    padding: 0;
     align-items: end;
   }
   .modal-panel {
-    max-height: 92vh;
+    max-width: none;
+    max-height: 94vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    animation: sheet-up 260ms var(--ease-snap);
+  }
+  .icon-picker {
+    grid-template-columns: 1fr;
+  }
+  .icon-input {
+    justify-self: start;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

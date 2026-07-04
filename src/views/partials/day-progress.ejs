@@ -1,0 +1,21 @@
+<%
+  const p = dayProgress;
+  const msg = p.total === 0
+    ? 'Aún no hay hábitos para hoy.'
+    : p.done === p.total
+      ? '¡Todo listo por hoy! Disfruta 🎉'
+      : p.done === 0
+        ? 'Empieza cuando quieras 🌱'
+        : '¡Vas muy bien! Sigue a tu ritmo.';
+%>
+<section class="day-progress card" data-day-progress>
+  <div class="dp-ring" style="--pct: <%= p.percent %>">
+    <div class="dp-ring-inner">
+      <b data-day-done><%= p.done %></b><span class="dp-slash">/</span><span data-day-total><%= p.total %></span>
+    </div>
+  </div>
+  <div class="dp-text">
+    <h2>Progreso de hoy</h2>
+    <p class="text-muted" data-day-msg><%= msg %></p>
+  </div>
+</section>

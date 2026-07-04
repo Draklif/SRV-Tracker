@@ -1,0 +1,70 @@
+<%
+  const colorHex = habitColors[habit.color] || habitColors.blue;
+  const settings = habit.settings || {};
+  const log = habit.log;
+  const value = log && log.value_num != null ? log.value_num : 0;
+  const valueText = log && log.value_text ? log.value_text : '';
+  const completed = !!(log && log.completed);
+  const current = habit.streak ? habit.streak.current_streak : 0;
+  const target = habit.target_daily;
+  const pct = target ? Math.min(100, Math.round((value / target) * 100)) : completed ? 100 : 0;
+  const t = habit.type;
+%>
+<article class="tracker-card<%= completed ? ' is-complete' : '' %>"
+  data-habit-id="<%= habit.id %>" data-type="<%= t %>"
+  data-target="<%= target || '' %>" data-unit="<%= habit.unit || '' %>"
+  style="--habit-color: <%= colorHex %>">
+
+  <div class="tc-top">
+    <span class="tc-icon"><%= habit.icon %></span>
+    <div class="tc-info">
+      <h3 class="tc-name"><%= habit.name %></h3>
+      <span class="tc-streak" data-streak-wrap <%= current > 0 ? '' : 'hidden' %>>
+        🔥 <b data-streak><%= current %></b> <span class="tc-streak-unit">días</span>
+      </span>
+    </div>
+
+    <% if (t === 'checkbox') { %>
+    <button class="tc-check<%= completed ? ' is-done' : '' %>" data-log="toggle" aria-pressed="<%= completed %>">
+      <span class="tc-check-mark">✓</span>
+    </button>
+    <% } %>
+  </div>
+
+  <% if (t === 'quantity' || t === 'duration') { %>
+  <div class="tc-control">
+    <div class="tc-progress-row">
+      <div class="progress"><span class="progress-fill" data-fill style="width: <%= pct %>%"></span></div>
+      <span class="tc-amount"><b data-value><%= value %></b> / <%= target %><%= habit.unit ? ' ' + habit.unit : '' %></span>
+    </div>
+    <div class="tc-quick">
+      <% (settings.quickAdd || []).forEach((q) => { %>
+      <button class="tc-add" data-log="increment" data-amount="<%= q %>">+<%= q %></button>
+      <% }) %>
+      <button class="tc-add tc-add-icon" data-log="toggle-manual" title="Editar manualmente">✎</button>
+    </div>
+    <div class="tc-manual" hidden>
+      <input type="number" class="tc-manual-input" step="any" min="0" value="<%= value %>" aria-label="Valor manual" />
+      <button class="btn btn-sm btn-primary" data-log="set-manual">OK</button>
+    </div>
+  </div>
+  <% } else if (t === 'scale') { %>
+  <div class="tc-control tc-scale" data-min="<%= settings.scaleMin %>" data-max="<%= settings.scaleMax %>">
+    <% for (let i = settings.scaleMin; i <= settings.scaleMax; i++) { %>
+    <button class="tc-scale-btn<%= completed && value >= i ? ' is-on' : '' %>" data-log="scale" data-level="<%= i %>"><%= i %></button>
+    <% } %>
+  </div>
+  <% } else if (t === 'numeric') { %>
+  <div class="tc-control tc-inline">
+    <input type="number" class="tc-num-input" step="any" value="<%= completed ? value : '' %>"
+      placeholder="—" aria-label="<%= habit.name %>" />
+    <% if (habit.unit) { %><span class="tc-unit"><%= habit.unit %></span><% } %>
+    <button class="btn btn-sm btn-primary" data-log="set-number">Guardar</button>
+  </div>
+  <% } else if (t === 'text') { %>
+  <div class="tc-control tc-textarea">
+    <textarea class="tc-text-input" rows="2" maxlength="280" placeholder="Escribe algo…"><%= valueText %></textarea>
+    <button class="btn btn-sm btn-primary" data-log="save-text">Guardar</button>
+  </div>
+  <% } %>
+</article>
