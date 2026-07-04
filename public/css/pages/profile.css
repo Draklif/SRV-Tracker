@@ -132,12 +132,17 @@
 }
 .avatar-form {
   flex: 1;
-  min-width: 180px;
+  min-width: 0; /* permite encoger dentro del flex y evita desbordar la card */
   gap: var(--space-3);
 }
 .avatar-form input[type='file'] {
   font-size: var(--fs-sm);
   color: var(--text-muted);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .avatar-form input[type='file']::file-selector-button {
   border-radius: var(--radius-sm);

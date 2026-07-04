@@ -1,18 +1,18 @@
 <%
   // Barra de navegación inferior (solo visible en móvil, ver bottom-nav.css).
-  // A medida que crezca la app se añaden pestañas aquí (Hábitos, Amigos…).
+  // A medida que crezca la app se añaden pestañas aquí.
   const tabs = [
-    { href: '/', icon: '🏠', label: 'Inicio', active: currentPath === '/' },
-    { href: '/habits', icon: '🎯', label: 'Hábitos', active: currentPath.startsWith('/habits') },
-    { href: '/social', icon: '🫶', label: 'Amigos', active: currentPath.startsWith('/social') },
-    { href: '/profile', icon: '👤', label: 'Perfil', active: currentPath.startsWith('/profile') },
+    { href: '/', icon: 'home', label: 'Inicio', active: currentPath === '/' },
+    { href: '/habits', icon: 'target', label: 'Hábitos', active: currentPath.startsWith('/habits') },
+    { href: '/social', icon: 'users', label: 'Amigos', active: currentPath.startsWith('/social') },
+    { href: '/profile', icon: 'user', label: 'Perfil', active: currentPath.startsWith('/profile') },
   ];
 %>
 <nav class="bottom-nav" aria-label="Navegación">
   <% tabs.forEach((tab) => { %>
   <a href="<%= tab.href %>" class="bottom-nav-item <%= tab.active ? 'is-active' : '' %>"
      <%= tab.active ? 'aria-current="page"' : '' %>>
-    <span class="bottom-nav-icon"><%= tab.icon %></span>
+    <span class="bottom-nav-icon"><%- include('icon', { name: tab.icon, size: 22 }) %></span>
     <span class="bottom-nav-label"><%= tab.label %></span>
   </a>
   <% }) %>

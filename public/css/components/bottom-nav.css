@@ -34,7 +34,8 @@
   }
 
   .bottom-nav-icon {
-    font-size: 1.3rem;
+    display: grid;
+    place-items: center;
     line-height: 1;
   }
 

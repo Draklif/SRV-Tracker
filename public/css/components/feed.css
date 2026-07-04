@@ -10,6 +10,17 @@
   animation: feed-in 420ms var(--ease-snap);
 }
 
+.fi-avatar-link {
+  display: inline-flex;
+  transition: transform var(--transition);
+}
+.fi-avatar-link:hover {
+  transform: rotate(4deg) scale(1.08);
+}
+.fi-user-link:hover b {
+  color: var(--brand);
+}
+
 .fi-body {
   flex: 1;
   min-width: 0;

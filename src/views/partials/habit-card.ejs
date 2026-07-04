@@ -1,5 +1,7 @@
 <%
-  const isArchived = typeof archived !== 'undefined' ? archived : false;
+  // Flag propio (cardArchived): el local `archived` de la página /habits es un
+  // ARRAY y se filtra al include por el scope de EJS ([] es truthy → bug).
+  const isArchived = typeof cardArchived !== 'undefined' ? Boolean(cardArchived) : false;
   const colorHex = habitColors[habit.color] || habitColors.blue;
   const meta = habitTypeMeta[habit.type];
   // Config serializada para prellenar el modal de edición sin otra petición.
@@ -27,13 +29,25 @@
 
   <div class="habit-actions">
     <% if (isArchived) { %>
-    <button class="icon-btn" data-action="restore" title="Restaurar" aria-label="Restaurar hábito">↩︎</button>
+    <button class="icon-btn" data-action="restore" title="Restaurar" aria-label="Restaurar hábito">
+      <%- include('icon', { name: 'restore', size: 17 }) %>
+    </button>
     <% } else { %>
-    <button class="icon-btn move" data-action="up" title="Subir" aria-label="Subir">▲</button>
-    <button class="icon-btn move" data-action="down" title="Bajar" aria-label="Bajar">▼</button>
-    <a class="icon-btn" href="/habits/<%= habit.id %>/history" title="Historial" aria-label="Ver historial">📊</a>
-    <button class="icon-btn" data-action="edit" title="Editar" aria-label="Editar hábito">✏️</button>
-    <button class="icon-btn" data-action="archive" title="Archivar" aria-label="Archivar hábito">🗄️</button>
+    <button class="icon-btn move" data-action="up" title="Subir" aria-label="Subir">
+      <%- include('icon', { name: 'up', size: 16 }) %>
+    </button>
+    <button class="icon-btn move" data-action="down" title="Bajar" aria-label="Bajar">
+      <%- include('icon', { name: 'down', size: 16 }) %>
+    </button>
+    <a class="icon-btn" href="/habits/<%= habit.id %>/history" title="Historial" aria-label="Ver historial">
+      <%- include('icon', { name: 'chart', size: 17 }) %>
+    </a>
+    <button class="icon-btn" data-action="edit" title="Editar" aria-label="Editar hábito">
+      <%- include('icon', { name: 'pencil', size: 17 }) %>
+    </button>
+    <button class="icon-btn" data-action="archive" title="Archivar" aria-label="Archivar hábito">
+      <%- include('icon', { name: 'archive', size: 17 }) %>
+    </button>
     <% } %>
   </div>
 </article>

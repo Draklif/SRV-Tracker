@@ -14,6 +14,7 @@ const log = asyncHandler(async (req, res) => {
 
   res.json({
     habitId,
+    date, // fecha local del registro: el cliente recarga si su render es de otro día
     value: logRow ? logRow.value_num : 0,
     valueText: logRow ? logRow.value_text : null,
     completed: logRow ? Boolean(logRow.completed) : false,

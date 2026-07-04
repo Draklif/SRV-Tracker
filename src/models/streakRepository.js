@@ -14,6 +14,14 @@ const statements = {
     JOIN habits h ON h.id = hs.habit_id
     WHERE h.user_id = ?
   `),
+  topByUser: db.prepare(`
+    SELECT h.name, h.icon, h.color, hs.current_streak, hs.longest_streak
+    FROM habit_streaks hs
+    JOIN habits h ON h.id = hs.habit_id
+    WHERE h.user_id = ? AND h.is_archived = 0 AND hs.current_streak > 0
+    ORDER BY hs.current_streak DESC
+    LIMIT ?
+  `),
   upsert: db.prepare(`
     INSERT INTO habit_streaks (habit_id, current_streak, longest_streak, last_completed_date)
     VALUES (@habit_id, @current_streak, @longest_streak, @last_completed_date)
@@ -37,4 +45,9 @@ function upsert(row) {
   return statements.get.get(row.habit_id);
 }
 
-module.exports = { get, findByUser, upsert };
+/** Mejores rachas activas de un usuario (para su perfil público). */
+function topByUser(userId, limit = 3) {
+  return statements.topByUser.all(userId, limit);
+}
+
+module.exports = { get, findByUser, upsert, topByUser };

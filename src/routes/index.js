@@ -21,6 +21,12 @@ router.get('/healthz', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });
 
+// Fecha local "hoy" del usuario: el cliente la usa para detectar el cambio de
+// día y recargar (evita dashboards obsoletos con la pestaña abierta de ayer).
+router.get('/api/today', requireAuth, (req, res) => {
+  res.json({ date: require('../utils/date').todayFor(req.user.timezone) });
+});
+
 // Inicio (landing pública o home del usuario autenticado).
 router.get('/', homeController.index);
 
@@ -29,6 +35,7 @@ router.use('/', authRoutes);
 router.use('/profile', profileRoutes);
 router.use('/habits', habitRoutes);
 router.get('/social', requireAuth, socialController.page);
+router.get('/u/:username', requireAuth, require('../controllers/userController').showFriend);
 
 // API JSON.
 router.use('/api/habits', habitApiRoutes);

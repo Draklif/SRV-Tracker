@@ -1,0 +1,22 @@
+<%
+  // Iconos SVG inline de la interfaz (trazo, heredan color con currentColor).
+  // Uso: include('icon', { name: 'chart', size: 20 })
+  // Los emojis quedan reservados para hábitos, logros y reacciones.
+  const ICON_PATHS = {
+    home: '<path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 10.2V20h13v-9.8"/>',
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>',
+    users: '<circle cx="9" cy="8.5" r="3.4"/><path d="M3.5 19.5c.7-3.2 2.9-4.8 5.5-4.8s4.8 1.6 5.5 4.8"/><circle cx="17.2" cy="9.6" r="2.5"/><path d="M16.4 14.9c2.1.3 3.6 1.6 4.2 3.9"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20c1-3.4 4-5.1 7.5-5.1s6.5 1.7 7.5 5.1"/>',
+    chart: '<path d="M4 4v16h16"/><path d="M9 16v-5"/><path d="M13.5 16V7.5"/><path d="M18 16v-3"/>',
+    pencil: '<path d="M4 20l4.3-1L20 7.3a2.05 2.05 0 0 0-2.9-2.9L5.4 16.1 4 20z"/>',
+    archive: '<rect x="3.5" y="4" width="17" height="4.4" rx="1"/><path d="M5.5 8.4V19a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V8.4"/><path d="M10 12.4h4"/>',
+    restore: '<path d="M4.3 10a8 8 0 1 1 2 6.5"/><path d="M4.3 4.6V10h5.4"/>',
+    up: '<path d="M6 14.5l6-6 6 6"/>',
+    down: '<path d="M6 9.5l6 6 6-6"/>',
+    plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  };
+  const s = typeof size !== 'undefined' ? size : 20;
+%>
+<svg class="icon icon-<%= name %>" width="<%= s %>" height="<%= s %>" viewBox="0 0 24 24"
+  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+  stroke-linejoin="round" aria-hidden="true"><%- ICON_PATHS[name] || '' %></svg>

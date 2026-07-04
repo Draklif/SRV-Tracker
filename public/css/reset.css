@@ -19,6 +19,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Reserva el espacio del scrollbar siempre: el ancho del contenido no
+     "salta" entre páginas largas y cortas. */
+  scrollbar-gutter: stable;
 }
 
 body {

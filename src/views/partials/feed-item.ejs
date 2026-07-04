@@ -17,9 +17,11 @@
   const byEmoji = Object.fromEntries(reactions.map((r) => [r.emoji, r]));
 %>
 <article class="feed-item card" data-event-id="<%= event.id %>">
-  <%- include('avatar', { avatarUser: event, size: 'sm' }) %>
+  <a class="fi-avatar-link" href="/u/<%= event.username %>" title="Ver perfil de <%= who %>">
+    <%- include('avatar', { avatarUser: event, size: 'sm' }) %>
+  </a>
   <div class="fi-body">
-    <p class="fi-text"><b><%= who %></b> <%- story %></p>
+    <p class="fi-text"><a class="fi-user-link" href="/u/<%= event.username %>"><b><%= who %></b></a> <%- story %></p>
     <span class="fi-time text-muted"><%= timeAgo(event.created_at) %></span>
     <div class="fi-reactions">
       <% reactionEmojis.forEach((emoji) => {

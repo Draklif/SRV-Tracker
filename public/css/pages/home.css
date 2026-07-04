@@ -72,10 +72,18 @@
   height: 68px;
   border-radius: 50%;
   background: var(--surface);
-  display: grid;
-  place-items: center;
+  /* flex horizontal centrado: "10/10" cabe sin desbordar el círculo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   font-weight: var(--fw-bold);
-  font-size: var(--fs-lg);
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+.dp-ring-inner b {
+  font-size: 1.05rem;
+  color: var(--brand);
 }
 .dp-slash {
   opacity: 0.5;
@@ -169,6 +177,29 @@
 }
 .tc-name-link:hover {
   color: var(--habit-color);
+}
+/* Botón visible de historial en cada tarjeta. */
+.tc-history {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  transition: all var(--transition);
+}
+.tc-history:hover {
+  background: color-mix(in srgb, var(--habit-color) 18%, transparent);
+  color: var(--habit-color);
+  transform: rotate(-4deg);
+}
+
+/* Iconos SVG de accesos rápidos en color de marca. */
+.ql-icon {
+  display: grid;
+  place-items: center;
+  color: var(--brand);
 }
 /* Racha: mini-cartel inclinado. */
 .tc-streak {
@@ -385,9 +416,6 @@
 .quick-link:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
-}
-.ql-icon {
-  font-size: 1.5rem;
 }
 
 /* ---- Estado vacío / próximamente ---- */

@@ -7,6 +7,27 @@
  */
 (function () {
   const list = document.getElementById('tracker-list');
+  const page = document.querySelector('[data-today]');
+
+  // ---- Cambio de día: si la página quedó abierta de ayer, recargar ---------
+  // (evita ver hábitos "completados" que en realidad son del día anterior).
+  async function checkDayRollover() {
+    if (!page || document.hidden) return;
+    try {
+      const res = await fetch('/api/today', { headers: { Accept: 'application/json' } });
+      if (!res.ok) return;
+      const { date } = await res.json();
+      if (date && date !== page.dataset.today) window.location.reload();
+    } catch {
+      /* sin red: reintentará */
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkDayRollover();
+  });
+  window.addEventListener('focus', checkDayRollover);
+  setInterval(checkDayRollover, 5 * 60 * 1000);
+
   if (!list) return;
 
   function dayMessage(dp) {
@@ -116,6 +137,11 @@
     btn.disabled = true;
     try {
       const res = await window.api.post(`/api/habits/${id}/log`, body);
+      // Si el registro cayó en un día distinto al renderizado, refrescar todo.
+      if (page && res.date && res.date !== page.dataset.today) {
+        window.location.reload();
+        return;
+      }
       updateCard(card, res);
       updateDayProgress(res.dayProgress);
       if (res.rewards) {

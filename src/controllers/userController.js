@@ -6,6 +6,9 @@ const path = require('path');
 const config = require('../config');
 const userService = require('../services/userService');
 const achievementService = require('../services/achievementService');
+const userRepository = require('../models/userRepository');
+const streakRepository = require('../models/streakRepository');
+const { NotFoundError } = require('../utils/errors');
 const { levelProgress } = require('../utils/level');
 const { profileSchema, passwordChangeSchema, TIMEZONES, THEMES } = require('../validators/profileValidators');
 const asyncHandler = require('../utils/asyncHandler');
@@ -87,4 +90,22 @@ const uploadAvatar = asyncHandler(async (req, res) => {
   return res.redirect('/profile');
 });
 
-module.exports = { showProfile, updateProfile, changePassword, uploadAvatar };
+/** GET /u/:username — perfil público de un amigo (grupo cerrado). */
+const showFriend = (req, res) => {
+  const friend = userRepository.findByUsername(req.params.username);
+  if (!friend) throw new NotFoundError('No encontramos a esa persona.');
+  // Tu propio perfil se gestiona en /profile.
+  if (friend.id === req.user.id) return res.redirect('/profile');
+
+  const achievements = achievementService.listForUser(friend.id);
+  return res.render('pages/friend-profile', {
+    title: friend.display_name,
+    friend,
+    level: levelProgress(friend.xp),
+    unlocked: achievements.filter((a) => a.unlocked_at),
+    totalAchievements: achievements.length,
+    topStreaks: streakRepository.topByUser(friend.id, 3),
+  });
+};
+
+module.exports = { showProfile, updateProfile, changePassword, uploadAvatar, showFriend };

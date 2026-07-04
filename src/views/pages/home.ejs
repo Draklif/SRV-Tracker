@@ -3,7 +3,7 @@
 
 <%- include('../partials/app-nav') %>
 
-<main class="container home-page">
+<main class="container home-page" data-today="<%= today %>">
   <%- include('../partials/flash') %>
 
   <section class="greeting card">
@@ -60,15 +60,15 @@
 
   <section class="quick-links">
     <a class="quick-link card" href="/habits">
-      <span class="ql-icon">🎯</span>
+      <span class="ql-icon"><%- include('../partials/icon', { name: 'target', size: 24 }) %></span>
       <span class="ql-label">Gestionar hábitos</span>
     </a>
     <a class="quick-link card" href="/social">
-      <span class="ql-icon">🫶</span>
+      <span class="ql-icon"><%- include('../partials/icon', { name: 'users', size: 24 }) %></span>
       <span class="ql-label">Amigos</span>
     </a>
     <a class="quick-link card" href="/profile">
-      <span class="ql-icon">👤</span>
+      <span class="ql-icon"><%- include('../partials/icon', { name: 'user', size: 24 }) %></span>
       <span class="ql-label">Tu perfil</span>
     </a>
   </section>

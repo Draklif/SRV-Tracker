@@ -32,7 +32,7 @@
     <h2 class="archived-title">Archivados</h2>
     <div class="habit-list" id="archived-list">
       <% archived.forEach((habit) => { %>
-      <%- include('../partials/habit-card', { habit, archived: true }) %>
+      <%- include('../partials/habit-card', { habit, cardArchived: true }) %>
       <% }) %>
     </div>
   </section>

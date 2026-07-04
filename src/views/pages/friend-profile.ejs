@@ -1,0 +1,58 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/profile.css', '/css/pages/friend.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container profile-page">
+  <a class="back-link" href="/social">← Volver al feed</a>
+
+  <header class="profile-header card">
+    <%- include('../partials/avatar', { avatarUser: friend, size: 'lg' }) %>
+    <div class="profile-id">
+      <h1><%= friend.display_name %></h1>
+      <p class="text-muted">@<%= friend.username %></p>
+      <% if (friend.bio) { %><p class="profile-bio"><%= friend.bio %></p><% } %>
+    </div>
+    <div class="profile-level">
+      <span class="chip">Nivel <%= level.level %></span>
+      <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+    </div>
+  </header>
+
+  <% if (topStreaks.length) { %>
+  <section class="card">
+    <h2 class="friend-section-title">Rachas en curso</h2>
+    <div class="friend-streaks">
+      <% topStreaks.forEach((s) => { %>
+      <div class="friend-streak" style="--habit-color: <%= habitColors[s.color] || habitColors.blue %>">
+        <span class="fs-icon"><%= s.icon %></span>
+        <div class="fs-body">
+          <span class="fs-name"><%= s.name %></span>
+          <span class="fs-days">🔥 <%= s.current_streak %> días</span>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <section class="card achievements-section">
+    <h2>Logros</h2>
+    <p class="text-muted ach-summary"><%= unlocked.length %> de <%= totalAchievements %> descubiertos</p>
+    <% if (unlocked.length === 0) { %>
+    <p class="text-muted">Todavía está calentando motores 🌱</p>
+    <% } else { %>
+    <div class="ach-grid">
+      <% unlocked.forEach((a) => { %>
+      <div class="ach-badge is-unlocked tier-<%= a.tier %>" title="<%= a.description %>">
+        <span class="ach-icon"><%= a.icon %></span>
+        <span class="ach-name"><%= a.name %></span>
+        <span class="ach-desc"><%= a.description %></span>
+        <span class="ach-check">✓</span>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </section>
+</main>
+
+<%- include('../partials/foot') %>

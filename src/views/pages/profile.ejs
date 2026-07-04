@@ -18,22 +18,25 @@
     </div>
   </header>
 
-  <!-- Logros e insignias -->
+  <!-- Logros e insignias (solo los conseguidos: la vitrina crece contigo) -->
   <section class="card achievements-section">
     <h2>Logros</h2>
-    <% const unlockedCount = achievements.filter((a) => a.unlocked_at).length; %>
-    <p class="text-muted ach-summary"><%= unlockedCount %> de <%= achievements.length %> desbloqueados</p>
+    <% const unlocked = achievements.filter((a) => a.unlocked_at); %>
+    <p class="text-muted ach-summary"><%= unlocked.length %> de <%= achievements.length %> descubiertos</p>
+    <% if (unlocked.length === 0) { %>
+    <p class="text-muted ach-empty">Tu vitrina está esperando. El primer logro llega con tu primer registro 🌱</p>
+    <% } else { %>
     <div class="ach-grid">
-      <% achievements.forEach((a) => { %>
-      <div class="ach-badge<%= a.unlocked_at ? ' is-unlocked' : '' %> tier-<%= a.tier %>"
-        title="<%= a.description %>">
+      <% unlocked.forEach((a) => { %>
+      <div class="ach-badge is-unlocked tier-<%= a.tier %>" title="<%= a.description %>">
         <span class="ach-icon"><%= a.icon %></span>
         <span class="ach-name"><%= a.name %></span>
         <span class="ach-desc"><%= a.description %></span>
-        <% if (a.unlocked_at) { %><span class="ach-check">✓</span><% } %>
+        <span class="ach-check">✓</span>
       </div>
       <% }) %>
     </div>
+    <% } %>
   </section>
 
   <div class="profile-grid">

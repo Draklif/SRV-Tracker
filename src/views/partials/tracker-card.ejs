@@ -24,6 +24,11 @@
       </span>
     </div>
 
+    <a class="tc-history" href="/habits/<%= habit.id %>/history" title="Historial y estadísticas"
+      aria-label="Historial de <%= habit.name %>">
+      <%- include('icon', { name: 'chart', size: 18 }) %>
+    </a>
+
     <% if (t === 'checkbox') { %>
     <button class="tc-check<%= completed ? ' is-done' : '' %>" data-log="toggle" aria-pressed="<%= completed %>">
       <span class="tc-check-mark">✓</span>
