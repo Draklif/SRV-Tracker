@@ -45,7 +45,14 @@
   display: block;
   height: 100%;
   background: repeating-linear-gradient(-45deg, var(--brand) 0 10px, var(--brand-strong) 10px 20px);
+  background-size: 28px 28px;
   transition: width 600ms var(--ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .level-fill,
+  .progress-fill {
+    animation: stripes-flow 1.6s linear infinite;
+  }
 }
 .level-caption {
   font-size: var(--fs-xs);
@@ -241,6 +248,18 @@
   transform: rotate(0deg);
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--habit-color) 40%, transparent);
 }
+/* Pop de resorte al completar (la clase la añade tracker.js al interactuar). */
+.tc-check.just-done {
+  animation: check-pop 500ms var(--ease-spring);
+}
+@keyframes check-pop {
+  0% {
+    transform: rotate(0deg) scale(0.6);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
 
 /* Contenedor de controles: respiración entre progreso, botones y editor. */
 .tc-control {
@@ -270,6 +289,7 @@
     var(--habit-color, var(--brand)) 0 10px,
     color-mix(in srgb, var(--habit-color, var(--brand)) 74%, #fff) 10px 20px
   );
+  background-size: 28px 28px;
   transition: width 500ms var(--ease);
 }
 .tc-amount {
@@ -443,6 +463,18 @@
   }
 }
 
+/* Inputs nunca fuerzan overflow (los inputs tienen min-width intrínseco). */
+.tc-num-input,
+.tc-manual-input,
+.tc-text-input {
+  min-width: 0;
+}
+
+/* Chevron de expansión: solo visible en móvil. */
+.tc-expand {
+  display: none;
+}
+
 @media (max-width: 560px) {
   .greeting {
     flex-direction: column;
@@ -454,5 +486,47 @@
   .day-progress {
     flex-direction: column;
     text-align: center;
+  }
+
+  /* En móvil las tarjetas colapsan: tap en la cabecera despliega el control.
+     (checkbox no lo necesita: su toggle vive en la cabecera). */
+  .tracker-card:not(.is-open) .tc-control {
+    display: none;
+  }
+  .tracker-card.is-open .tc-control {
+    animation: dropdown-in 320ms var(--ease-spring);
+  }
+  .tc-expand {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+    transition: transform 260ms var(--ease-spring), color var(--transition);
+  }
+  .tracker-card.is-open .tc-expand {
+    transform: rotate(180deg);
+    color: var(--habit-color);
+  }
+  /* El link de historial pasa dentro del panel desplegado… lo simple: ocultarlo
+     en la cabecera móvil para liberar ancho (sigue accesible por el nombre). */
+  .tc-history {
+    display: none;
+  }
+  .tc-scale-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .tc-amount {
+    font-size: var(--fs-xs);
+  }
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
 }

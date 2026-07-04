@@ -17,9 +17,13 @@
   const el = (id) => document.getElementById(id);
   const val = (id) => el(id).value.trim();
 
+  // Devolver el foco a quien abrió el modal al cerrarlo (accesibilidad).
+  let modalTrigger = null;
+
   // ---- Apertura / cierre del modal ----------------------------------------
 
   function openModal() {
+    modalTrigger = document.activeElement;
     errorBox.hidden = true;
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
@@ -35,6 +39,8 @@
     modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (modalTrigger && document.contains(modalTrigger)) modalTrigger.focus();
+    modalTrigger = null;
   }
 
   function resetForm() {

@@ -35,4 +35,9 @@
       <% }) %>
     </div>
   </div>
+  <% if (reactionEmojis.length) { %>
+  <button class="fi-expand" data-fi-expand aria-expanded="false" aria-label="Reaccionar">
+    <%- include('icon', { name: 'down', size: 16 }) %>
+  </button>
+  <% } %>
 </article>

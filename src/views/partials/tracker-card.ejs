@@ -29,6 +29,13 @@
       <%- include('icon', { name: 'chart', size: 18 }) %>
     </a>
 
+    <% if (t !== 'checkbox') { %>
+    <button class="tc-expand" data-expand aria-expanded="false"
+      aria-label="Mostrar controles de <%= habit.name %>">
+      <%- include('icon', { name: 'down', size: 18 }) %>
+    </button>
+    <% } %>
+
     <% if (t === 'checkbox') { %>
     <button class="tc-check<%= completed ? ' is-done' : '' %>" data-log="toggle" aria-pressed="<%= completed %>">
       <span class="tc-check-mark">✓</span>

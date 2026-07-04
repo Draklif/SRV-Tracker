@@ -12,6 +12,22 @@
   let lastId = Number(feed.dataset.lastId) || 0;
   let fetching = false;
 
+  // ---- Expansión móvil: tap en la tarjeta muestra las reacciones -----------
+  const isMobile = () => window.matchMedia('(max-width: 560px)').matches;
+
+  feed.addEventListener('click', (e) => {
+    if (!isMobile()) return;
+    const item = e.target.closest('.feed-item');
+    if (!item) return;
+    const expandBtn = e.target.closest('[data-fi-expand]');
+    // Tap en el chevron o en la tarjeta (fuera de links y reacciones).
+    if (expandBtn || !e.target.closest('a, button')) {
+      const open = item.classList.toggle('is-open');
+      const btn = item.querySelector('[data-fi-expand]');
+      if (btn) btn.setAttribute('aria-expanded', String(open));
+    }
+  });
+
   // ---- Reacciones (optimistas) ---------------------------------------------
 
   feed.addEventListener('click', async (e) => {

@@ -92,8 +92,14 @@
     } else if (type === 'checkbox') {
       const btn = card.querySelector('.tc-check');
       if (btn) {
+        const wasDone = btn.classList.contains('is-done');
         btn.classList.toggle('is-done', res.completed);
         btn.setAttribute('aria-pressed', String(res.completed));
+        if (res.completed && !wasDone) {
+          btn.classList.remove('just-done');
+          void btn.offsetWidth;
+          btn.classList.add('just-done');
+        }
       }
     } else if (type === 'scale') {
       card.querySelectorAll('.tc-scale-btn').forEach((b) => {
@@ -156,6 +162,27 @@
   }
 
   // ---- Cableado ------------------------------------------------------------
+
+  // ---- Expansión móvil: tap en la cabecera despliega los controles --------
+  const isMobile = () => window.matchMedia('(max-width: 560px)').matches;
+
+  function toggleCard(card) {
+    const open = card.classList.toggle('is-open');
+    const expandBtn = card.querySelector('[data-expand]');
+    if (expandBtn) expandBtn.setAttribute('aria-expanded', String(open));
+  }
+
+  list.addEventListener('click', (e) => {
+    if (!isMobile()) return;
+    const expandBtn = e.target.closest('[data-expand]');
+    if (expandBtn) return toggleCard(expandBtn.closest('.tracker-card'));
+    // Tap en la cabecera (fuera de links/botones/inputs) también despliega.
+    const top = e.target.closest('.tc-top');
+    if (top && !e.target.closest('a, button, input, textarea')) {
+      const card = top.closest('.tracker-card');
+      if (card.querySelector('.tc-control')) toggleCard(card);
+    }
+  });
 
   list.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-log]');

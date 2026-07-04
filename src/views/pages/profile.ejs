@@ -1,3 +1,4 @@
+<% const pageScripts = ['/js/profile.js']; %>
 <%- include('../partials/head', { title, styles: ['/css/pages/profile.css'] }) %>
 
 <%- include('../partials/app-nav') %>
@@ -6,7 +7,16 @@
   <%- include('../partials/flash') %>
 
   <header class="profile-header card">
-    <%- include('../partials/avatar', { avatarUser: user, size: 'lg' }) %>
+    <!-- Tocar el avatar abre el selector; elegir imagen la sube al instante. -->
+    <form method="post" action="/profile/avatar" enctype="multipart/form-data" class="avatar-upload-form">
+      <%- include('../partials/csrf-field') %>
+      <label class="avatar-upload" title="Cambiar avatar">
+        <%- include('../partials/avatar', { avatarUser: user, size: 'lg' }) %>
+        <span class="avatar-upload-badge"><%- include('../partials/icon', { name: 'camera', size: 15 }) %></span>
+        <input type="file" id="avatar-input" name="avatar"
+          accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+      </label>
+    </form>
     <div class="profile-id">
       <h1><%= user.display_name %></h1>
       <p class="text-muted">@<%= user.username %></p>
@@ -84,20 +94,6 @@
       </form>
     </section>
 
-    <!-- Avatar -->
-    <section class="card">
-      <h2>Avatar</h2>
-      <div class="avatar-editor">
-        <%- include('../partials/avatar', { avatarUser: user, size: 'lg' }) %>
-        <form method="post" action="/profile/avatar" enctype="multipart/form-data" class="form avatar-form">
-          <%- include('../partials/csrf-field') %>
-          <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg,image/webp,image/gif" />
-          <small class="field-hint">PNG, JPG, WEBP o GIF · máx. 2 MB</small>
-          <button class="btn btn-ghost" type="submit">Subir avatar</button>
-        </form>
-      </div>
-    </section>
-
     <!-- Contraseña -->
     <section class="card">
       <h2>Cambiar contraseña</h2>
@@ -126,4 +122,4 @@
   </div>
 </main>
 
-<%- include('../partials/foot') %>
+<%- include('../partials/foot', { scripts: pageScripts }) %>

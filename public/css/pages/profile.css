@@ -24,15 +24,49 @@
   color: var(--text-muted);
 }
 
+/* Nivel + XP en una sola fila: menos altura, mejor uso del espacio. */
 .profile-level {
   margin-left: auto;
-  display: grid;
-  gap: var(--space-1);
-  justify-items: end;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 .profile-xp {
   font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+/* ---- Avatar clicable con badge de cámara ---- */
+.avatar-upload-form {
+  flex-shrink: 0;
+}
+.avatar-upload {
+  position: relative;
+  display: inline-grid;
+  cursor: pointer;
+}
+.avatar-upload-badge {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--brand);
+  color: #fff;
+  border: 2.5px solid var(--surface);
+  border-radius: 50%;
+  transform: rotate(-6deg);
+  transition: transform 240ms var(--ease-spring), background-color var(--transition);
+}
+.avatar-upload:hover .avatar-upload-badge {
+  transform: rotate(0deg) scale(1.15);
+  background: var(--brand-strong);
+}
+.avatar-upload:hover .avatar {
+  transform: rotate(0deg) scale(1.03);
 }
 
 /* ---- Logros ---- */
@@ -124,51 +158,25 @@
   display: inline-block;
 }
 
-.avatar-editor {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  flex-wrap: wrap;
-}
-.avatar-form {
-  flex: 1;
-  min-width: 0; /* permite encoger dentro del flex y evita desbordar la card */
-  gap: var(--space-3);
-}
-.avatar-form input[type='file'] {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.avatar-form input[type='file']::file-selector-button {
-  border-radius: var(--radius-sm);
-  margin-right: var(--space-3);
-  padding: 0.5em 1em;
-  border: 2px solid var(--text);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: var(--fs-xs);
-}
-
 @media (max-width: 560px) {
   .profile-header {
     transform: none;
     flex-wrap: wrap;
+    gap: var(--space-3) var(--space-4);
+  }
+  .profile-id h1 {
+    font-size: var(--fs-xl);
   }
   .profile-level {
     margin-left: 0;
-    justify-items: start;
+    width: 100%;
   }
   .ach-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  /* Acciones de formulario a ancho completo: más cómodas con el pulgar. */
+  .profile-grid .form .btn {
+    justify-self: stretch;
+    width: 100%;
   }
 }

@@ -54,6 +54,24 @@
   font-size: var(--fs-xl);
 }
 
+/* Animación scroll-driven: las tarjetas del feed "suben" al entrar en el
+   viewport durante el scroll (progresivo: solo navegadores compatibles). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .feed > .feed-item {
+      animation: scroll-rise both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+@keyframes scroll-rise {
+  from {
+    opacity: 0.2;
+    transform: translateY(22px) scale(0.985);
+  }
+}
+
 @keyframes live-pulse {
   0%,
   100% {

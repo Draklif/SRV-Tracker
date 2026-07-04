@@ -75,6 +75,43 @@
   min-width: 0.6em;
 }
 
+/* Chevron de expansión del feed: solo móvil. */
+.fi-expand {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  /* En móvil las reacciones se despliegan al tocar la tarjeta (el wrap de
+     6 botones rompía la estética en pantallas angostas). */
+  .feed-item:not(.is-open) .fi-reactions {
+    display: none;
+  }
+  .feed-item.is-open .fi-reactions {
+    animation: dropdown-in-feed 300ms var(--ease-spring);
+  }
+  .fi-expand {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+    transition: transform 260ms var(--ease-spring), color var(--transition);
+  }
+  .feed-item.is-open .fi-expand {
+    transform: rotate(180deg);
+    color: var(--brand);
+  }
+}
+
+@keyframes dropdown-in-feed {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 @keyframes feed-in {
   from {
     opacity: 0;

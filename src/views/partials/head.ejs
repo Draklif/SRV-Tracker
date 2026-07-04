@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="<%= (typeof theme !== 'undefined' && theme === 'light') ? '#f0eee6' : '#0f1420' %>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text x='2' y='19' font-size='19' transform='rotate(-10 12 12)' fill='%234f8cff'>★</text></svg>" />
     <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
     <meta name="csrf-token" content="<%= csrfToken %>" />
     <% } %>

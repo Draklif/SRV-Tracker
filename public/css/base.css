@@ -10,6 +10,73 @@ body {
   background-image: var(--bg-gradient);
   background-size: var(--bg-size);
   background-attachment: fixed;
+  /* Los elementos inclinados/girados asoman sus esquinas fuera del contenedor:
+     nunca deben provocar scroll horizontal. */
+  overflow-x: clip;
+}
+
+/* ---- View Transitions entre páginas (MPA, progresivo) ----
+   El navegador anima la navegación completa; la nav se mantiene fija como
+   elemento compartido y el contenido entra con un deslizamiento corto. */
+@view-transition {
+  navigation: auto;
+}
+.app-nav {
+  view-transition-name: app-nav;
+}
+.bottom-nav {
+  view-transition-name: bottom-nav;
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 160ms var(--ease) both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-in 260ms var(--ease) both;
+  }
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---- Entrada escalonada de tarjetas (con resorte) ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .tracker-list > *,
+  .habit-list > *,
+  .stats-row > *,
+  .fa-list > *,
+  .quick-links > * {
+    animation: rise-in 520ms var(--ease-spring) backwards;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+  .tracker-list > :nth-child(2), .habit-list > :nth-child(2), .stats-row > :nth-child(2), .fa-list > :nth-child(2), .quick-links > :nth-child(2) { --i: 1; }
+  .tracker-list > :nth-child(3), .habit-list > :nth-child(3), .stats-row > :nth-child(3), .fa-list > :nth-child(3), .quick-links > :nth-child(3) { --i: 2; }
+  .tracker-list > :nth-child(4), .habit-list > :nth-child(4), .stats-row > :nth-child(4), .fa-list > :nth-child(4), .quick-links > :nth-child(4) { --i: 3; }
+  .tracker-list > :nth-child(5), .habit-list > :nth-child(5), .fa-list > :nth-child(5) { --i: 4; }
+  .tracker-list > :nth-child(6), .habit-list > :nth-child(6) { --i: 5; }
+  .tracker-list > :nth-child(n + 7), .habit-list > :nth-child(n + 7) { --i: 6; }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+/* ---- Rayas en movimiento para barras de progreso ---- */
+@keyframes stripes-flow {
+  to {
+    background-position: 28px 0;
+  }
 }
 
 h1,
