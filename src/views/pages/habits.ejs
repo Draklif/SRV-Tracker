@@ -1,0 +1,44 @@
+<% const pageScripts = ['/js/api.js', '/js/habits.js']; %>
+<%- include('../partials/head', { title, styles: ['/css/pages/habits.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container habits-page">
+  <%- include('../partials/flash') %>
+
+  <header class="page-head">
+    <h1>Tus hábitos</h1>
+    <button class="btn btn-primary" data-action="new-habit">＋ Nuevo hábito</button>
+  </header>
+
+  <!-- Metadatos de tipos para el cliente (campos dinámicos) -->
+  <script type="application/json" id="habit-type-meta"><%- JSON.stringify(habitTypeMeta) %></script>
+
+  <div class="habits-empty" id="habits-empty" <%= habits.length ? 'hidden' : '' %>>
+    <span class="empty-emoji">🌱</span>
+    <h2>Aún no tienes hábitos</h2>
+    <p class="text-muted">Empieza con uno pequeño. Lo demás llega solo.</p>
+    <button class="btn btn-primary" data-action="new-habit">Crear mi primer hábito</button>
+  </div>
+
+  <section class="habit-list" id="habit-list" aria-live="polite">
+    <% habits.forEach((habit) => { %>
+    <%- include('../partials/habit-card', { habit }) %>
+    <% }) %>
+  </section>
+
+  <% if (archived.length) { %>
+  <section class="archived-section">
+    <h2 class="archived-title">Archivados</h2>
+    <div class="habit-list" id="archived-list">
+      <% archived.forEach((habit) => { %>
+      <%- include('../partials/habit-card', { habit, archived: true }) %>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+</main>
+
+<%- include('../partials/habit-form-modal') %>
+
+<%- include('../partials/foot', { scripts: pageScripts }) %>

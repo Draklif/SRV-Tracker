@@ -1,0 +1,325 @@
+/* habits.css — Página de gestión de hábitos: tarjetas, modal y selectores. */
+
+.habits-page {
+  padding-block: var(--space-6) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.page-head h1 {
+  font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+
+/* ---- Lista y tarjetas ---- */
+.habit-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.habit-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: var(--card-border);
+  border-left: 6px solid var(--habit-color, var(--brand));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.habit-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.habit-card.is-archived {
+  opacity: 0.7;
+  border-left-color: var(--text-faint);
+}
+
+.habit-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  background: color-mix(in srgb, var(--habit-color) 22%, transparent);
+  border: 2px solid var(--habit-color);
+  border-radius: var(--radius-sm);
+  transform: rotate(-3deg);
+}
+
+.habit-main {
+  flex: 1;
+  min-width: 0;
+}
+.habit-name {
+  font-size: var(--fs-lg);
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.habit-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.habit-type {
+  font-weight: var(--fw-bold);
+  color: var(--habit-color);
+}
+.habit-meta .dot {
+  opacity: 0.5;
+}
+
+.habit-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  transition: background-color var(--transition), color var(--transition),
+    transform var(--transition);
+}
+.icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.icon-btn:active {
+  transform: scale(0.9);
+}
+
+/* ---- Estado vacío ---- */
+.habits-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  background: var(--surface);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+.empty-emoji {
+  font-size: 2.6rem;
+}
+
+/* ---- Archivados ---- */
+.archived-section {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+.archived-title {
+  font-size: var(--fs-lg);
+  color: var(--text-muted);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--border);
+}
+
+/* ---- Modal ---- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+.modal[hidden] {
+  display: none;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 13, 24, 0.62);
+  backdrop-filter: blur(3px);
+  animation: fade-in 160ms var(--ease);
+}
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-5);
+  box-shadow: var(--shadow-lg);
+  animation: pop-in 200ms var(--ease-snap);
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.modal-head h2 {
+  font-size: var(--fs-xl);
+}
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* ---- Selector de tipo ---- */
+.type-picker {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+.type-option {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3);
+  text-align: left;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), transform var(--transition),
+    background-color var(--transition);
+}
+.type-option:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+.type-option.is-selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.type-emoji {
+  font-size: 1.3rem;
+}
+.type-label {
+  font-weight: var(--fw-bold);
+}
+.type-desc {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.type-fixed {
+  padding: 0.6em 0.9em;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-bold);
+}
+
+/* ---- Selector de icono ---- */
+.icon-picker {
+  display: grid;
+  gap: var(--space-2);
+}
+.icon-input {
+  width: 3.2em !important;
+  text-align: center;
+  font-size: 1.3rem;
+}
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+  gap: var(--space-1);
+}
+.icon-choice {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  background: var(--surface-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), transform var(--transition);
+}
+.icon-choice:hover {
+  border-color: var(--brand);
+  transform: scale(1.08);
+}
+
+/* ---- Swatches de color ---- */
+.color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--swatch);
+  border: 3px solid transparent;
+  box-shadow: var(--shadow-ink-sm);
+  transition: transform var(--transition);
+}
+.swatch:hover {
+  transform: scale(1.12);
+}
+.swatch.is-selected {
+  border-color: var(--text);
+  transform: scale(1.12);
+}
+
+/* ---- Fila de dos campos (escala) ---- */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.field-row > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .type-picker {
+    grid-template-columns: 1fr;
+  }
+  .modal {
+    padding: var(--space-2);
+    align-items: end;
+  }
+  .modal-panel {
+    max-height: 92vh;
+  }
+}

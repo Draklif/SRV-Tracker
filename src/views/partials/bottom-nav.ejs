@@ -3,6 +3,7 @@
   // A medida que crezca la app se añaden pestañas aquí (Hábitos, Amigos…).
   const tabs = [
     { href: '/', icon: '🏠', label: 'Inicio', active: currentPath === '/' },
+    { href: '/habits', icon: '🎯', label: 'Hábitos', active: currentPath.startsWith('/habits') },
     { href: '/profile', icon: '👤', label: 'Perfil', active: currentPath.startsWith('/profile') },
   ];
 %>

@@ -1,0 +1,38 @@
+<%
+  const isArchived = typeof archived !== 'undefined' ? archived : false;
+  const colorHex = habitColors[habit.color] || habitColors.blue;
+  const meta = habitTypeMeta[habit.type];
+  // Config serializada para prellenar el modal de edición sin otra petición.
+  const cfg = {
+    id: habit.id, name: habit.name, icon: habit.icon, color: habit.color,
+    type: habit.type, unit: habit.unit, targetDaily: habit.target_daily, settings: habit.settings,
+  };
+%>
+<article class="habit-card<%= isArchived ? ' is-archived' : '' %>"
+  data-habit-id="<%= habit.id %>" data-json="<%= JSON.stringify(cfg) %>"
+  style="--habit-color: <%= colorHex %>">
+  <span class="habit-icon"><%= habit.icon %></span>
+
+  <div class="habit-main">
+    <h3 class="habit-name"><%= habit.name %></h3>
+    <p class="habit-meta">
+      <span class="habit-type"><%= meta ? meta.label : habit.type %></span>
+      <% if (habit.target_daily) { %>
+      <span class="dot">·</span><span>Meta <%= habit.target_daily %><%= habit.unit ? ' ' + habit.unit : '' %></span>
+      <% } else if (habit.unit) { %>
+      <span class="dot">·</span><span><%= habit.unit %></span>
+      <% } %>
+    </p>
+  </div>
+
+  <div class="habit-actions">
+    <% if (isArchived) { %>
+    <button class="icon-btn" data-action="restore" title="Restaurar" aria-label="Restaurar hábito">↩︎</button>
+    <% } else { %>
+    <button class="icon-btn move" data-action="up" title="Subir" aria-label="Subir">▲</button>
+    <button class="icon-btn move" data-action="down" title="Bajar" aria-label="Bajar">▼</button>
+    <button class="icon-btn" data-action="edit" title="Editar" aria-label="Editar hábito">✏️</button>
+    <button class="icon-btn" data-action="archive" title="Archivar" aria-label="Archivar hábito">🗄️</button>
+    <% } %>
+  </div>
+</article>

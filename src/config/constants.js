@@ -18,6 +18,44 @@ const HABIT_TYPES = Object.freeze({
 const HABIT_TYPE_LIST = Object.freeze(Object.values(HABIT_TYPES));
 
 /**
+ * Metadatos de cada tipo de hábito para la UI (etiqueta, icono sugerido,
+ * descripción y qué campos del formulario aplican). Fuente única para el
+ * selector de tipo y para la lógica de campos dinámicos del cliente.
+ */
+const HABIT_TYPE_META = Object.freeze({
+  checkbox: { label: 'Sí / No', icon: '✅', desc: 'Hecho o no hecho', fields: [] },
+  quantity: { label: 'Cantidad', icon: '💧', desc: 'Suma con unidad (agua, pasos…)', fields: ['unit', 'target', 'quickAdd'] },
+  duration: { label: 'Tiempo', icon: '⏱️', desc: 'Minutos (dormir, estudiar…)', fields: ['target', 'quickAdd'] },
+  scale: { label: 'Escala', icon: '😊', desc: 'Del 1 al N (ánimo, energía…)', fields: ['scale'] },
+  numeric: { label: 'Número', icon: '⚖️', desc: 'Un valor con unidad (peso…)', fields: ['unit', 'target'] },
+  text: { label: 'Nota', icon: '📝', desc: 'Texto corto (gratitud…)', fields: [] },
+});
+
+/**
+ * Paleta de colores de hábito: clave → hex. Se guarda la clave en la BD y se
+ * resuelve el hex en las vistas. Alineada con el tema azul cozy.
+ */
+const HABIT_COLORS = Object.freeze({
+  blue: '#4f8cff',
+  teal: '#39c6d6',
+  green: '#4fce8f',
+  purple: '#8f7bf2',
+  pink: '#d97ba8',
+  coral: '#e8945a',
+  amber: '#ffcf66',
+  red: '#ff6b6b',
+});
+
+const HABIT_COLOR_KEYS = Object.freeze(Object.keys(HABIT_COLORS));
+
+/** Emojis sugeridos en el selector de icono (se puede escribir uno propio). */
+const HABIT_ICON_SUGGESTIONS = Object.freeze([
+  '💧', '🏋️', '📖', '🧘', '🏃', '🚶', '😴', '🥗', '💊', '🧠',
+  '✍️', '🎨', '🎸', '💻', '🌱', '☀️', '💤', '🚭', '🙏', '⚖️',
+  '🦷', '💦', '🍎', '☕', '🎯',
+]);
+
+/**
  * Tipos de recurso para la futura "aldea compartida".
  * Se declaran ya para poder asociarlos a hábitos desde el inicio.
  */
@@ -72,6 +110,10 @@ const ACTIVITY_TYPES = Object.freeze({
 module.exports = {
   HABIT_TYPES,
   HABIT_TYPE_LIST,
+  HABIT_TYPE_META,
+  HABIT_COLORS,
+  HABIT_COLOR_KEYS,
+  HABIT_ICON_SUGGESTIONS,
   RESOURCE_TYPES,
   REACTIONS,
   XP_RULES,

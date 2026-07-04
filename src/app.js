@@ -5,6 +5,7 @@ const express = require('express');
 const helmet = require('helmet');
 
 const config = require('./config');
+const constants = require('./config/constants');
 const routes = require('./routes');
 const sessionMiddleware = require('./middlewares/session');
 const loadUser = require('./middlewares/loadUser');
@@ -58,6 +59,10 @@ function createApp() {
 
   // Valores disponibles en todas las vistas.
   app.locals.appName = 'Tracker';
+  app.locals.habitColors = constants.HABIT_COLORS;
+  app.locals.habitTypeMeta = constants.HABIT_TYPE_META;
+  app.locals.habitColorKeys = constants.HABIT_COLOR_KEYS;
+  app.locals.habitIcons = constants.HABIT_ICON_SUGGESTIONS;
 
   // Rutas de la aplicación.
   app.use('/', routes);
