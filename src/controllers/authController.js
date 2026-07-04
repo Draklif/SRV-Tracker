@@ -13,7 +13,9 @@ function safeRedirect(target) {
 }
 
 const showRegister = (req, res) => {
-  res.render('pages/register', { title: 'Crear cuenta', values: {}, inviteCode: '', errors: {} });
+  // El código puede llegar prellenado por la URL (?code=...) desde un enlace de invitación.
+  const inviteCode = typeof req.query.code === 'string' ? req.query.code.trim() : '';
+  res.render('pages/register', { title: 'Crear cuenta', values: {}, inviteCode, errors: {} });
 };
 
 const register = asyncHandler(async (req, res) => {

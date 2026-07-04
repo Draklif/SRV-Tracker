@@ -20,13 +20,18 @@
   const copyBtn = document.querySelector('.invite-copy');
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
-      const code = copyBtn.dataset.code;
+      const { code, url, app } = copyBtn.dataset;
+      // Copiamos un mensaje listo para compartir con el enlace directo al
+      // registro: el código viaja en la URL y se autorrellena al abrirlo.
+      const message = url
+        ? `¡Te invito a ${app || 'la app'}! Regístrate con mi código de invitación:\n${url}`
+        : code;
       try {
-        await navigator.clipboard.writeText(code);
+        await navigator.clipboard.writeText(message);
       } catch (_) {
         return; // Sin permiso de portapapeles: no molestamos con un error.
       }
-      if (window.toast) window.toast.show('Código copiado ✅', { type: 'info', duration: 1800 });
+      if (window.toast) window.toast.show('Invitación copiada ✅', { type: 'info', duration: 1800 });
     });
   }
 

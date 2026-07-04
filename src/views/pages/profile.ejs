@@ -158,8 +158,11 @@
       <% if (activeInvite) { %>
       <div class="invite-active" data-expires-at="<%= activeInvite.expires_at %>">
         <code class="invite-code"><%= activeInvite.code %></code>
-        <button type="button" class="btn btn-ghost btn-sm invite-copy" data-code="<%= activeInvite.code %>">
-          Copiar
+        <button type="button" class="btn btn-ghost btn-sm invite-copy"
+          data-code="<%= activeInvite.code %>"
+          data-url="<%= baseUrl %>/register?code=<%= activeInvite.code %>"
+          data-app="<%= appName %>">
+          Copiar invitación
         </button>
         <p class="invite-expiry text-muted" aria-live="polite"></p>
       </div>
