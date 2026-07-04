@@ -20,8 +20,18 @@ const requiredUnit = z
   .min(1, 'Indica la unidad')
   .max(12, 'Máximo 12 caracteres');
 
+// Frecuencia del hábito (ortogonal al tipo). Se valida a fondo en habitService
+// (días no vacíos, cuota 1..6); aquí solo definimos la forma.
+const schedule = z
+  .object({
+    type: z.enum(['daily', 'weekdays', 'weekly']).default('daily'),
+    days: z.array(z.coerce.number().int().min(1).max(7)).optional(),
+    timesPerWeek: z.coerce.number().int().min(1).max(6).optional(),
+  })
+  .optional();
+
 // Un esquema por tipo (unión discriminada por `type`).
-const checkbox = z.object({ type: z.literal('checkbox'), name, icon, color, resourceType });
+const checkbox = z.object({ type: z.literal('checkbox'), name, icon, color, resourceType, schedule });
 const quantity = z.object({
   type: z.literal('quantity'),
   name,
@@ -31,6 +41,7 @@ const quantity = z.object({
   unit: requiredUnit,
   targetDaily: positive,
   quickAdd,
+  schedule,
 });
 const duration = z.object({
   type: z.literal('duration'),
@@ -41,6 +52,7 @@ const duration = z.object({
   unit: optionalUnit,
   targetDaily: positive.optional(),
   quickAdd,
+  schedule,
 });
 const scale = z.object({
   type: z.literal('scale'),
@@ -50,6 +62,7 @@ const scale = z.object({
   resourceType,
   scaleMin: z.coerce.number().int().min(0).max(10),
   scaleMax: z.coerce.number().int().min(1).max(10),
+  schedule,
 });
 const numeric = z.object({
   type: z.literal('numeric'),
@@ -59,8 +72,9 @@ const numeric = z.object({
   resourceType,
   unit: optionalUnit,
   targetDaily: z.coerce.number().optional(),
+  schedule,
 });
-const text = z.object({ type: z.literal('text'), name, icon, color, resourceType });
+const text = z.object({ type: z.literal('text'), name, icon, color, resourceType, schedule });
 
 const habitSchema = z.discriminatedUnion('type', [checkbox, quantity, duration, scale, numeric, text]);
 

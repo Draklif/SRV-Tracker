@@ -92,6 +92,18 @@
             <option value="<%= tz %>" <%= values.timezone === tz ? 'selected' : '' %>><%= tz %></option>
             <% }) %>
           </select>
+          <%
+            // El "día" de la app es la fecha local; el reinicio es a medianoche.
+            let nowLocal = '';
+            try {
+              nowLocal = new Intl.DateTimeFormat('es-MX', {
+                timeZone: values.timezone, hour: '2-digit', minute: '2-digit', hour12: false,
+              }).format(new Date());
+            } catch (_) { nowLocal = ''; }
+          %>
+          <small class="field-hint">
+            Tu día se reinicia a las 00:00<% if (nowLocal) { %> · ahora son las <%= nowLocal %> en tu zona<% } %>.
+          </small>
         </div>
 
         <div class="field">

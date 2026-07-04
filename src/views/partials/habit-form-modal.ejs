@@ -106,6 +106,35 @@
               <input id="habit-scalemax" type="number" min="1" max="10" value="5" />
             </div>
           </div>
+
+          <!-- Frecuencia: aplica a cualquier tipo de hábito -->
+          <div class="field">
+            <label>Frecuencia</label>
+            <input type="hidden" id="habit-sched-type" value="daily" />
+            <div class="segmented" id="schedule-modes" role="group" aria-label="Frecuencia del hábito">
+              <button type="button" class="seg" data-sched="daily">Diario</button>
+              <button type="button" class="seg" data-sched="weekdays">Días</button>
+              <button type="button" class="seg" data-sched="weekly">Veces/sem</button>
+            </div>
+
+            <div class="sched-panel" id="sched-weekdays" hidden>
+              <div class="weekday-toggles" id="weekday-toggles">
+                <% [['1','L'],['2','M'],['3','X'],['4','J'],['5','V'],['6','S'],['7','D']].forEach(([d, lbl]) => { %>
+                <button type="button" class="wd" data-day="<%= d %>" aria-pressed="false"><%= lbl %></button>
+                <% }) %>
+              </div>
+              <small class="field-hint">Solo los días marcados cuentan para la racha.</small>
+            </div>
+
+            <div class="sched-panel" id="sched-weekly" hidden>
+              <div class="times-week" id="times-week">
+                <% [1,2,3,4,5,6].forEach((n) => { %>
+                <button type="button" class="tw" data-times="<%= n %>" aria-pressed="false"><%= n %></button>
+                <% }) %>
+              </div>
+              <small class="field-hint">Mantén la racha si cumples la cuota cada semana.</small>
+            </div>
+          </div>
         </div>
       </div>
 

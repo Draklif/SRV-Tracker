@@ -6,6 +6,7 @@ const helmet = require('helmet');
 
 const config = require('./config');
 const constants = require('./config/constants');
+const schedule = require('./utils/schedule');
 const routes = require('./routes');
 const sessionMiddleware = require('./middlewares/session');
 const loadUser = require('./middlewares/loadUser');
@@ -84,6 +85,7 @@ function createApp() {
   app.locals.habitColorKeys = constants.HABIT_COLOR_KEYS;
   app.locals.habitIcons = constants.HABIT_ICON_SUGGESTIONS;
   app.locals.resourceTypeMeta = constants.RESOURCE_TYPE_META;
+  app.locals.schedule = schedule; // helpers de frecuencia para las vistas
 
   // Rutas de la aplicación.
   app.use('/', routes);

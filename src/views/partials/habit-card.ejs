@@ -4,6 +4,7 @@
   const isArchived = typeof cardArchived !== 'undefined' ? Boolean(cardArchived) : false;
   const colorHex = habitColors[habit.color] || habitColors.blue;
   const meta = habitTypeMeta[habit.type];
+  const sched = schedule.getSchedule(habit);
   // Config serializada para prellenar el modal de edición sin otra petición.
   const cfg = {
     id: habit.id, name: habit.name, icon: habit.icon, color: habit.color,
@@ -24,6 +25,9 @@
       <span class="dot">·</span><span>Meta <%= habit.target_daily %><%= habit.unit ? ' ' + habit.unit : '' %></span>
       <% } else if (habit.unit) { %>
       <span class="dot">·</span><span><%= habit.unit %></span>
+      <% } %>
+      <% if (sched.type !== 'daily') { %>
+      <span class="dot">·</span><span class="habit-freq"><%= schedule.describe(sched) %></span>
       <% } %>
     </p>
   </div>

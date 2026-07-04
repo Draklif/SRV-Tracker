@@ -76,6 +76,12 @@
     if (streakNum) streakNum.textContent = res.streak.current;
     if (streakWrap) streakWrap.hidden = res.streak.current <= 0;
 
+    // Chip semanal (hábitos "N veces/semana"): reflejar la cuota al instante.
+    if (res.week) {
+      const weekEl = card.querySelector('.tc-week');
+      if (weekEl) weekEl.textContent = `${res.week.done}/${res.week.target} esta semana`;
+    }
+
     if (type === 'quantity' || type === 'duration') {
       const target = Number(card.dataset.target) || 0;
       const fill = card.querySelector('[data-fill]');

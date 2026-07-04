@@ -52,6 +52,7 @@
     el('habit-resource').value = '';
     syncColorSelection('blue');
     syncIconSelection('⭐');
+    setSchedule({ type: 'daily' });
     document.querySelectorAll('.type-option').forEach((b) => b.classList.remove('is-selected'));
   }
 
@@ -93,6 +94,7 @@
     if (s.quickAdd) el('habit-quickadd').value = s.quickAdd.join(', ');
     if (s.scaleMin != null) el('habit-scalemin').value = s.scaleMin;
     if (s.scaleMax != null) el('habit-scalemax').value = s.scaleMax;
+    setSchedule(s.schedule || { type: 'daily' });
 
     toggleDynamicFields(cfg.type);
     openModal();
@@ -159,6 +161,61 @@
     });
   }
 
+  // ---- Frecuencia (diario / días concretos / N veces por semana) -----------
+
+  /** Muestra el panel del modo activo y marca el segmento correspondiente. */
+  function showScheduleMode(type) {
+    el('habit-sched-type').value = type;
+    document.querySelectorAll('#schedule-modes .seg').forEach((b) => {
+      b.classList.toggle('is-selected', b.dataset.sched === type);
+    });
+    el('sched-weekdays').hidden = type !== 'weekdays';
+    el('sched-weekly').hidden = type !== 'weekly';
+  }
+
+  function toggleWeekday(btn) {
+    const on = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(on));
+    btn.classList.toggle('is-selected', on);
+  }
+
+  function selectTimesPerWeek(n) {
+    document.querySelectorAll('#times-week .tw').forEach((b) => {
+      const on = b.dataset.times === String(n);
+      b.classList.toggle('is-selected', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  /** Precarga el bloque de frecuencia desde un objeto schedule (o diario). */
+  function setSchedule(sched) {
+    const type = sched && sched.type ? sched.type : 'daily';
+    const days = new Set((sched && sched.days) || []);
+    document.querySelectorAll('#weekday-toggles .wd').forEach((b) => {
+      const on = days.has(Number(b.dataset.day));
+      b.classList.toggle('is-selected', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    selectTimesPerWeek(sched && sched.timesPerWeek ? sched.timesPerWeek : 0);
+    showScheduleMode(type);
+  }
+
+  /** Lee el bloque de frecuencia como objeto schedule para el payload. */
+  function readSchedule() {
+    const type = el('habit-sched-type').value || 'daily';
+    if (type === 'weekdays') {
+      const days = [...document.querySelectorAll('#weekday-toggles .wd')]
+        .filter((b) => b.getAttribute('aria-pressed') === 'true')
+        .map((b) => Number(b.dataset.day));
+      return { type, days };
+    }
+    if (type === 'weekly') {
+      const active = document.querySelector('#times-week .tw.is-selected');
+      return { type, timesPerWeek: active ? Number(active.dataset.times) : undefined };
+    }
+    return { type: 'daily' };
+  }
+
   // ---- Construcción del payload y envío ------------------------------------
 
   function buildPayload() {
@@ -185,6 +242,7 @@
       payload.scaleMin = Number(val('habit-scalemin'));
       payload.scaleMax = Number(val('habit-scalemax'));
     }
+    payload.schedule = readSchedule();
     return payload;
   }
 
@@ -206,6 +264,15 @@
     }
     if (!val('habit-resource')) {
       showError({ message: 'Elige un recurso.' });
+      return;
+    }
+    const sched = readSchedule();
+    if (sched.type === 'weekdays' && !sched.days.length) {
+      showError({ message: 'Elige al menos un día de la semana.' });
+      return;
+    }
+    if (sched.type === 'weekly' && !sched.timesPerWeek) {
+      showError({ message: 'Indica cuántas veces por semana.' });
       return;
     }
     const saveBtn = el('habit-save');
@@ -468,6 +535,15 @@
       el('habit-color').value = btn.dataset.color;
       syncColorSelection(btn.dataset.color);
     });
+  });
+  document.querySelectorAll('#schedule-modes .seg').forEach((btn) => {
+    btn.addEventListener('click', () => showScheduleMode(btn.dataset.sched));
+  });
+  document.querySelectorAll('#weekday-toggles .wd').forEach((btn) => {
+    btn.addEventListener('click', () => toggleWeekday(btn));
+  });
+  document.querySelectorAll('#times-week .tw').forEach((btn) => {
+    btn.addEventListener('click', () => selectTimesPerWeek(Number(btn.dataset.times)));
   });
 
   form.addEventListener('submit', submit);

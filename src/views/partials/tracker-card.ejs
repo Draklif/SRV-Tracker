@@ -1,6 +1,9 @@
 <%
   const colorHex = habitColors[habit.color] || habitColors.blue;
   const settings = habit.settings || {};
+  const sched = habit.schedule || schedule.getSchedule(habit);
+  const restToday = !!habit.restToday;
+  const streakUnit = schedule.streakUnit(sched);
   const log = habit.log;
   const value = log && log.value_num != null ? log.value_num : 0;
   const valueText = log && log.value_text ? log.value_text : '';
@@ -10,7 +13,7 @@
   const pct = target ? Math.min(100, Math.round((value / target) * 100)) : completed ? 100 : 0;
   const t = habit.type;
 %>
-<article class="tracker-card<%= completed ? ' is-complete' : '' %>"
+<article class="tracker-card<%= completed ? ' is-complete' : '' %><%= restToday ? ' is-rest' : '' %>"
   data-habit-id="<%= habit.id %>" data-type="<%= t %>"
   data-target="<%= target || '' %>" data-unit="<%= habit.unit || '' %>"
   style="--habit-color: <%= colorHex %>">
@@ -20,8 +23,13 @@
     <div class="tc-info">
       <h3 class="tc-name"><a href="/habits/<%= habit.id %>/history" class="tc-name-link"><%= habit.name %></a></h3>
       <span class="tc-streak" data-streak-wrap <%= current > 0 ? '' : 'hidden' %>>
-        🔥 <b data-streak><%= current %></b> <span class="tc-streak-unit">días</span>
+        🔥 <b data-streak><%= current %></b> <span class="tc-streak-unit"><%= streakUnit %></span>
       </span>
+      <% if (restToday) { %>
+      <span class="tc-rest">😴 día libre</span>
+      <% } else if (sched.type === 'weekly') { %>
+      <span class="tc-week"><%= habit.weekDone || 0 %>/<%= habit.weekTarget %> esta semana</span>
+      <% } %>
     </div>
 
     <a class="tc-history" href="/habits/<%= habit.id %>/history" title="Historial y estadísticas"

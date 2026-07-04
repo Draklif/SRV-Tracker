@@ -19,7 +19,26 @@ function map(row) {
   return { ...row, settings };
 }
 
-/** Construye el objeto `settings` (config específica del tipo) desde el input. */
+/**
+ * Normaliza la frecuencia del input a la forma guardada en `settings.schedule`.
+ * Devuelve null para diario (no se guarda: los hábitos sin schedule son diarios).
+ */
+function normalizeSchedule(input) {
+  if (!input || !input.type || input.type === 'daily') return null;
+  if (input.type === 'weekdays') {
+    const days = [...new Set((input.days || []).filter((d) => d >= 1 && d <= 7))].sort((a, b) => a - b);
+    if (!days.length || days.length >= 7) return null; // 0 o 7 días = diario
+    return { type: 'weekdays', days };
+  }
+  if (input.type === 'weekly') {
+    const n = Number(input.timesPerWeek);
+    if (!n || n < 1 || n >= 7) return null; // 7×/semana = diario
+    return { type: 'weekly', timesPerWeek: n };
+  }
+  return null;
+}
+
+/** Construye el objeto `settings` (config específica del tipo + frecuencia) desde el input. */
 function buildSettings(data) {
   const settings = {};
   if (data.type === HABIT_TYPES.QUANTITY || data.type === HABIT_TYPES.DURATION) {
@@ -29,6 +48,8 @@ function buildSettings(data) {
     settings.scaleMin = data.scaleMin;
     settings.scaleMax = data.scaleMax;
   }
+  const schedule = normalizeSchedule(data.schedule);
+  if (schedule) settings.schedule = schedule;
   return settings;
 }
 
@@ -50,6 +71,17 @@ function deriveColumns(data) {
 function validateBusiness(data) {
   if (data.type === HABIT_TYPES.SCALE && data.scaleMax <= data.scaleMin) {
     throw new ValidationError({ scaleMax: 'El máximo debe ser mayor que el mínimo' });
+  }
+  const sched = data.schedule;
+  if (sched && sched.type === 'weekdays') {
+    const days = (sched.days || []).filter((d) => d >= 1 && d <= 7);
+    if (!days.length) throw new ValidationError({ schedule: 'Elige al menos un día de la semana' });
+  }
+  if (sched && sched.type === 'weekly') {
+    const n = Number(sched.timesPerWeek);
+    if (!n || n < 1 || n > 6) {
+      throw new ValidationError({ schedule: 'Indica cuántas veces por semana (1 a 6)' });
+    }
   }
 }
 

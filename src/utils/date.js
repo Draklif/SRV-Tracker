@@ -36,4 +36,16 @@ function diffDays(a, b) {
   return Math.round((Date.UTC(ay, am - 1, ad) - Date.UTC(by, bm - 1, bd)) / 86400000);
 }
 
-module.exports = { todayFor, addDays, previousDay, diffDays };
+/** Día de la semana ISO de una fecha 'YYYY-MM-DD': 1=lunes … 7=domingo. */
+function isoWeekday(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); // 0=domingo … 6=sábado
+  return ((dow + 6) % 7) + 1;
+}
+
+/** Lunes (inicio de semana ISO) de la semana que contiene a la fecha dada. */
+function weekStart(dateStr) {
+  return addDays(dateStr, -(isoWeekday(dateStr) - 1));
+}
+
+module.exports = { todayFor, addDays, previousDay, diffDays, isoWeekday, weekStart };

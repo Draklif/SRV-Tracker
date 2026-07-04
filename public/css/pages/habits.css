@@ -502,6 +502,65 @@
   gap: var(--space-2);
 }
 
+/* ---- Frecuencia: segmentado + días + veces por semana ---- */
+.segmented {
+  display: flex;
+  gap: var(--space-2);
+}
+.seg {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+  background: var(--surface-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background-color var(--transition);
+}
+.seg:hover {
+  border-color: var(--brand);
+}
+.seg.is-selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+.sched-panel {
+  margin-top: var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+}
+.weekday-toggles,
+.times-week {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.wd,
+.tw {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-weight: var(--fw-bold);
+  background: var(--surface-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background-color var(--transition),
+    transform var(--transition);
+}
+.wd:hover,
+.tw:hover {
+  border-color: var(--brand);
+  transform: scale(1.08);
+}
+.wd.is-selected,
+.tw.is-selected {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

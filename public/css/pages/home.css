@@ -222,6 +222,26 @@
   transform: skewX(var(--skew));
 }
 
+/* Progreso semanal (hábitos "N veces/semana") y etiqueta de día libre. */
+.tc-week,
+.tc-rest {
+  display: inline-block;
+  margin-top: 2px;
+  margin-left: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+}
+
+/* Día libre: la tarjeta se atenúa porque hoy no es obligatoria. */
+.tracker-card.is-rest {
+  opacity: 0.62;
+  border-left-style: dashed;
+}
+.tracker-card.is-rest:hover {
+  opacity: 1;
+}
+
 /* Checkbox: ficha cuadrada girada (se endereza al completar). */
 .tc-check {
   flex-shrink: 0;

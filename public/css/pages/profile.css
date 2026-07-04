@@ -27,9 +27,14 @@
 /* Nivel + XP en una sola fila: menos altura, mejor uso del espacio. */
 .profile-level {
   margin-left: auto;
+  flex-shrink: 0; /* no se comprime aunque la bio sea larga */
   display: flex;
   align-items: center;
   gap: var(--space-3);
+}
+/* La pill de nivel nunca parte su texto ("Nivel 12" en una línea). */
+.profile-level .chip {
+  white-space: nowrap;
 }
 .profile-xp {
   font-size: var(--fs-sm);
