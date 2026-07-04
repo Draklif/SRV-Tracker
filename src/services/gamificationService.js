@@ -7,6 +7,7 @@ const dashboardService = require('./dashboardService');
 const withTransaction = require('../database/withTransaction');
 const { XP_RULES } = require('../config/constants');
 const { levelFromXp, levelProgress } = require('../utils/level');
+const { isProgress } = require('../utils/logProgress');
 
 /**
  * Otorga XP de forma idempotente (índice único user+reason+source+day).
@@ -25,19 +26,6 @@ function award(userId, amount, reason, sourceType, sourceId, day) {
   if (!inserted) return 0;
   userRepository.addXp(userId, amount);
   return amount;
-}
-
-/**
- * Un registro cuenta como "avance" solo si tiene contenido real: completado,
- * un valor numérico > 0 o texto. Un quantity/duration en 0 (o una nota vacía)
- * persiste el log pero no es un avance, así que no debe otorgar XP.
- */
-function isProgress(log) {
-  if (!log) return false;
-  if (log.completed) return true;
-  if (log.value_num != null && log.value_num > 0) return true;
-  if (log.value_text != null && String(log.value_text).trim() !== '') return true;
-  return false;
 }
 
 /**

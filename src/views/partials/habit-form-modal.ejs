@@ -10,6 +10,7 @@
     <form id="habit-form" class="form" novalidate>
       <input type="hidden" id="habit-id" />
       <input type="hidden" id="habit-type" />
+      <input type="hidden" id="habit-resource" />
       <input type="hidden" id="habit-color" value="blue" />
 
       <!-- Paso 1: tipo (solo al crear; el tipo es inmutable al editar) -->
@@ -26,15 +27,29 @@
         </div>
       </div>
 
-      <!-- Tipo fijo mostrado al editar -->
-      <div class="form-step" id="type-fixed-wrap" hidden>
-        <span class="step-tag">Tipo</span>
-        <div class="type-fixed"><span id="type-fixed-label"></span></div>
+      <!-- Paso 2: recurso que genera el hábito (aparece al elegir tipo) -->
+      <div class="form-step" id="resource-picker-wrap" hidden>
+        <div class="step-head">
+          <span class="step-tag">02 · Recurso</span>
+          <button type="button" class="step-back" data-back="type">← Atrás</button>
+        </div>
+        <div class="type-picker resource-picker">
+          <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
+          <button type="button" class="type-option resource-option" data-resource="<%= key %>">
+            <span class="type-emoji"><%= m.icon %></span>
+            <span class="type-label"><%= m.label %></span>
+            <span class="type-desc"><%= m.desc %></span>
+          </button>
+          <% }) %>
+        </div>
       </div>
 
-      <!-- Paso 2: detalles (aparece al elegir tipo) -->
+      <!-- Paso 3: detalles. El tag lo fija habits.js: numerado al crear, "Detalles" al editar. -->
       <div class="form-step" id="habit-details" hidden>
-        <span class="step-tag">02 · Detalles</span>
+        <div class="step-head">
+          <span class="step-tag" id="details-step-tag">03 · Detalles</span>
+          <button type="button" class="step-back" id="details-back" data-back="resource">← Atrás</button>
+        </div>
 
         <div class="details-grid">
           <div class="field">

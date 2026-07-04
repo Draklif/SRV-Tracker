@@ -9,8 +9,8 @@ const db = require('../database/connection');
 
 const statements = {
   insert: db.prepare(`
-    INSERT INTO habits (user_id, name, icon, color, type, unit, target_daily, settings, sort_order)
-    VALUES (@user_id, @name, @icon, @color, @type, @unit, @target_daily, @settings, @sort_order)
+    INSERT INTO habits (user_id, name, icon, color, type, resource_type, unit, target_daily, settings, sort_order)
+    VALUES (@user_id, @name, @icon, @color, @type, @resource_type, @unit, @target_daily, @settings, @sort_order)
   `),
   byId: db.prepare('SELECT * FROM habits WHERE id = ?'),
   activeByUser: db.prepare(`

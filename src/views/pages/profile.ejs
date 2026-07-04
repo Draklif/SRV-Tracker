@@ -28,6 +28,21 @@
     </div>
   </header>
 
+  <!-- Recursos generados (se acumulan en la pool para la futura aldea) -->
+  <section class="card resources-section">
+    <h2>Recursos</h2>
+    <p class="text-muted res-summary">Lo que tus hábitos han aportado a la aldea</p>
+    <div class="res-grid">
+      <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
+      <div class="res-tile" title="<%= m.desc %>">
+        <span class="res-icon"><%= m.icon %></span>
+        <span class="res-total"><%= resources[key] || 0 %></span>
+        <span class="res-name"><%= m.label %></span>
+      </div>
+      <% }) %>
+    </div>
+  </section>
+
   <!-- Logros e insignias (solo los conseguidos: la vitrina crece contigo) -->
   <section class="card achievements-section">
     <h2>Logros</h2>

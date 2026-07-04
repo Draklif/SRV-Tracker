@@ -61,10 +61,33 @@ const HABIT_ICON_SUGGESTIONS = Object.freeze([
  */
 const RESOURCE_TYPES = Object.freeze({
   WATER: 'water', // Agua → agua
-  ENERGY: 'energy', // Ejercicio → energía
-  REST: 'rest', // Sueño → descanso
+  ENERGY: 'energy', // Ejercicio / sueño → energía
   KNOWLEDGE: 'knowledge', // Lectura → conocimiento
   FOOD: 'food', // Comida saludable → comida
+});
+
+const RESOURCE_TYPE_KEYS = Object.freeze(Object.values(RESOURCE_TYPES));
+
+/**
+ * Metadatos de cada recurso para la UI (etiqueta, icono, descripción).
+ * Fuente única para el selector del formulario y la vitrina del perfil.
+ * Mismo patrón que HABIT_TYPE_META.
+ */
+const RESOURCE_TYPE_META = Object.freeze({
+  water: { label: 'Agua', icon: '💧', desc: 'Hidratación y limpieza' },
+  energy: { label: 'Energía', icon: '⚡', desc: 'Movimiento, ejercicio y descanso' },
+  knowledge: { label: 'Conocimiento', icon: '📚', desc: 'Lectura y estudio' },
+  food: { label: 'Comida', icon: '🍎', desc: 'Nutrición y alimentación' },
+});
+
+/**
+ * Recursos generados por registrar un hábito. Como el XP, nunca se restan.
+ * Un avance real otorga ON_PROGRESS; alcanzar la meta diaria otorga
+ * ON_COMPLETE adicional (completar da la suma). Idempotente por día.
+ */
+const RESOURCE_RULES = Object.freeze({
+  ON_PROGRESS: 1, // Registrar cualquier avance real en un hábito
+  ON_COMPLETE: 2, // Alcanzar la meta diaria (además del avance)
 });
 
 /** Emojis permitidos como reacciones en el feed (solo reacciones, sin comentarios). */
@@ -118,6 +141,9 @@ module.exports = {
   HABIT_COLOR_KEYS,
   HABIT_ICON_SUGGESTIONS,
   RESOURCE_TYPES,
+  RESOURCE_TYPE_KEYS,
+  RESOURCE_TYPE_META,
+  RESOURCE_RULES,
   REACTIONS,
   XP_RULES,
   LEVEL_CURVE,

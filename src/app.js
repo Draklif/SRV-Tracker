@@ -72,6 +72,7 @@ function createApp() {
   app.locals.habitTypeMeta = constants.HABIT_TYPE_META;
   app.locals.habitColorKeys = constants.HABIT_COLOR_KEYS;
   app.locals.habitIcons = constants.HABIT_ICON_SUGGESTIONS;
+  app.locals.resourceTypeMeta = constants.RESOURCE_TYPE_META;
 
   // Rutas de la aplicación.
   app.use('/', routes);

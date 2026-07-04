@@ -49,6 +49,7 @@
     el('habit-color').value = 'blue';
     el('habit-icon').value = '⭐';
     el('habit-type').value = '';
+    el('habit-resource').value = '';
     syncColorSelection('blue');
     syncIconSelection('⭐');
     document.querySelectorAll('.type-option').forEach((b) => b.classList.remove('is-selected'));
@@ -57,12 +58,12 @@
   function startCreate() {
     resetForm();
     el('habit-modal-title').textContent = 'Nuevo hábito';
-    el('type-picker-wrap').hidden = false;
-    el('type-fixed-wrap').hidden = true;
-    // Los detalles aparecen al elegir tipo (paso 01 → 02).
-    el('habit-details').hidden = true;
-    el('habit-save').disabled = true;
+    // Flujo por pasos: cada sección se revela y la anterior se oculta
+    // (01 Tipo → 02 Recurso → 03 Detalles) para que el modal no crezca.
+    el('details-step-tag').textContent = '03 · Detalles';
+    el('details-back').hidden = false;
     toggleDynamicFields(null);
+    goToStep('type');
     openModal();
   }
 
@@ -70,9 +71,12 @@
     resetForm();
     const cfg = JSON.parse(card.dataset.json);
     el('habit-modal-title').textContent = 'Editar hábito';
+    // Tipo y recurso son inmutables: al editar se va directo a los detalles.
     el('type-picker-wrap').hidden = true;
-    el('type-fixed-wrap').hidden = false;
-    el('type-fixed-label').textContent = typeMeta[cfg.type] ? typeMeta[cfg.type].label : cfg.type;
+    el('resource-picker-wrap').hidden = true;
+    el('details-step-tag').textContent = 'Detalles';
+    el('details-back').hidden = true; // sin volver atrás al editar
+    el('habit-resource').value = cfg.resourceType || '';
 
     el('habit-details').hidden = false;
     el('habit-save').disabled = false;
@@ -108,16 +112,39 @@
     el('habit-unit').placeholder = UNIT_PLACEHOLDER[type] || UNIT_PLACEHOLDER_DEFAULT;
   }
 
+  function focusFirst(selector) {
+    const first = document.querySelector(selector);
+    if (first) first.focus();
+  }
+
+  // Muestra un único paso del asistente de creación (01 → 02 → 03) y oculta los
+  // demás, para que el modal no crezca. Sirve tanto para avanzar como para
+  // volver atrás con los botones "← Atrás".
+  function goToStep(step) {
+    el('type-picker-wrap').hidden = step !== 'type';
+    el('resource-picker-wrap').hidden = step !== 'resource';
+    el('habit-details').hidden = step !== 'details';
+    el('habit-save').disabled = step !== 'details';
+    if (step === 'type') focusFirst('#type-picker-wrap .type-option');
+    else if (step === 'resource') focusFirst('.resource-option');
+    else el('habit-name').focus();
+  }
+
   function selectType(type) {
     el('habit-type').value = type;
-    document.querySelectorAll('.type-option').forEach((b) => {
+    document.querySelectorAll('#type-picker-wrap .type-option').forEach((b) => {
       b.classList.toggle('is-selected', b.dataset.type === type);
     });
     toggleDynamicFields(type);
-    // Revelar el paso 02 y habilitar guardar.
-    el('habit-details').hidden = false;
-    el('habit-save').disabled = false;
-    el('habit-name').focus();
+    goToStep('resource');
+  }
+
+  function selectResource(resource) {
+    el('habit-resource').value = resource;
+    document.querySelectorAll('.resource-option').forEach((b) => {
+      b.classList.toggle('is-selected', b.dataset.resource === resource);
+    });
+    goToStep('details');
   }
 
   function syncColorSelection(color) {
@@ -141,6 +168,7 @@
       name: val('habit-name'),
       icon: val('habit-icon'),
       color: val('habit-color'),
+      resourceType: val('habit-resource'),
     };
     const fields = typeMeta[type] ? typeMeta[type].fields : [];
     if (fields.includes('unit') && val('habit-unit')) payload.unit = val('habit-unit');
@@ -174,6 +202,10 @@
     event.preventDefault();
     if (!val('habit-type')) {
       showError({ message: 'Elige un tipo de hábito.' });
+      return;
+    }
+    if (!val('habit-resource')) {
+      showError({ message: 'Elige un recurso.' });
       return;
     }
     const saveBtn = el('habit-save');
@@ -414,8 +446,14 @@
     else if (action === 'down') moveHabit(card, 'down');
   });
 
-  document.querySelectorAll('.type-option').forEach((btn) => {
+  document.querySelectorAll('#type-picker-wrap .type-option').forEach((btn) => {
     btn.addEventListener('click', () => selectType(btn.dataset.type));
+  });
+  document.querySelectorAll('.resource-option').forEach((btn) => {
+    btn.addEventListener('click', () => selectResource(btn.dataset.resource));
+  });
+  document.querySelectorAll('.step-back').forEach((btn) => {
+    btn.addEventListener('click', () => goToStep(btn.dataset.back));
   });
   document.querySelectorAll('.icon-choice').forEach((btn) => {
     btn.addEventListener('click', () => {

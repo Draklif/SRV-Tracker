@@ -6,6 +6,7 @@ const path = require('path');
 const config = require('../config');
 const userService = require('../services/userService');
 const achievementService = require('../services/achievementService');
+const resourceService = require('../services/resourceService');
 const inviteService = require('../services/inviteService');
 const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
@@ -24,6 +25,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     timezones: TIMEZONES,
     themes: THEMES,
     achievements: achievementService.listForUser(req.user.id),
+    resources: resourceService.totalsForUser(req.user.id),
     level: levelProgress(req.user.xp),
     activeInvite: inviteService.getActiveForUser(req.user.id),
     inviteTtlMinutes: inviteService.INVITE_TTL_MINUTES,

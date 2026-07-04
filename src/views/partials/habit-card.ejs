@@ -7,7 +7,8 @@
   // Config serializada para prellenar el modal de edición sin otra petición.
   const cfg = {
     id: habit.id, name: habit.name, icon: habit.icon, color: habit.color,
-    type: habit.type, unit: habit.unit, targetDaily: habit.target_daily, settings: habit.settings,
+    type: habit.type, resourceType: habit.resource_type,
+    unit: habit.unit, targetDaily: habit.target_daily, settings: habit.settings,
   };
 %>
 <article class="habit-card<%= isArchived ? ' is-archived' : '' %>"

@@ -78,6 +78,7 @@ function create(user, data) {
     icon: data.icon,
     color: data.color,
     type: data.type,
+    resource_type: data.resourceType,
     unit: columns.unit,
     target_daily: columns.target_daily,
     settings: JSON.stringify(buildSettings(data)),
@@ -96,6 +97,9 @@ function update(id, userId, data) {
   const existing = getOwned(id, userId);
   if (data.type !== existing.type) {
     throw new ValidationError({ type: 'No se puede cambiar el tipo de un hábito' });
+  }
+  if (data.resourceType !== existing.resource_type) {
+    throw new ValidationError({ resourceType: 'No se puede cambiar el recurso de un hábito' });
   }
   validateBusiness(data);
   const columns = deriveColumns(data);

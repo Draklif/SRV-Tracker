@@ -1,12 +1,13 @@
 'use strict';
 
 const { z } = require('zod');
-const { HABIT_COLOR_KEYS } = require('../config/constants');
+const { HABIT_COLOR_KEYS, RESOURCE_TYPE_KEYS } = require('../config/constants');
 
 // Campos comunes a todos los tipos.
 const name = z.string().trim().min(1, 'Ponle un nombre').max(40, 'Máximo 40 caracteres');
 const icon = z.string().trim().min(1, 'Elige un icono').max(8, 'Icono demasiado largo');
 const color = z.enum(HABIT_COLOR_KEYS, { errorMap: () => ({ message: 'Color no válido' }) });
+const resourceType = z.enum(RESOURCE_TYPE_KEYS, { errorMap: () => ({ message: 'Elige un recurso' }) });
 
 const optionalUnit = z.string().trim().max(12, 'Máximo 12 caracteres').optional().or(z.literal(''));
 const positive = z.coerce
@@ -20,12 +21,13 @@ const requiredUnit = z
   .max(12, 'Máximo 12 caracteres');
 
 // Un esquema por tipo (unión discriminada por `type`).
-const checkbox = z.object({ type: z.literal('checkbox'), name, icon, color });
+const checkbox = z.object({ type: z.literal('checkbox'), name, icon, color, resourceType });
 const quantity = z.object({
   type: z.literal('quantity'),
   name,
   icon,
   color,
+  resourceType,
   unit: requiredUnit,
   targetDaily: positive,
   quickAdd,
@@ -35,6 +37,7 @@ const duration = z.object({
   name,
   icon,
   color,
+  resourceType,
   unit: optionalUnit,
   targetDaily: positive.optional(),
   quickAdd,
@@ -44,6 +47,7 @@ const scale = z.object({
   name,
   icon,
   color,
+  resourceType,
   scaleMin: z.coerce.number().int().min(0).max(10),
   scaleMax: z.coerce.number().int().min(1).max(10),
 });
@@ -52,10 +56,11 @@ const numeric = z.object({
   name,
   icon,
   color,
+  resourceType,
   unit: optionalUnit,
   targetDaily: z.coerce.number().optional(),
 });
-const text = z.object({ type: z.literal('text'), name, icon, color });
+const text = z.object({ type: z.literal('text'), name, icon, color, resourceType });
 
 const habitSchema = z.discriminatedUnion('type', [checkbox, quantity, duration, scale, numeric, text]);
 
