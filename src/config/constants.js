@@ -9,7 +9,7 @@
 const HABIT_TYPES = Object.freeze({
   CHECKBOX: 'checkbox', // Hecho / no hecho (ej. "Hice ejercicio")
   QUANTITY: 'quantity', // Cantidad acumulable con unidad (ej. agua, pasos)
-  DURATION: 'duration', // Tiempo, se guarda en minutos (ej. dormir, estudiar)
+  DURATION: 'duration', // Tiempo, con unidad configurable (min por defecto; ej. dormir, estudiar)
   SCALE: 'scale', // Escala 1..N (ej. ánimo, estrés, energía)
   NUMERIC: 'numeric', // Valor puntual con unidad (ej. peso)
   TEXT: 'text', // Texto corto (ej. "¿Qué agradeces hoy?")
@@ -25,7 +25,7 @@ const HABIT_TYPE_LIST = Object.freeze(Object.values(HABIT_TYPES));
 const HABIT_TYPE_META = Object.freeze({
   checkbox: { label: 'Sí / No', icon: '✅', desc: 'Hecho o no hecho', fields: [] },
   quantity: { label: 'Cantidad', icon: '💧', desc: 'Suma con unidad (agua, pasos…)', fields: ['unit', 'target', 'quickAdd'] },
-  duration: { label: 'Tiempo', icon: '⏱️', desc: 'Minutos (dormir, estudiar…)', fields: ['target', 'quickAdd'] },
+  duration: { label: 'Tiempo', icon: '⏱️', desc: 'Duración (dormir, estudiar…)', fields: ['unit', 'target', 'quickAdd'] },
   scale: { label: 'Escala', icon: '😊', desc: 'Del 1 al N (ánimo, energía…)', fields: ['scale'] },
   numeric: { label: 'Número', icon: '⚖️', desc: 'Un valor con unidad (peso…)', fields: ['unit', 'target'] },
   text: { label: 'Nota', icon: '📝', desc: 'Texto corto (gratitud…)', fields: [] },

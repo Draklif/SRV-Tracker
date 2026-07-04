@@ -38,7 +38,7 @@ function deriveColumns(data) {
     case HABIT_TYPES.QUANTITY:
       return { unit: data.unit, target_daily: data.targetDaily };
     case HABIT_TYPES.DURATION:
-      return { unit: 'min', target_daily: data.targetDaily ?? null };
+      return { unit: (data.unit && data.unit.trim()) || 'min', target_daily: data.targetDaily ?? null };
     case HABIT_TYPES.NUMERIC:
       return { unit: (data.unit && data.unit.trim()) || null, target_daily: data.targetDaily ?? null };
     default: // checkbox, scale, text

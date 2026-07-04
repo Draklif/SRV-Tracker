@@ -35,6 +35,7 @@ const duration = z.object({
   name,
   icon,
   color,
+  unit: optionalUnit,
   targetDaily: positive.optional(),
   quickAdd,
 });

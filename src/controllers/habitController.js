@@ -32,8 +32,9 @@ const update = asyncHandler(async (req, res) => {
 
 /** DELETE /api/habits/:id — archivar (soft, conserva histórico). */
 const archive = asyncHandler(async (req, res) => {
-  habitService.archive(Number(req.params.id), req.user.id);
-  res.json({ ok: true, id: Number(req.params.id) });
+  const habit = habitService.archive(Number(req.params.id), req.user.id);
+  const html = await renderPartial(res, 'partials/habit-card', { habit, cardArchived: true });
+  res.json({ ok: true, id: Number(req.params.id), html });
 });
 
 /** POST /api/habits/:id/restore — desarchivar. */

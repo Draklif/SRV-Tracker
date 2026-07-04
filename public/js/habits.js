@@ -96,11 +96,16 @@
 
   // ---- Selección de tipo / icono / color ----------------------------------
 
+  // Sugerencias de unidad según el tipo (el placeholder del campo compartido).
+  const UNIT_PLACEHOLDER = { duration: 'min, h', numeric: 'kg, °C…' };
+  const UNIT_PLACEHOLDER_DEFAULT = 'ml, pasos, kcal…';
+
   function toggleDynamicFields(type) {
     const fields = type && typeMeta[type] ? typeMeta[type].fields : [];
     document.querySelectorAll('[data-field]').forEach((wrap) => {
       wrap.hidden = !fields.includes(wrap.dataset.field);
     });
+    el('habit-unit').placeholder = UNIT_PLACEHOLDER[type] || UNIT_PLACEHOLDER_DEFAULT;
   }
 
   function selectType(type) {
@@ -205,12 +210,41 @@
 
   // ---- Acciones sobre tarjetas (delegación) --------------------------------
 
+  /**
+   * Devuelve el contenedor de archivados, creando la sección "Archivados" la
+   * primera vez (no existe en el DOM si no había hábitos archivados al cargar).
+   */
+  function ensureArchivedList() {
+    let archivedList = document.getElementById('archived-list');
+    if (archivedList) return archivedList;
+    const section = document.createElement('section');
+    section.className = 'archived-section';
+    section.innerHTML =
+      '<h2 class="archived-title">Archivados</h2><div class="habit-list" id="archived-list"></div>';
+    document.querySelector('main.habits-page').appendChild(section);
+    return section.querySelector('#archived-list');
+  }
+
+  /** Quita la sección "Archivados" del DOM cuando se queda sin tarjetas. */
+  function pruneArchivedSection() {
+    const archivedList = document.getElementById('archived-list');
+    if (archivedList && !archivedList.children.length) {
+      const section = archivedList.closest('.archived-section');
+      if (section) section.remove();
+    }
+  }
+
   async function archiveHabit(card) {
     const id = card.dataset.habitId;
     try {
-      await window.api.del(`/api/habits/${id}`);
+      const result = await window.api.del(`/api/habits/${id}`);
       card.remove();
       if (!list.children.length && emptyState) emptyState.hidden = false;
+      if (result && result.html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = result.html.trim();
+        ensureArchivedList().appendChild(tmp.firstElementChild);
+      }
     } catch (err) {
       showError(err);
     }
@@ -221,6 +255,7 @@
     try {
       const result = await window.api.post(`/api/habits/${id}/restore`, {});
       card.remove();
+      pruneArchivedSection();
       applyCard(result.html, null);
     } catch (err) {
       alert(err.message);
