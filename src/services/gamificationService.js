@@ -28,6 +28,19 @@ function award(userId, amount, reason, sourceType, sourceId, day) {
 }
 
 /**
+ * Un registro cuenta como "avance" solo si tiene contenido real: completado,
+ * un valor numérico > 0 o texto. Un quantity/duration en 0 (o una nota vacía)
+ * persiste el log pero no es un avance, así que no debe otorgar XP.
+ */
+function isProgress(log) {
+  if (!log) return false;
+  if (log.completed) return true;
+  if (log.value_num != null && log.value_num > 0) return true;
+  if (log.value_text != null && String(log.value_text).trim() !== '') return true;
+  return false;
+}
+
+/**
  * Procesa las recompensas de un registro de hábito: XP por registrar, por
  * meta diaria, por día completo y por hitos de racha; luego evalúa logros.
  * Todo en una transacción. Devuelve el resumen para los toasts del cliente.
@@ -37,8 +50,9 @@ function processLog({ user, habit, log, streak, date }) {
     const xpBefore = userRepository.findById(user.id).xp;
     let gained = 0;
 
-    // Solo se premia el avance, nunca el retroceso (clear/desmarcar no toca XP).
-    if (log) {
+    // Solo se premia el avance real, nunca el retroceso ni un valor en 0/vacío
+    // (clear/desmarcar/poner en 0 no tocan XP).
+    if (isProgress(log)) {
       gained += award(user.id, XP_RULES.HABIT_LOG, 'habit_log', 'habit', habit.id, date);
 
       if (log.completed) {
