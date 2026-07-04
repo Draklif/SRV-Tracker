@@ -36,9 +36,14 @@
 
 .fi-reactions {
   display: flex;
-  flex-wrap: wrap;
+  /* Siempre una sola línea, pegadas a la izquierda. */
+  flex-wrap: nowrap;
+  justify-content: flex-start;
   gap: var(--space-1);
   margin-top: var(--space-2);
+}
+.fi-react {
+  flex-shrink: 0;
 }
 .fi-reactions:empty {
   display: none;
@@ -81,10 +86,26 @@
 }
 
 @media (max-width: 560px) {
-  /* En móvil las reacciones se despliegan al tocar la tarjeta (el wrap de
-     6 botones rompía la estética en pantallas angostas). */
+  /* En móvil las reacciones se despliegan al tocar la tarjeta, compactas
+     para caber SIEMPRE en una sola línea. */
   .feed-item:not(.is-open) .fi-reactions {
     display: none;
+  }
+  /* Ocupan el ancho completo de la card (anulando el offset del avatar:
+     36px + gap) y se centran respecto a los bordes reales de la tarjeta. */
+  .fi-reactions {
+    gap: 3px;
+    margin-left: calc(-36px - var(--space-3));
+    justify-content: center;
+  }
+  .fi-react {
+    padding: 0.18em 0.42em;
+    font-size: 0.85rem;
+    gap: 2px;
+  }
+  .fi-count {
+    font-size: 0.66rem;
+    min-width: 0;
   }
   .feed-item.is-open .fi-reactions {
     animation: dropdown-in-feed 300ms var(--ease-spring);

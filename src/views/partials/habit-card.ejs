@@ -27,6 +27,12 @@
     </p>
   </div>
 
+  <% if (!isArchived) { %>
+  <button class="hc-expand" data-action="card-toggle" aria-expanded="false" aria-label="Más opciones">
+    <%- include('icon', { name: 'down', size: 16 }) %>
+  </button>
+  <% } %>
+
   <div class="habit-actions">
     <% if (isArchived) { %>
     <button class="icon-btn" data-action="restore" title="Restaurar" aria-label="Restaurar hábito">

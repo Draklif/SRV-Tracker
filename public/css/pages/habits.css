@@ -45,6 +45,98 @@
   border-left-color: var(--text-faint);
 }
 
+/* Chevron de expansión: solo móvil. */
+.hc-expand {
+  display: none;
+}
+
+/* Estado "levantado" durante el drag por long-press (móvil).
+   `animation: none` es CLAVE: al moverla en el DOM se reiniciaría la animación
+   de entrada (rise-in, con delay en opacity 0) y la tarjeta "desaparecería".
+   El transform lo controla el JS para que siga el dedo. */
+.habit-card.is-dragging {
+  transition: none;
+  animation: none;
+  box-shadow: var(--shadow-lg);
+  opacity: 0.95;
+  position: relative;
+  z-index: 10;
+  border-color: var(--brand);
+}
+
+@media (max-width: 560px) {
+  /* El CTA principal a ancho completo. */
+  .page-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .page-head .btn {
+    width: 100%;
+  }
+
+  /* Colapsable: la cabecera muestra lo esencial; tap despliega las acciones. */
+  .habit-card {
+    flex-wrap: wrap;
+    touch-action: pan-y; /* scroll normal; el drag lo activa el long-press */
+  }
+
+  /* La meta NUNCA hace wrap: se compacta en pantallas chicas. */
+  .habit-meta {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 0.74rem;
+    gap: var(--space-1);
+  }
+  .habit-type {
+    font-size: 0.58rem;
+    flex-shrink: 0;
+  }
+  /* Si aun así no cabe, elipsis en el último tramo (jamás dos líneas). */
+  .habit-meta > span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .habit-card:not(.is-archived):not(.is-open) .habit-actions {
+    display: none;
+  }
+  .habit-card.is-open .habit-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    margin-top: var(--space-1);
+    border-top: 1.5px solid var(--border);
+    animation: hc-dropdown 300ms var(--ease-spring);
+  }
+  /* Reordenar en móvil = mantener oprimido y arrastrar (no botones). */
+  .habit-actions .move {
+    display: none;
+  }
+  .hc-expand {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-faint);
+    transition: transform 260ms var(--ease-spring), color var(--transition);
+  }
+  .habit-card.is-open .hc-expand {
+    transform: rotate(180deg);
+    color: var(--brand);
+  }
+}
+
+@keyframes hc-dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 .habit-icon {
   flex-shrink: 0;
   width: 50px;

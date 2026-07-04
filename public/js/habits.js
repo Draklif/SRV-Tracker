@@ -230,6 +230,9 @@
   async function moveHabit(card, dir) {
     const sibling = dir === 'up' ? card.previousElementSibling : card.nextElementSibling;
     if (!sibling) return;
+    // Reinsertar en el DOM reinicia la animación de entrada (parpadeo): anularla.
+    card.style.animation = 'none';
+    sibling.style.animation = 'none';
     if (dir === 'up') list.insertBefore(card, sibling);
     else list.insertBefore(sibling, card);
     const order = [...list.querySelectorAll('.habit-card')].map((c) => Number(c.dataset.habitId));
@@ -243,6 +246,119 @@
     }
   }
 
+  // ---- Colapsable móvil + reorder por long-press ---------------------------
+
+  const isMobile = () => window.matchMedia('(max-width: 560px)').matches;
+  let suppressNextClick = false; // evita que un drag termine abriendo la tarjeta
+
+  function toggleCardOpen(card) {
+    const open = card.classList.toggle('is-open');
+    const chevron = card.querySelector('.hc-expand');
+    if (chevron) chevron.setAttribute('aria-expanded', String(open));
+  }
+
+  /** Reordenar arrastrando tras mantener oprimido (solo táctil). */
+  function setupTouchReorder() {
+    if (!list) return;
+    let pressTimer = null;
+    let dragging = null;
+    let startY = 0;
+    let orderBefore = null;
+
+    const cancelPress = () => {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    };
+
+    let anchorY = 0; // Y del puntero en el último cambio de posición en el DOM
+
+    list.addEventListener('pointerdown', (e) => {
+      if (!isMobile() || e.pointerType === 'mouse') return;
+      const card = e.target.closest('.habit-card');
+      if (!card || card.classList.contains('is-archived')) return;
+      if (e.target.closest('button, a, input')) return;
+      startY = e.clientY;
+      pressTimer = setTimeout(() => {
+        dragging = card;
+        anchorY = startY;
+        orderBefore = [...list.querySelectorAll('.habit-card')].map((c) => c.dataset.habitId);
+        card.classList.add('is-dragging');
+        if (navigator.vibrate) navigator.vibrate(15);
+      }, 400);
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      // Si el dedo se mueve antes del long-press, es un scroll: cancelar.
+      if (pressTimer && !dragging && Math.abs(e.clientY - startY) > 8) cancelPress();
+      if (!dragging) return;
+
+      // La tarjeta sigue al dedo (translate desde su hueco actual).
+      dragging.style.transform = `translateY(${e.clientY - anchorY}px) scale(1.02)`;
+
+      const siblings = [...list.querySelectorAll('.habit-card:not(.is-dragging)')];
+      const next = siblings.find((c) => {
+        const r = c.getBoundingClientRect();
+        return e.clientY < r.top + r.height / 2;
+      });
+      const target = next || null;
+      // Solo tocar el DOM si la posición realmente cambia.
+      if (target !== dragging.nextElementSibling) {
+        if (target) list.insertBefore(dragging, target);
+        else list.appendChild(dragging);
+        // Re-anclar: la tarjeta ocupa su nuevo hueco y sigue bajo el dedo.
+        anchorY = e.clientY;
+        dragging.style.transform = 'scale(1.02)';
+      }
+    });
+
+    // Con drag activo, bloquear el scroll de la página.
+    list.addEventListener(
+      'touchmove',
+      (e) => {
+        if (dragging) e.preventDefault();
+      },
+      { passive: false }
+    );
+
+    async function endDrag() {
+      cancelPress();
+      if (!dragging) return;
+      const card = dragging;
+      dragging = null;
+      card.style.transform = '';
+      card.classList.remove('is-dragging');
+      suppressNextClick = true;
+      setTimeout(() => (suppressNextClick = false), 350);
+
+      const order = [...list.querySelectorAll('.habit-card')].map((c) => Number(c.dataset.habitId));
+      if (order.join() === orderBefore.join()) return; // sin cambios
+      try {
+        await window.api.post('/api/habits/reorder', { order });
+        if (navigator.vibrate) navigator.vibrate(8);
+      } catch (err) {
+        // Revertir al orden original si el servidor rechaza.
+        orderBefore.forEach((id) => {
+          const c = list.querySelector(`[data-habit-id="${id}"]`);
+          if (c) list.appendChild(c);
+        });
+        alert(err.message);
+      }
+    }
+    document.addEventListener('pointerup', endDrag);
+    document.addEventListener('pointercancel', endDrag);
+  }
+  setupTouchReorder();
+
+  // Tap en la tarjeta (fuera de botones/links) también despliega en móvil.
+  if (list) {
+    list.addEventListener('click', (e) => {
+      if (!isMobile() || suppressNextClick) return;
+      if (e.target.closest('button, a, input')) return;
+      const card = e.target.closest('.habit-card');
+      if (card && !card.classList.contains('is-archived')) toggleCardOpen(card);
+    });
+  }
+
   // ---- Cableado de eventos -------------------------------------------------
 
   document.addEventListener('click', (e) => {
@@ -252,11 +368,11 @@
 
     if (action === 'new-habit') return startCreate();
     if (action === 'close') return closeModal();
-    if (action === 'type' /* unused */) return;
 
     const card = trigger.closest('.habit-card');
     if (!card) return;
-    if (action === 'edit') startEdit(card);
+    if (action === 'card-toggle') toggleCardOpen(card);
+    else if (action === 'edit') startEdit(card);
     else if (action === 'archive') archiveHabit(card);
     else if (action === 'restore') restoreHabit(card);
     else if (action === 'up') moveHabit(card, 'up');

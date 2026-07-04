@@ -181,3 +181,25 @@
     transform: none;
   }
 }
+
+@media (max-width: 560px) {
+  /* Header compacto: solo "Entrar" junto a la marca (el hero ya tiene el CTA
+     de crear cuenta); así los botones no colisionan con el logo. */
+  .landing-nav {
+    gap: var(--space-3);
+  }
+  .landing-nav .brand {
+    flex-shrink: 0;
+  }
+  .landing-nav-actions .btn-primary {
+    display: none;
+  }
+  /* CTAs del hero a ancho completo: más naturales con el pulgar. */
+  .hero-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-cta .btn {
+    width: 100%;
+  }
+}
