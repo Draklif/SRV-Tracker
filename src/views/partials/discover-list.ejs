@@ -1,0 +1,13 @@
+<%
+  // Lista de resultados del directorio ("Descubrir"), sin el formulario de
+  // búsqueda. Compartida entre la vista inicial y la respuesta de la API.
+%>
+<% if (directory.length === 0) { %>
+<div class="card empty-note"><p class="text-muted">Nadie coincide con tu búsqueda.</p></div>
+<% } else { %>
+<div class="user-list card">
+  <% directory.forEach((u) => { %>
+  <%- include('user-row', { rowUser: u, rel: u.rel, friendshipId: u.friendship_id, rowMode: 'directory' }) %>
+  <% }) %>
+</div>
+<% } %>

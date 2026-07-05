@@ -12,7 +12,10 @@
   <% tabs.forEach((tab) => { %>
   <a href="<%= tab.href %>" class="bottom-nav-item <%= tab.active ? 'is-active' : '' %>"
      <%= tab.active ? 'aria-current="page"' : '' %>>
-    <span class="bottom-nav-icon"><%- include('icon', { name: tab.icon, size: 22 }) %></span>
+    <span class="bottom-nav-icon">
+      <%- include('icon', { name: tab.icon, size: 22 }) %>
+      <% if (tab.href === '/social') { %><span class="bottom-nav-badge" data-nav-friend-badge <%= pendingFriendCount ? '' : 'hidden' %>><%= pendingFriendCount %></span><% } %>
+    </span>
     <span class="bottom-nav-label"><%= tab.label %></span>
   </a>
   <% }) %>

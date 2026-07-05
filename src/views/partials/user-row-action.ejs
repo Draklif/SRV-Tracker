@@ -1,0 +1,23 @@
+<%
+  // Bloque de botones de una fila de usuario según la relación (`rel`).
+  // Se renderiza en la vista inicial y lo devuelve la API tras cada acción,
+  // así el markup vive en un solo sitio. `friendshipId` puede ser null.
+  const fid = typeof friendshipId !== 'undefined' ? friendshipId : null;
+  const uname = (typeof rowUser !== 'undefined' && rowUser) ? rowUser.username : '';
+%>
+<span class="user-row-action" data-row-action>
+  <% if (rel === 'self') { %>
+    <span class="chip chip-muted">Tú</span>
+  <% } else if (rel === 'friends') { %>
+    <span class="chip chip-ok">Amigos ✓</span>
+    <button type="button" class="btn btn-ghost btn-sm" data-friend-action="remove" data-friendship-id="<%= fid %>">Quitar</button>
+  <% } else if (rel === 'pending_out') { %>
+    <span class="chip chip-muted">Solicitud enviada</span>
+    <button type="button" class="btn btn-ghost btn-sm" data-friend-action="cancel" data-friendship-id="<%= fid %>">Cancelar</button>
+  <% } else if (rel === 'pending_in') { %>
+    <button type="button" class="btn btn-primary btn-sm" data-friend-action="accept" data-friendship-id="<%= fid %>">Aceptar</button>
+    <button type="button" class="btn btn-ghost btn-sm" data-friend-action="decline" data-friendship-id="<%= fid %>">Rechazar</button>
+  <% } else { %>
+    <button type="button" class="btn btn-primary btn-sm" data-friend-action="request" data-username="<%= uname %>">Agregar</button>
+  <% } %>
+</span>

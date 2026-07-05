@@ -125,6 +125,12 @@ const ROLES = Object.freeze({
   ADMIN: 'admin',
 });
 
+/** Estado de una relación de amistad (tabla friendships). */
+const FRIENDSHIP_STATUS = Object.freeze({
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+});
+
 /** Tipos de evento del feed de actividad. */
 const ACTIVITY_TYPES = Object.freeze({
   HABIT_COMPLETED: 'habit_completed',
@@ -149,5 +155,6 @@ module.exports = {
   LEVEL_CURVE,
   INVITE_TTL_MINUTES,
   ROLES,
+  FRIENDSHIP_STATUS,
   ACTIVITY_TYPES,
 };

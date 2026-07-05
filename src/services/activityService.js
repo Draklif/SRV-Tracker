@@ -2,12 +2,19 @@
 
 const activityRepository = require('../models/activityRepository');
 const reactionRepository = require('../models/reactionRepository');
+const friendshipService = require('./friendshipService');
 const { ACTIVITY_TYPES } = require('../config/constants');
 
 /**
- * Feed de actividad global (un solo grupo de amigos). Los eventos se crean
- * desde el subscriber del bus; aquí vive el ensamblado para las vistas.
+ * Feed de actividad acotado a los amigos del usuario (más su propia actividad).
+ * Los eventos se crean desde el subscriber del bus; aquí vive el ensamblado y el
+ * cálculo de qué autores puede ver cada usuario.
  */
+
+/** Autores visibles para `userId`: sus amigos aceptados + él mismo (JSON). */
+function visibleAuthorIds(userId) {
+  return JSON.stringify([userId, ...friendshipService.friendIds(userId)]);
+}
 
 /** Adjunta las reacciones agregadas a cada evento del feed. */
 function withReactions(events, userId) {
@@ -26,11 +33,11 @@ function withReactions(events, userId) {
 }
 
 function feed(userId, limit = 30) {
-  return withReactions(activityRepository.feed(limit), userId);
+  return withReactions(activityRepository.feed(visibleAuthorIds(userId), limit), userId);
 }
 
 function feedAfter(userId, afterId) {
-  return withReactions(activityRepository.after(afterId), userId);
+  return withReactions(activityRepository.after(visibleAuthorIds(userId), afterId), userId);
 }
 
 /** Crea un evento si no existe ya uno igual hoy (anti-spam del feed). */

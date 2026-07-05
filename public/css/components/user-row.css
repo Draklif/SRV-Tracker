@@ -1,0 +1,79 @@
+/* Fila de usuario reutilizable (directorio de amigos, listas y perfil). */
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+}
+
+.user-row + .user-row {
+  border-top: 1px solid var(--border);
+}
+
+.user-row:hover {
+  background: var(--surface-2);
+}
+
+.user-row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.user-row-id {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-row-name {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-row-handle {
+  font-size: var(--fs-xs);
+}
+
+.user-row-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* Variantes de chip para estado de relación. */
+.chip-ok {
+  background: var(--success);
+}
+
+.chip-muted {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+/* Bloque de acción de amistad en la cabecera del perfil. */
+.profile-friend-action {
+  padding: 0;
+  margin-top: var(--space-3);
+  justify-content: flex-start;
+}
+
+.profile-friend-action:hover {
+  background: transparent;
+}

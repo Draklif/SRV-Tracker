@@ -3,20 +3,34 @@
 const activityService = require('../services/activityService');
 const reactionService = require('../services/reactionService');
 const realtimeService = require('../services/realtimeService');
+const friendshipService = require('../services/friendshipService');
 const asyncHandler = require('../utils/asyncHandler');
 const renderPartial = require('../utils/renderPartial');
 const { timeAgo } = require('../utils/format');
 const { REACTIONS } = require('../config/constants');
 
-/** GET /social — feed del grupo. */
+/** GET /social — hub de amigos: feed + gestión (amigos, solicitudes, descubrir). */
 const page = (req, res) => {
   const events = activityService.feed(req.user.id);
+  const search = typeof req.query.q === 'string' ? req.query.q : '';
+  // Pestaña activa al cargar: la del ?tab= (o "discover" si hubo búsqueda),
+  // para no perder el sitio tras enviar el buscador (que recarga la página).
+  const TABS = ['feed', 'friends', 'requests', 'discover'];
+  const activeTab = TABS.includes(req.query.tab)
+    ? req.query.tab
+    : search
+      ? 'discover'
+      : 'feed';
   res.render('pages/social', {
     title: 'Amigos',
     events,
     reactionEmojis: REACTIONS,
     timeAgo,
     lastId: events.length ? events[0].id : 0,
+    friends: friendshipService.overview(req.user.id),
+    directory: friendshipService.directory(req.user.id, search),
+    search,
+    activeTab,
   });
 };
 

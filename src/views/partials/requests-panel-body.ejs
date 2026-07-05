@@ -1,0 +1,23 @@
+<%
+  // Cuerpo de la pestaña "Solicitudes" (recibidas + enviadas). Igual que
+  // friends-panel-body: compartido entre la vista inicial y la respuesta de la API.
+%>
+<h2 class="section-title">Recibidas</h2>
+<div class="user-list card">
+  <% if (friends.incoming.length === 0) { %>
+  <p class="text-muted empty-note">Sin solicitudes pendientes.</p>
+  <% } %>
+  <% friends.incoming.forEach((r) => { %>
+  <%- include('user-row', { rowUser: r, rel: 'pending_in', friendshipId: r.friendship_id, rowMode: 'list' }) %>
+  <% }) %>
+</div>
+
+<h2 class="section-title">Enviadas</h2>
+<div class="user-list card">
+  <% if (friends.outgoing.length === 0) { %>
+  <p class="text-muted empty-note">No has enviado solicitudes.</p>
+  <% } %>
+  <% friends.outgoing.forEach((r) => { %>
+  <%- include('user-row', { rowUser: r, rel: 'pending_out', friendshipId: r.friendship_id, rowMode: 'list' }) %>
+  <% }) %>
+</div>

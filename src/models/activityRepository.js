@@ -2,7 +2,11 @@
 
 const db = require('../database/connection');
 
-/** Acceso a datos del feed de actividad global. */
+/**
+ * Acceso a datos del feed de actividad. El feed está acotado a un conjunto de
+ * autores (@ids, JSON de user_id = amigos + uno mismo); el service lo calcula.
+ * Se ligan como JSON + json_each porque better-sqlite3 no liga arrays.
+ */
 
 const statements = {
   insert: db.prepare(
@@ -16,12 +20,14 @@ const statements = {
   feed: db.prepare(`
     SELECT ae.*, u.username, u.display_name, u.avatar_path
     FROM activity_events ae JOIN users u ON u.id = ae.user_id
-    ORDER BY ae.id DESC LIMIT ?
+    WHERE ae.user_id IN (SELECT value FROM json_each(@ids))
+    ORDER BY ae.id DESC LIMIT @limit
   `),
   after: db.prepare(`
     SELECT ae.*, u.username, u.display_name, u.avatar_path
     FROM activity_events ae JOIN users u ON u.id = ae.user_id
-    WHERE ae.id > ? ORDER BY ae.id ASC LIMIT 20
+    WHERE ae.id > @after AND ae.user_id IN (SELECT value FROM json_each(@ids))
+    ORDER BY ae.id ASC LIMIT 20
   `),
   // Anti-spam: ¿ya existe hoy un evento igual (mismo usuario/tipo/hábito)?
   existsForDay: db.prepare(`
@@ -38,12 +44,14 @@ function insert(userId, type, payload) {
   return statements.byId.get(info.lastInsertRowid);
 }
 
-function feed(limit) {
-  return statements.feed.all(limit);
+/** Feed de los autores `idsJson` (JSON de user_id), más recientes primero. */
+function feed(idsJson, limit) {
+  return statements.feed.all({ ids: idsJson, limit });
 }
 
-function after(id) {
-  return statements.after.all(id);
+/** Eventos posteriores a `afterId` de los autores `idsJson` (para SSE). */
+function after(idsJson, afterId) {
+  return statements.after.all({ ids: idsJson, after: afterId });
 }
 
 function existsForDay(userId, type, habitId, day) {

@@ -91,3 +91,24 @@
     display: none;
   }
 }
+
+/* Badge de solicitudes de amistad en el enlace "Amigos". */
+.nav-link-friends {
+  position: relative;
+}
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.3em;
+  height: 1.3em;
+  margin-left: 0.35em;
+  padding: 0 0.4em;
+  border-radius: var(--radius-pill);
+  background: var(--danger, #e5484d);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 900;
+  vertical-align: middle;
+}
+.nav-badge[hidden] { display: none; }

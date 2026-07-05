@@ -1,9 +1,9 @@
-<% const pageScripts = ['/js/api.js', '/js/social.js']; %>
+<% const pageScripts = ['/js/api.js', '/js/social.js', '/js/friends.js']; %>
 <%- include('../partials/head', { title, styles: ['/css/pages/social.css'] }) %>
 
 <%- include('../partials/app-nav') %>
 
-<main class="container social-page">
+<main class="container social-page" id="friends-hub">
   <%- include('../partials/flash') %>
 
   <header class="page-head">
@@ -11,17 +11,59 @@
     <span class="live-dot" title="Feed en vivo"><span></span> En vivo</span>
   </header>
 
-  <section class="feed" id="feed" data-last-id="<%= lastId %>" data-user-id="<%= user.id %>">
-    <% if (events.length === 0) { %>
-    <div class="feed-empty card">
-      <span class="empty-emoji">🫶</span>
-      <h2>Todo tranquilo por aquí</h2>
-      <p class="text-muted">Cuando tú o tus amigos completen hábitos, lo verás aquí al instante.</p>
+  <% const isTab = (t) => (activeTab === t ? 'is-active' : ''); %>
+  <nav class="tabs" role="tablist" aria-label="Secciones de amigos">
+    <button class="tab <%= isTab('feed') %>" role="tab" data-tab="feed">Feed</button>
+    <button class="tab <%= isTab('friends') %>" role="tab" data-tab="friends">Mis amigos <span class="tab-count"><%= friends.friends.length %></span></button>
+    <button class="tab <%= isTab('requests') %>" role="tab" data-tab="requests">
+      Solicitudes
+      <span class="tab-badge" data-requests-badge <%= friends.pendingCount ? '' : 'hidden' %>><%= friends.pendingCount %></span>
+    </button>
+    <button class="tab <%= isTab('discover') %>" role="tab" data-tab="discover">Descubrir</button>
+  </nav>
+
+  <!-- Feed -->
+  <section class="tab-panel <%= isTab('feed') %>" data-panel="feed" <%= activeTab === 'feed' ? '' : 'hidden' %>>
+    <div class="feed" id="feed" data-last-id="<%= lastId %>" data-user-id="<%= user.id %>">
+      <% if (events.length === 0) { %>
+      <div class="feed-empty card">
+        <span class="empty-emoji">🫶</span>
+        <h2>Todo tranquilo por aquí</h2>
+        <p class="text-muted">Cuando tú o tus amigos completen hábitos, lo verás aquí al instante.</p>
+      </div>
+      <% } %>
+      <% events.forEach((event) => { %>
+      <%- include('../partials/feed-item', { event, reactionEmojis, timeAgo }) %>
+      <% }) %>
     </div>
-    <% } %>
-    <% events.forEach((event) => { %>
-    <%- include('../partials/feed-item', { event, reactionEmojis, timeAgo }) %>
-    <% }) %>
+  </section>
+
+  <!-- Mis amigos -->
+  <section class="tab-panel <%= isTab('friends') %>" data-panel="friends" <%= activeTab === 'friends' ? '' : 'hidden' %>>
+    <div data-friends-body>
+      <%- include('../partials/friends-panel-body', { friends }) %>
+    </div>
+  </section>
+
+  <!-- Solicitudes -->
+  <section class="tab-panel <%= isTab('requests') %>" data-panel="requests" <%= activeTab === 'requests' ? '' : 'hidden' %>>
+    <div data-requests-body>
+      <%- include('../partials/requests-panel-body', { friends }) %>
+    </div>
+  </section>
+
+  <!-- Descubrir -->
+  <section class="tab-panel <%= isTab('discover') %>" data-panel="discover" <%= activeTab === 'discover' ? '' : 'hidden' %>>
+    <form class="search-form" method="get" action="/social">
+      <input type="hidden" name="tab" value="discover" />
+      <div class="field">
+        <input type="search" name="q" value="<%= search %>" placeholder="Buscar por nombre o usuario…" aria-label="Buscar personas" />
+      </div>
+      <button class="btn btn-primary" type="submit">Buscar</button>
+    </form>
+    <div data-discover-body>
+      <%- include('../partials/discover-list', { directory }) %>
+    </div>
   </section>
 </main>
 

@@ -7,6 +7,7 @@ const profileRoutes = require('./web/profileRoutes');
 const habitRoutes = require('./web/habitRoutes');
 const habitApiRoutes = require('./api/habitApiRoutes');
 const socialApiRoutes = require('./api/socialApiRoutes');
+const friendApiRoutes = require('./api/friendApiRoutes');
 const socialController = require('../controllers/socialController');
 const requireAuth = require('../middlewares/requireAuth');
 
@@ -39,6 +40,7 @@ router.get('/u/:username', requireAuth, require('../controllers/userController')
 
 // API JSON.
 router.use('/api/habits', habitApiRoutes);
+router.use('/api/friends', friendApiRoutes);
 router.use('/api', socialApiRoutes);
 
 module.exports = router;

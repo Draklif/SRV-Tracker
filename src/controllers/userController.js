@@ -8,6 +8,7 @@ const userService = require('../services/userService');
 const achievementService = require('../services/achievementService');
 const resourceService = require('../services/resourceService');
 const inviteService = require('../services/inviteService');
+const friendshipService = require('../services/friendshipService');
 const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
 const { NotFoundError } = require('../utils/errors');
@@ -112,6 +113,7 @@ const showFriend = (req, res) => {
   return res.render('pages/friend-profile', {
     title: friend.display_name,
     friend,
+    friendStatus: friendshipService.statusWith(req.user.id, friend.id),
     level: levelProgress(friend.xp),
     unlocked: achievements.filter((a) => a.unlocked_at),
     totalAchievements: achievements.length,

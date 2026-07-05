@@ -1,0 +1,20 @@
+<%
+  // Fila de usuario reutilizable (directorio, amigos, solicitudes).
+  // `rowUser` = { id, username, display_name, avatar_path }.
+  // `rel` = none | pending_out | pending_in | friends | self.
+  // `friendshipId` = id de la relación (o null). `rowMode` = 'directory' | 'list':
+  //   'list' → la fila se elimina del DOM tras una acción terminal (solicitudes/amigos).
+  //   'directory' → la acción se re-renderiza en el sitio.
+  const mode = typeof rowMode !== 'undefined' ? rowMode : 'directory';
+  const fid = typeof friendshipId !== 'undefined' ? friendshipId : null;
+%>
+<div class="user-row" data-user-id="<%= rowUser.id %>" data-username="<%= rowUser.username %>" data-row-mode="<%= mode %>">
+  <a class="user-row-main" href="/u/<%= rowUser.username %>">
+    <%- include('avatar', { avatarUser: rowUser, size: 'sm' }) %>
+    <span class="user-row-id">
+      <span class="user-row-name"><%= rowUser.display_name %></span>
+      <span class="user-row-handle text-muted">@<%= rowUser.username %></span>
+    </span>
+  </a>
+  <%- include('user-row-action', { rel, friendshipId: fid, rowUser }) %>
+</div>

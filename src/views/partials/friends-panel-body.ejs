@@ -1,0 +1,13 @@
+<%
+  // Cuerpo de la pestaña "Mis amigos". Se renderiza en la vista inicial y lo
+  // devuelve la API tras cada acción para mantener las pestañas sincronizadas.
+%>
+<% if (friends.friends.length === 0) { %>
+<div class="card empty-note"><p class="text-muted">Aún no tienes amigos. Ve a <strong>Descubrir</strong> para agregar gente.</p></div>
+<% } else { %>
+<div class="user-list card">
+  <% friends.friends.forEach((f) => { %>
+  <%- include('user-row', { rowUser: f, rel: 'friends', friendshipId: f.friendship_id, rowMode: 'list' }) %>
+  <% }) %>
+</div>
+<% } %>
