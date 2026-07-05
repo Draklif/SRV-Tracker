@@ -1,0 +1,294 @@
+/* La Colonia — rejilla de salas, tesoro y modales. UI-first, sin assets. */
+
+.village-page {
+  padding-bottom: calc(var(--bottom-nav-h) + var(--space-6));
+}
+
+.page-head-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.dev-btn {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+/* ── Estado sin colonia ── */
+.village-intro {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.intro-emoji {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: var(--space-2);
+}
+.village-create {
+  margin-top: var(--space-4);
+  text-align: left;
+}
+.village-invites {
+  max-width: 480px;
+  margin: var(--space-4) auto 0;
+}
+.invite-list,
+.member-list,
+.invite-friend-list {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.invite-row,
+.invite-friend-row,
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.invite-row {
+  justify-content: space-between;
+}
+.member-name {
+  flex: 1;
+}
+.member-badge {
+  font-size: var(--fs-xs, 0.75rem);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+}
+
+/* ── Tesoro compartido ── */
+.treasury {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.treasury-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.treasury-icon {
+  font-size: 1.25rem;
+}
+
+/* ── Rejilla de salas ── */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+@media (max-width: 560px) {
+  .room-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.room-tile {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.room-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand);
+  box-shadow: var(--shadow);
+}
+.room-tile.is-built {
+  border-top: 5px solid var(--brand);
+}
+.room-tile.is-empty {
+  border-style: dashed;
+  color: var(--text-muted);
+  background: transparent;
+}
+.room-tile.is-building {
+  opacity: 0.85;
+  border-top-color: var(--amber, #ffcf66);
+}
+.room-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+.room-plus {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.room-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.room-lvl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.room-status {
+  font-size: 0.68rem;
+  color: var(--amber, #ffcf66);
+  font-weight: 700;
+}
+
+.village-members {
+  margin-top: var(--space-5);
+}
+
+/* ── Modal de construcción ── */
+.room-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.room-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  text-align: left;
+  padding: var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.room-option:hover {
+  border-color: var(--brand);
+  transform: translateX(2px);
+}
+.room-option .room-icon {
+  font-size: 1.5rem;
+}
+.room-option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cost-chips {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cost-chip {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.room-modal-status {
+  font-weight: 700;
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+/* ── Modal (mismo lenguaje que habits.css, per-página) ── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-35deg, rgba(246, 244, 237, 0.03) 0 2px, transparent 2px 14px),
+    rgba(9, 13, 24, 0.78);
+  backdrop-filter: blur(3px);
+  animation: fade-in 160ms var(--ease);
+}
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: var(--card-border);
+  border-top: 6px solid var(--brand);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5);
+  animation: panel-in 240ms var(--ease-snap);
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.modal-close {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transform: rotate(-4deg);
+  transition: all var(--transition);
+  cursor: pointer;
+  background: transparent;
+}
+.modal-close:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: rotate(0deg);
+}
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.modal-foot .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}

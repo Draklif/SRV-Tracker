@@ -137,6 +137,47 @@ const ACTIVITY_TYPES = Object.freeze({
   STREAK_MILESTONE: 'streak_milestone',
   LEVEL_UP: 'level_up',
   ACHIEVEMENT_UNLOCKED: 'achievement_unlocked',
+  VILLAGE_ROOM_BUILT: 'village_room_built',
+  VILLAGE_JOINED: 'village_joined',
+});
+
+/* ─────────────────────────  La Colonia (aldea)  ───────────────────────── */
+
+/** Estado de una membresía de colonia (tabla village_members). */
+const MEMBER_STATUS = Object.freeze({
+  PENDING: 'pending', // Invitado, aún no acepta
+  ACTIVE: 'active', // Miembro de pleno derecho
+});
+
+/** Nº de slots (posiciones de construcción) de la rejilla de la colonia. */
+const VILLAGE_MAX_SLOTS = 12;
+
+/**
+ * Tipos de sala construibles. El reskin es sci-fi (base espacial), pero cada
+ * sala se ancla a uno de los 4 recursos primarios (ver RESOURCE_TYPES).
+ */
+const ROOM_TYPES = Object.freeze({
+  RECICLADOR: 'reciclador', // 💧 agua
+  REACTOR: 'reactor', // ⚡ energía
+  LABORATORIO: 'laboratorio', // 📚 conocimiento
+  HIDROPONIA: 'hidroponia', // 🍞 comida
+  ALMACEN: 'almacen', // 🔩 infraestructura
+});
+
+const ROOM_TYPE_KEYS = Object.freeze(Object.values(ROOM_TYPES));
+
+/**
+ * Metadatos de cada sala para la UI y la economía de construcción. Mismo patrón
+ * que HABIT_TYPE_META / RESOURCE_TYPE_META. `cost` es el coste base (nivel 1);
+ * las mejoras escalan el coste por nivel en el servicio. `buildMinutes` es la
+ * duración de la construcción (timer perezoso). Costes tuneables.
+ */
+const ROOM_META = Object.freeze({
+  reciclador: { label: 'Reciclador', icon: '💧', resource: 'water', desc: 'Purifica y almacena agua/O₂.', cost: { water: 20 }, buildMinutes: 120 },
+  reactor: { label: 'Reactor', icon: '⚡', resource: 'energy', desc: 'Genera y distribuye energía a la base.', cost: { energy: 20 }, buildMinutes: 120 },
+  laboratorio: { label: 'Laboratorio', icon: '📚', resource: 'knowledge', desc: 'Investigación: base de futuros desbloqueos.', cost: { knowledge: 25 }, buildMinutes: 180 },
+  hidroponia: { label: 'Hidroponía', icon: '🍞', resource: 'food', desc: 'Cultiva raciones para la colonia.', cost: { food: 20 }, buildMinutes: 120 },
+  almacen: { label: 'Almacén', icon: '🔩', resource: 'energy', desc: 'Amplía la capacidad del tesoro compartido.', cost: { energy: 10, knowledge: 10 }, buildMinutes: 90 },
 });
 
 module.exports = {
@@ -157,4 +198,9 @@ module.exports = {
   ROLES,
   FRIENDSHIP_STATUS,
   ACTIVITY_TYPES,
+  MEMBER_STATUS,
+  VILLAGE_MAX_SLOTS,
+  ROOM_TYPES,
+  ROOM_TYPE_KEYS,
+  ROOM_META,
 };

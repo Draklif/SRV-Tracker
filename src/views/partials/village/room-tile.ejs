@@ -1,0 +1,28 @@
+<%
+  // Una celda de la rejilla: sala construida/en obras, o hueco vacío.
+  // Params: slot (fila de village_rooms o null), index, roomMeta.
+  const meta = slot ? roomMeta[slot.room_type] : null;
+%>
+<% if (slot && meta) { %>
+<button type="button"
+        class="room-tile is-built<%= slot.status === 'constructing' ? ' is-building' : '' %>"
+        data-action="room"
+        data-slot="<%= index %>"
+        data-room-id="<%= slot.id %>"
+        data-room-type="<%= slot.room_type %>"
+        data-level="<%= slot.level %>"
+        data-status="<%= slot.status %>"
+        data-finish="<%= slot.construct_finish_at || '' %>">
+  <span class="room-icon" aria-hidden="true"><%= meta.icon %></span>
+  <span class="room-name"><%= meta.label %></span>
+  <span class="room-lvl">Nv <%= slot.level %></span>
+  <% if (slot.status === 'constructing') { %>
+  <span class="room-status" data-countdown="<%= slot.construct_finish_at %>">En obras…</span>
+  <% } %>
+</button>
+<% } else { %>
+<button type="button" class="room-tile is-empty" data-action="empty" data-slot="<%= index %>">
+  <span class="room-plus" aria-hidden="true">＋</span>
+  <span class="room-name">Construir</span>
+</button>
+<% } %>

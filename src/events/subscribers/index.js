@@ -3,6 +3,7 @@
 const gamification = require('./gamification');
 const activity = require('./activity');
 const resource = require('./resource');
+const village = require('./village');
 
 /**
  * Registra todos los subscribers del bus. Se llama una vez al crear la app.
@@ -18,6 +19,7 @@ function registerAll() {
   gamification.register();
   activity.register();
   resource.register();
+  village.register();
 }
 
 module.exports = { registerAll };

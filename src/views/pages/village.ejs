@@ -1,0 +1,163 @@
+<% const pageScripts = ['/js/api.js', '/js/village.js']; %>
+<%- include('../partials/head', { title, styles: ['/css/pages/village.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container village-page" id="village-root">
+  <%- include('../partials/flash') %>
+
+  <% if (!vm.village) { %>
+  <!-- ─────────────── Estado: sin colonia ─────────────── -->
+  <header class="page-head">
+    <h1>La Colonia</h1>
+  </header>
+
+  <section class="card village-intro">
+    <span class="intro-emoji" aria-hidden="true">🛰️</span>
+    <h2>Funda tu colonia</h2>
+    <p class="text-muted">Una base espacial que tú y tus amigos hacen crecer con sus hábitos reales. Cada avance aporta recursos al tesoro compartido.</p>
+    <form id="create-village-form" class="form village-create">
+      <div class="field">
+        <label for="village-name">Nombre de la colonia</label>
+        <input type="text" id="village-name" name="name" maxlength="40" placeholder="Ej. Refugio Orión" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Fundar colonia</button>
+    </form>
+  </section>
+
+  <% if (vm.invites && vm.invites.length) { %>
+  <section class="card village-invites">
+    <h2>Invitaciones</h2>
+    <ul class="invite-list">
+      <% vm.invites.forEach((inv) => { %>
+      <li class="invite-row">
+        <div>
+          <b><%= inv.village_name %></b>
+          <% if (inv.invited_by_name) { %><span class="text-muted"> · te invitó <%= inv.invited_by_name %></span><% } %>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" data-action="accept" data-village-id="<%= inv.village_id %>">Unirme</button>
+      </li>
+      <% }) %>
+    </ul>
+  </section>
+  <% } %>
+
+  <% } else { %>
+  <!-- ─────────────── Estado: con colonia ─────────────── -->
+  <header class="page-head">
+    <h1><%= vm.village.name %></h1>
+    <div class="page-head-actions">
+      <% if (isDev) { %>
+      <button type="button" class="btn btn-ghost btn-sm dev-btn" data-action="dev-refill" title="Solo desarrollo">🛠 Rellenar (dev)</button>
+      <% } %>
+      <button type="button" class="btn btn-ghost btn-sm" data-action="open-invite">Invitar amigo</button>
+    </div>
+  </header>
+
+  <!-- Tesoro compartido -->
+  <section class="treasury" aria-label="Tesoro compartido">
+    <% Object.entries(resourceMeta).forEach(([key, meta]) => { %>
+    <div class="treasury-item" title="<%= meta.label %>">
+      <span class="treasury-icon" aria-hidden="true"><%= meta.icon %></span>
+      <span class="treasury-value" data-resource="<%= key %>"><%= vm.treasury[key] || 0 %></span>
+    </div>
+    <% }) %>
+  </section>
+
+  <!-- Rejilla de salas -->
+  <section class="room-grid" aria-label="Salas de la colonia">
+    <% vm.slots.forEach((slot, index) => { %>
+    <%- include('../partials/village/room-tile', { slot, index, roomMeta }) %>
+    <% }) %>
+  </section>
+
+  <!-- Miembros -->
+  <section class="card village-members">
+    <h2>Colonos (<%= vm.members.length %>)</h2>
+    <ul class="member-list">
+      <% vm.members.forEach((m) => { %>
+      <li class="member-row">
+        <%- include('../partials/avatar', { avatarUser: m, size: 'sm' }) %>
+        <span class="member-name"><%= m.display_name %></span>
+        <% if (m.status === 'pending') { %><span class="member-badge">pendiente</span><% } %>
+      </li>
+      <% }) %>
+    </ul>
+  </section>
+  <% } %>
+</main>
+
+<!-- Datos para el cliente -->
+<script id="village-data" type="application/json"><%- JSON.stringify({ roomMeta, resourceMeta }) %></script>
+
+<% if (vm.village) { %>
+<!-- ─────────────── Modal: construir ─────────────── -->
+<div class="modal" id="build-modal" hidden aria-hidden="true">
+  <div class="modal-backdrop" data-action="close"></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="build-modal-title">
+    <header class="modal-head">
+      <h2 id="build-modal-title">Construir sala</h2>
+      <button type="button" class="modal-close" data-action="close" aria-label="Cerrar">✕</button>
+    </header>
+    <div class="room-options">
+      <% roomKeys.forEach((key) => { const meta = roomMeta[key]; %>
+      <button type="button" class="room-option" data-build="<%= key %>">
+        <span class="room-icon" aria-hidden="true"><%= meta.icon %></span>
+        <span class="room-option-body">
+          <b><%= meta.label %></b>
+          <small class="text-muted"><%= meta.desc %></small>
+          <span class="cost-chips">
+            <% Object.entries(meta.cost).forEach(([r, n]) => { %>
+            <span class="cost-chip"><%= n %> <%= resourceMeta[r] ? resourceMeta[r].icon : r %></span>
+            <% }) %>
+          </span>
+        </span>
+      </button>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── Modal: detalle de sala ─────────────── -->
+<div class="modal" id="room-modal" hidden aria-hidden="true">
+  <div class="modal-backdrop" data-action="close"></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="room-modal-title">
+    <header class="modal-head">
+      <h2 id="room-modal-title">Sala</h2>
+      <button type="button" class="modal-close" data-action="close" aria-label="Cerrar">✕</button>
+    </header>
+    <p id="room-modal-desc" class="text-muted"></p>
+    <p id="room-modal-status" class="room-modal-status"></p>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="room-rush-btn" data-action="rush" hidden>Completar ya · gratis</button>
+      <button type="button" class="btn btn-primary" id="room-upgrade-btn" data-action="upgrade">Mejorar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── Modal: invitar ─────────────── -->
+<div class="modal" id="invite-modal" hidden aria-hidden="true">
+  <div class="modal-backdrop" data-action="close"></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="invite-modal-title">
+    <header class="modal-head">
+      <h2 id="invite-modal-title">Invitar amigo</h2>
+      <button type="button" class="modal-close" data-action="close" aria-label="Cerrar">✕</button>
+    </header>
+    <% if (!friends.length) { %>
+    <p class="text-muted">Aún no tienes amigos para invitar. Agrega amigos desde la sección Amigos.</p>
+    <% } else { %>
+    <ul class="invite-friend-list">
+      <% friends.forEach((f) => { %>
+      <li class="invite-friend-row">
+        <%- include('../partials/avatar', { avatarUser: f, size: 'sm' }) %>
+        <span class="member-name"><%= f.display_name %></span>
+        <button type="button" class="btn btn-sm btn-primary" data-action="invite" data-friend-id="<%= f.id %>">Invitar</button>
+      </li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </div>
+</div>
+<% } %>
+
+<%- include('../partials/foot', { scripts: pageScripts }) %>
