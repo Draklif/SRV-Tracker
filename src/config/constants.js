@@ -149,36 +149,145 @@ const MEMBER_STATUS = Object.freeze({
   ACTIVE: 'active', // Miembro de pleno derecho
 });
 
-/** Nº de slots (posiciones de construcción) de la rejilla de la colonia. */
-const VILLAGE_MAX_SLOTS = 12;
+/* ── Economía de dos capas ──
+ * PRIMARIOS (RESOURCE_TYPES: water/energy/knowledge/food) vienen de hábitos y son
+ * la ÚNICA moneda de construcción (regla sagrada, intacta). Los SECUNDARIOS se
+ * producen DENTRO de la colonia (capa de supervivencia) y son data-driven: añadir
+ * uno nuevo = solo metadatos + una sala productora, sin tocar esquema. En Fase A
+ * se modelan pero permanecen INERTES (no hay colonos que los operen).
+ */
+
+/** Tipos de recurso secundario (producidos en la colonia). */
+const SECONDARY_RESOURCE_TYPES = Object.freeze(['o2', 'prepared_food', 'treated_water']);
+// Hueco documentado para el futuro (Fase B+): 'science', 'medicine', 'ammo'.
+// Añadir = agregar la clave aquí + su meta abajo + una sala que lo produzca.
+
+/** Metadatos de cada secundario para la UI. Mismo patrón que RESOURCE_TYPE_META. */
+const SECONDARY_RESOURCE_META = Object.freeze({
+  o2: { label: 'Oxígeno', icon: '🫧', desc: 'Aire respirable de los generadores.' },
+  prepared_food: { label: 'Raciones', icon: '🥫', desc: 'Comida preparada en el comedor.' },
+  treated_water: { label: 'Agua tratada', icon: '🚰', desc: 'Agua potable de la planta.' },
+});
 
 /**
- * Tipos de sala construibles. El reskin es sci-fi (base espacial), pero cada
- * sala se ancla a uno de los 4 recursos primarios (ver RESOURCE_TYPES).
+ * Créditos: TERCERA capa económica (ni primaria ni secundaria). Moneda de
+ * aceleración/comercio. Acelerar una construcción cuesta créditos según el tiempo
+ * que aún le falte (redondeado hacia arriba, mínimo 1).
+ */
+const CREDITS_META = Object.freeze({ label: 'Créditos', icon: '🪙', desc: 'Moneda para acelerar y comerciar.' });
+const RUSH_CREDITS_PER_MINUTE = 1;
+
+/** Categorías de sala. Determinan el rol de la sala en el sistema. */
+const ROOM_CATEGORIES = Object.freeze({
+  PRODUCTION: 'production', // Produce un secundario
+  CAPACITY: 'capacity', // Amplía capacidad de almacenamiento
+  TRAINING: 'training', // Entrena colonos (Fase B)
+  EXPEDITION: 'expedition', // Lanza expediciones (Fase B)
+  INFRASTRUCTURE: 'infrastructure', // Núcleo, laboratorio, elevador…
+});
+
+/**
+ * Constantes de la rejilla. La unidad horizontal es la MEDIA casilla: una sala
+ * cuadrada mide 2 unidades de ancho y un elevador 1 (media casilla, ilusión de
+ * conector fino). Así el mapa hace snap fino y las salas siguen viéndose
+ * cuadradas. `col`/`width` en village_rooms están en estas unidades.
+ */
+const ROOM_BASE_WIDTH = 2; // Una sala cuadrada nace de 2 unidades (1 casilla)…
+const ROOM_MAX_WIDTH = 6; // …y se fusiona con iguales hasta 6 unidades (3 salas).
+
+/**
+ * Tipos de sala construibles. El Núcleo es infraestructura sembrada (no
+ * construible). Reskin sci-fi (base espacial).
  */
 const ROOM_TYPES = Object.freeze({
-  RECICLADOR: 'reciclador', // 💧 agua
-  REACTOR: 'reactor', // ⚡ energía
-  LABORATORIO: 'laboratorio', // 📚 conocimiento
-  HIDROPONIA: 'hidroponia', // 🍞 comida
-  ALMACEN: 'almacen', // 🔩 infraestructura
+  NUCLEO: 'nucleo',
+  O2_GENERATOR: 'o2_generator',
+  DINER: 'diner',
+  WATER_TREATMENT: 'water_treatment',
+  STORAGE: 'storage',
+  LABORATORY: 'laboratory',
+  ELEVATOR: 'elevator',
+  TRAINING_ROOM: 'training_room',
+  EXPEDITION_BAY: 'expedition_bay',
 });
 
 const ROOM_TYPE_KEYS = Object.freeze(Object.values(ROOM_TYPES));
 
 /**
- * Metadatos de cada sala para la UI y la economía de construcción. Mismo patrón
- * que HABIT_TYPE_META / RESOURCE_TYPE_META. `cost` es el coste base (nivel 1);
- * las mejoras escalan el coste por nivel en el servicio. `buildMinutes` es la
- * duración de la construcción (timer perezoso). Costes tuneables.
+ * Metadatos de cada sala. Mismo patrón que RESOURCE_TYPE_META. Campos:
+ *  - label, icon, category, desc — UI.
+ *  - cost:{<primario>:n} — coste base (nivel 1); las mejoras escalan por nivel.
+ *  - buildMinutes — duración de la construcción (timer perezoso).
+ *  - unlockTier — tier requerido; se desbloquea con el nivel del Laboratorio
+ *    (tier 0 siempre disponible). El Laboratorio ES el que sube el tier.
+ *  - baseWidth / maxWidth — huella en celdas (fusión de iguales adyacentes).
+ *  - workerSlotsPerCell — plazas de colono por celda (Fase B; inerte en A).
+ *  - produces:{<secundario>:perMin} — producción por minuto (Fase B; inerte).
+ *  - consumesO2 — O₂/min que consume (Fase B; inerte).
+ *  - caps:{<secundario>:+n} — capacidad de almacenamiento que aporta.
+ *  - buildable — false para el Núcleo (sembrado, no se construye).
+ * Valores tuneables.
  */
 const ROOM_META = Object.freeze({
-  reciclador: { label: 'Reciclador', icon: '💧', resource: 'water', desc: 'Purifica y almacena agua/O₂.', cost: { water: 20 }, buildMinutes: 120 },
-  reactor: { label: 'Reactor', icon: '⚡', resource: 'energy', desc: 'Genera y distribuye energía a la base.', cost: { energy: 20 }, buildMinutes: 120 },
-  laboratorio: { label: 'Laboratorio', icon: '📚', resource: 'knowledge', desc: 'Investigación: base de futuros desbloqueos.', cost: { knowledge: 25 }, buildMinutes: 180 },
-  hidroponia: { label: 'Hidroponía', icon: '🍞', resource: 'food', desc: 'Cultiva raciones para la colonia.', cost: { food: 20 }, buildMinutes: 120 },
-  almacen: { label: 'Almacén', icon: '🔩', resource: 'energy', desc: 'Amplía la capacidad del tesoro compartido.', cost: { energy: 10, knowledge: 10 }, buildMinutes: 90 },
+  nucleo: {
+    label: 'Núcleo', icon: '🛰️', category: ROOM_CATEGORIES.INFRASTRUCTURE, buildable: false,
+    desc: 'El corazón de la colonia. Todo crece a partir de aquí.',
+    cost: {}, buildMinutes: 0, unlockTier: 0, baseWidth: 2, maxWidth: 2,
+    workerSlotsPerCell: 0, produces: {}, consumesO2: 0, caps: {},
+  },
+  o2_generator: {
+    label: 'Generador de O₂', icon: '🫧', category: ROOM_CATEGORIES.PRODUCTION,
+    desc: 'Produce oxígeno para mantener la colonia respirable.',
+    cost: { energy: 20 }, buildMinutes: 120, unlockTier: 0, baseWidth: 2, maxWidth: 6,
+    workerSlotsPerCell: 1, produces: { o2: 2 }, consumesO2: 0, caps: {},
+  },
+  diner: {
+    label: 'Comedor', icon: '🍳', category: ROOM_CATEGORIES.PRODUCTION,
+    desc: 'Prepara raciones a partir de la despensa.',
+    cost: { food: 20 }, buildMinutes: 120, unlockTier: 0, baseWidth: 2, maxWidth: 6,
+    workerSlotsPerCell: 1, produces: { prepared_food: 2 }, consumesO2: 1, caps: {},
+  },
+  water_treatment: {
+    label: 'Planta de agua', icon: '🚰', category: ROOM_CATEGORIES.PRODUCTION,
+    desc: 'Potabiliza agua para la colonia.',
+    cost: { water: 20 }, buildMinutes: 120, unlockTier: 0, baseWidth: 2, maxWidth: 6,
+    workerSlotsPerCell: 1, produces: { treated_water: 2 }, consumesO2: 1, caps: {},
+  },
+  storage: {
+    label: 'Almacén', icon: '📦', category: ROOM_CATEGORIES.CAPACITY,
+    desc: 'Amplía la capacidad de almacenamiento de secundarios.',
+    cost: { energy: 10, knowledge: 10 }, buildMinutes: 90, unlockTier: 0, baseWidth: 2, maxWidth: 6,
+    workerSlotsPerCell: 0, produces: {}, consumesO2: 0,
+    caps: { o2: 50, prepared_food: 50, treated_water: 50 },
+  },
+  laboratory: {
+    label: 'Laboratorio', icon: '📚', category: ROOM_CATEGORIES.INFRASTRUCTURE,
+    desc: 'Investigación: su nivel desbloquea salas de mayor tier.',
+    cost: { knowledge: 25 }, buildMinutes: 180, unlockTier: 0, baseWidth: 2, maxWidth: 2,
+    workerSlotsPerCell: 0, produces: {}, consumesO2: 0, caps: {},
+  },
+  elevator: {
+    label: 'Elevador', icon: '🛗', category: ROOM_CATEGORIES.INFRASTRUCTURE,
+    desc: 'Conector vertical: habilita construir en el piso de arriba/abajo.',
+    cost: { energy: 15 }, buildMinutes: 60, unlockTier: 0, baseWidth: 1, maxWidth: 1,
+    workerSlotsPerCell: 0, produces: {}, consumesO2: 0, caps: {},
+  },
+  training_room: {
+    label: 'Sala de entrenamiento', icon: '🏋️', category: ROOM_CATEGORIES.TRAINING,
+    desc: 'Entrena a los colonos para mejorar sus aptitudes.',
+    cost: { energy: 30, knowledge: 20 }, buildMinutes: 240, unlockTier: 1, baseWidth: 2, maxWidth: 6,
+    workerSlotsPerCell: 1, produces: {}, consumesO2: 1, caps: {},
+  },
+  expedition_bay: {
+    label: 'Bahía de expedición', icon: '🚀', category: ROOM_CATEGORIES.EXPEDITION,
+    desc: 'Lanza expediciones al exterior. Ocupa 2 casillas y solo cabe una por colonia.',
+    cost: { energy: 40, knowledge: 30, food: 20 }, buildMinutes: 300, unlockTier: 2, baseWidth: 4, maxWidth: 4,
+    workerSlotsPerCell: 1, produces: {}, consumesO2: 2, caps: {}, unique: true,
+  },
 });
+
+/** Tipo de sala infraestructura raíz sembrada al fundar la colonia. */
+const NUCLEO_ROOM_TYPE = ROOM_TYPES.NUCLEO;
 
 module.exports = {
   HABIT_TYPES,
@@ -199,8 +308,15 @@ module.exports = {
   FRIENDSHIP_STATUS,
   ACTIVITY_TYPES,
   MEMBER_STATUS,
-  VILLAGE_MAX_SLOTS,
+  CREDITS_META,
+  RUSH_CREDITS_PER_MINUTE,
+  SECONDARY_RESOURCE_TYPES,
+  SECONDARY_RESOURCE_META,
+  ROOM_CATEGORIES,
+  ROOM_BASE_WIDTH,
+  ROOM_MAX_WIDTH,
   ROOM_TYPES,
   ROOM_TYPE_KEYS,
   ROOM_META,
+  NUCLEO_ROOM_TYPE,
 };

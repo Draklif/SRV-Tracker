@@ -54,7 +54,7 @@
     </div>
   </header>
 
-  <!-- Tesoro compartido -->
+  <!-- Tesoro compartido (PRIMARIOS · de hábitos · moneda de construcción) -->
   <section class="treasury" aria-label="Tesoro compartido">
     <% Object.entries(resourceMeta).forEach(([key, meta]) => { %>
     <div class="treasury-item" title="<%= meta.label %>">
@@ -64,11 +64,34 @@
     <% }) %>
   </section>
 
-  <!-- Rejilla de salas -->
-  <section class="room-grid" aria-label="Salas de la colonia">
-    <% vm.slots.forEach((slot, index) => { %>
-    <%- include('../partials/village/room-tile', { slot, index, roomMeta }) %>
+  <!-- Recursos SECUNDARIOS (producidos en la colonia · inertes en esta fase) -->
+  <section class="secondary-bar" aria-label="Recursos de supervivencia">
+    <% Object.entries(secondaryMeta).forEach(([key, meta]) => { const s = (vm.secondary && vm.secondary[key]) || { amount: 0, cap: 0 }; %>
+    <div class="secondary-item" title="<%= meta.label %> · requiere colonos (próxima fase)">
+      <span class="secondary-icon" aria-hidden="true"><%= meta.icon %></span>
+      <span class="secondary-value"><%= s.amount %><small>/<%= s.cap %></small></span>
+    </div>
     <% }) %>
+    <span class="secondary-note">requiere colonos · próxima fase</span>
+  </section>
+
+  <!-- Barra de construcción -->
+  <div class="build-bar">
+    <button type="button" class="btn btn-primary btn-sm" data-action="open-build">＋ Construir</button>
+    <span class="credits-chip" title="<%= creditsMeta.desc %>">
+      <span aria-hidden="true"><%= creditsMeta.icon %></span>
+      <b data-credits><%= vm.credits || 0 %></b>
+    </span>
+    <span class="placement-hint" id="placement-hint" hidden>Elige dónde colocar · <button type="button" class="link-btn" data-action="cancel-place">cancelar</button></span>
+  </div>
+
+  <!-- Mapa paneable de la colonia -->
+  <section class="map-viewport" id="map-viewport" aria-label="Mapa de la colonia">
+    <div class="map-canvas" id="map-canvas">
+      <% vm.rooms.forEach((room) => { %>
+      <%- include('../partials/village/room-tile', { room, roomMeta }) %>
+      <% }) %>
+    </div>
   </section>
 
   <!-- Miembros -->
@@ -88,7 +111,11 @@
 </main>
 
 <!-- Datos para el cliente -->
-<script id="village-data" type="application/json"><%- JSON.stringify({ roomMeta, resourceMeta }) %></script>
+<script id="village-data" type="application/json"><%- JSON.stringify(vm.village ? {
+  roomMeta, resourceMeta, secondaryMeta, creditsMeta, rushPerMinute, baseWidth, maxWidth,
+  rooms: vm.rooms, bounds: vm.bounds, credits: vm.credits || 0, villageId: vm.village.id,
+  unlockedRoomTypes: vm.unlockedRoomTypes,
+} : { roomMeta, resourceMeta }) %></script>
 
 <% if (vm.village) { %>
 <!-- ─────────────── Modal: construir ─────────────── -->
@@ -100,8 +127,13 @@
       <button type="button" class="modal-close" data-action="close" aria-label="Cerrar">✕</button>
     </header>
     <div class="room-options">
-      <% roomKeys.forEach((key) => { const meta = roomMeta[key]; %>
-      <button type="button" class="room-option" data-build="<%= key %>">
+      <% roomKeys.filter((key) => roomMeta[key].buildable !== false).forEach((key) => {
+           const meta = roomMeta[key];
+           const unlocked = vm.unlockedRoomTypes.includes(key);
+           const usedUp = meta.unique && vm.rooms.some((r) => r.room_type === key);
+           const disabled = !unlocked || usedUp;
+      %>
+      <button type="button" class="room-option<%= disabled ? ' is-locked' : '' %>" data-build="<%= key %>"<%= disabled ? ' disabled' : '' %>>
         <span class="room-icon" aria-hidden="true"><%= meta.icon %></span>
         <span class="room-option-body">
           <b><%= meta.label %></b>
@@ -110,6 +142,8 @@
             <% Object.entries(meta.cost).forEach(([r, n]) => { %>
             <span class="cost-chip"><%= n %> <%= resourceMeta[r] ? resourceMeta[r].icon : r %></span>
             <% }) %>
+            <% if (!unlocked) { %><span class="cost-chip lock-chip">🔒 Lab Nv <%= meta.unlockTier %></span><% } %>
+            <% if (usedUp) { %><span class="cost-chip lock-chip">✓ ya construida</span><% } %>
           </span>
         </span>
       </button>
@@ -129,7 +163,11 @@
     <p id="room-modal-desc" class="text-muted"></p>
     <p id="room-modal-status" class="room-modal-status"></p>
     <div class="modal-foot">
+      <button type="button" class="btn btn-ghost btn-danger" id="room-cancel-btn" data-action="cancel" hidden>Cancelar obra</button>
+      <button type="button" class="btn btn-ghost btn-danger" id="room-destroy-btn" data-action="destroy" hidden>Destruir</button>
+      <button type="button" class="btn btn-ghost" id="room-move-btn" data-action="move" hidden>Mover</button>
       <button type="button" class="btn btn-ghost" id="room-rush-btn" data-action="rush" hidden>Completar ya · gratis</button>
+      <button type="button" class="btn btn-ghost" id="room-merge-btn" data-action="merge" hidden>Fusionar vecina</button>
       <button type="button" class="btn btn-primary" id="room-upgrade-btn" data-action="upgrade">Mejorar</button>
     </div>
   </div>

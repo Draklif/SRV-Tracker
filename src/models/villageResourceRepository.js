@@ -38,6 +38,13 @@ const statements = {
       (village_id, resource_type, amount, reason, actor_id, source_type, source_id, day)
     VALUES (@village_id, @resource_type, @amount, @reason, @actor_id, @source_type, @source_id, @day)
   `),
+  // Materiales gastados en una sala (suma de gastos de construcción, positivo).
+  spentByRoom: db.prepare(`
+    SELECT resource_type, COALESCE(SUM(-amount), 0) AS spent
+    FROM village_transactions
+    WHERE village_id = @village_id AND source_type = 'room' AND source_id = @room_id AND reason = 'construction'
+    GROUP BY resource_type
+  `),
 };
 
 /** Crea (si faltan) las filas de balance en 0 para los recursos dados. */
@@ -72,4 +79,10 @@ function insertSpend(tx) {
   statements.insertSpend.run(tx);
 }
 
-module.exports = { ensureRows, balances, addBalance, setBalance, insertContributionIfNew, insertSpend };
+/** Materiales gastados en una sala: { resource_type: spent(+) }. */
+function spentByRoom(villageId, roomId) {
+  const rows = statements.spentByRoom.all({ village_id: villageId, room_id: roomId });
+  return Object.fromEntries(rows.map((r) => [r.resource_type, r.spent]));
+}
+
+module.exports = { ensureRows, balances, addBalance, setBalance, insertContributionIfNew, insertSpend, spentByRoom };

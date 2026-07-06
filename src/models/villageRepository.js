@@ -17,6 +17,11 @@ const statements = {
     WHERE m.user_id = @user_id AND m.status = 'active'
     LIMIT 1
   `),
+  // Suma (o resta, con delta negativo) créditos; nunca baja de 0.
+  addCredits: db.prepare(
+    'UPDATE villages SET credits = MAX(0, credits + @delta) WHERE id = @id'
+  ),
+  setCredits: db.prepare('UPDATE villages SET credits = @credits WHERE id = @id'),
 };
 
 function findById(id) {
@@ -34,4 +39,14 @@ function findActiveByUser(userId) {
   return statements.activeByUser.get({ user_id: userId });
 }
 
-module.exports = { findById, create, findActiveByUser };
+/** Suma (o resta) créditos a la colonia. Nunca baja de 0. */
+function addCredits(id, delta) {
+  statements.addCredits.run({ id, delta });
+}
+
+/** Fija los créditos de la colonia (utilidad de desarrollo). */
+function setCredits(id, credits) {
+  statements.setCredits.run({ id, credits });
+}
+
+module.exports = { findById, create, findActiveByUser, addCredits, setCredits };

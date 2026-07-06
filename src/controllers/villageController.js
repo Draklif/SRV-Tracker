@@ -8,10 +8,23 @@ const {
   inviteSchema,
   acceptSchema,
   buildSchema,
+  mergeSchema,
+  moveSchema,
   upgradeSchema,
+  cancelSchema,
+  destroySchema,
   rushSchema,
 } = require('../validators/villageValidators');
-const { ROOM_META, ROOM_TYPE_KEYS, RESOURCE_TYPE_META, VILLAGE_MAX_SLOTS } = require('../config/constants');
+const {
+  ROOM_META,
+  ROOM_TYPE_KEYS,
+  RESOURCE_TYPE_META,
+  SECONDARY_RESOURCE_META,
+  CREDITS_META,
+  RUSH_CREDITS_PER_MINUTE,
+  ROOM_BASE_WIDTH,
+  ROOM_MAX_WIDTH,
+} = require('../config/constants');
 const config = require('../config');
 const { ForbiddenError } = require('../utils/errors');
 
@@ -32,7 +45,11 @@ const page = (req, res) => {
     roomMeta: ROOM_META,
     roomKeys: ROOM_TYPE_KEYS,
     resourceMeta: RESOURCE_TYPE_META,
-    maxSlots: VILLAGE_MAX_SLOTS,
+    secondaryMeta: SECONDARY_RESOURCE_META,
+    creditsMeta: CREDITS_META,
+    rushPerMinute: RUSH_CREDITS_PER_MINUTE,
+    baseWidth: ROOM_BASE_WIDTH,
+    maxWidth: ROOM_MAX_WIDTH,
     isDev: !config.isProd,
   });
 };
@@ -58,10 +75,17 @@ const accept = asyncHandler(async (req, res) => {
   res.json({ ok: true });
 });
 
-/** POST /api/village/build — construye una sala en un slot. */
+/** POST /api/village/build — construye una sala en una celda del mapa. */
 const build = asyncHandler(async (req, res) => {
-  const { roomType, slotIndex } = buildSchema.parse(req.body);
-  const room = villageService.build(req.user, { roomType, slotIndex });
+  const { roomType, floor, col } = buildSchema.parse(req.body);
+  const room = villageService.build(req.user, { roomType, floor, col });
+  res.json({ ok: true, roomId: room.id });
+});
+
+/** POST /api/village/merge — fusiona dos salas contiguas iguales. */
+const merge = asyncHandler(async (req, res) => {
+  const { roomIdA, roomIdB } = mergeSchema.parse(req.body);
+  const room = villageService.merge(req.user, roomIdA, roomIdB);
   res.json({ ok: true, roomId: room.id });
 });
 
@@ -69,6 +93,27 @@ const build = asyncHandler(async (req, res) => {
 const upgrade = asyncHandler(async (req, res) => {
   const { roomId } = upgradeSchema.parse(req.body);
   villageService.upgrade(req.user, roomId);
+  res.json({ ok: true });
+});
+
+/** POST /api/village/move — mueve una sala a otra celda (medio timer). */
+const move = asyncHandler(async (req, res) => {
+  const { roomId, floor, col } = moveSchema.parse(req.body);
+  villageService.move(req.user, roomId, floor, col);
+  res.json({ ok: true });
+});
+
+/** POST /api/village/cancel — cancela una obra en curso (reembolso 100%). */
+const cancel = asyncHandler(async (req, res) => {
+  const { roomId } = cancelSchema.parse(req.body);
+  villageService.cancel(req.user, roomId);
+  res.json({ ok: true });
+});
+
+/** POST /api/village/destroy — destruye una sala construida (reembolso 50%). */
+const destroy = asyncHandler(async (req, res) => {
+  const { roomId } = destroySchema.parse(req.body);
+  villageService.destroy(req.user, roomId);
   res.json({ ok: true });
 });
 
@@ -86,4 +131,4 @@ const devRefill = asyncHandler(async (req, res) => {
   res.json({ ok: true });
 });
 
-module.exports = { page, create, invite, accept, build, upgrade, rush, devRefill };
+module.exports = { page, create, invite, accept, build, merge, move, upgrade, cancel, destroy, rush, devRefill };

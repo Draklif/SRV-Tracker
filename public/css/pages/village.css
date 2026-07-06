@@ -91,21 +91,100 @@
   font-size: 1.25rem;
 }
 
-/* ── Rejilla de salas ── */
-.room-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* ── Recursos secundarios (inertes en Fase A) ── */
+.secondary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  justify-content: center;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  opacity: 0.85;
 }
-@media (max-width: 560px) {
-  .room-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.secondary-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+}
+.secondary-icon {
+  font-size: 1.1rem;
+}
+.secondary-value small {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.secondary-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Barra de construcción ── */
+.build-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.credits-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  font-weight: 800;
+  border: 2px solid var(--amber, #ffcf66);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--amber, #ffcf66) 14%, transparent);
+}
+.placement-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--brand);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* ── Mapa paneable ── */
+.map-viewport {
+  position: relative;
+  height: 62vh;
+  min-height: 340px;
+  overflow: hidden;
+  border: var(--card-border);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 48px 48px,
+    var(--surface);
+  box-shadow: var(--shadow);
+  cursor: grab;
+  touch-action: none;
+}
+.map-viewport.is-grabbing {
+  cursor: grabbing;
+}
+.map-viewport.is-placing {
+  cursor: crosshair;
+}
+.map-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 
 .room-tile {
-  aspect-ratio: 1 / 1;
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,38 +194,48 @@
   padding: var(--space-2);
   border-radius: var(--radius);
   border: 2px solid var(--border);
+  border-top: 5px solid var(--brand);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 .room-tile:hover {
-  transform: translateY(-2px);
   border-color: var(--brand);
   box-shadow: var(--shadow);
 }
-.room-tile.is-built {
-  border-top: 5px solid var(--brand);
-}
-.room-tile.is-empty {
+/* Elevador: se dibuja estrecho (media casilla, vía JS) con aire de conector. */
+.room-tile[data-room-type='elevator'] {
   border-style: dashed;
-  color: var(--text-muted);
-  background: transparent;
+  border-top-style: solid;
+  background: color-mix(in srgb, var(--brand) 8%, var(--surface));
+  gap: 0;
+}
+.room-tile[data-room-type='elevator'] .room-name,
+.room-tile[data-room-type='elevator'] .room-lvl {
+  display: none;
+}
+.room-tile[data-room-type='elevator'] .room-icon {
+  font-size: 1.4rem;
+}
+
+.room-tile.is-nucleo {
+  border-top-color: var(--amber, #ffcf66);
+  border-width: 2px;
+  border-top-width: 5px;
+  background: color-mix(in srgb, var(--amber, #ffcf66) 12%, var(--surface));
 }
 .room-tile.is-building {
   opacity: 0.85;
   border-top-color: var(--amber, #ffcf66);
+  border-top-style: dashed;
 }
 .room-icon {
   font-size: 1.7rem;
   line-height: 1;
 }
-.room-plus {
-  font-size: 1.6rem;
-  line-height: 1;
-}
 .room-name {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 .room-lvl {
@@ -154,9 +243,45 @@
   color: var(--text-muted);
 }
 .room-status {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: var(--amber, #ffcf66);
   font-weight: 700;
+}
+
+/* ── Fantasma de colocación (anchors válidos) ── */
+.ghost-anchor {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--brand);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+  cursor: pointer;
+  animation: ghost-pulse 1.4s ease-in-out infinite;
+  transition: background var(--transition), transform var(--transition);
+}
+.ghost-anchor:hover {
+  background: color-mix(in srgb, var(--brand) 26%, transparent);
+  transform: scale(1.04);
+}
+.ghost-icon {
+  font-size: 1.6rem;
+  opacity: 0.75;
+}
+@keyframes ghost-pulse {
+  50% {
+    border-color: color-mix(in srgb, var(--brand) 55%, transparent);
+  }
+}
+
+/* ── Catálogo: sala bloqueada ── */
+.room-option.is-locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.lock-chip {
+  color: var(--text-muted);
 }
 
 .village-members {
@@ -271,9 +396,19 @@
 }
 .modal-foot {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: var(--space-3);
+  gap: var(--space-2);
   margin-top: var(--space-3);
+}
+.btn-danger {
+  color: var(--red, #ff6b6b);
+  border-color: color-mix(in srgb, var(--red, #ff6b6b) 45%, var(--border));
+}
+.btn-danger:hover {
+  background: var(--red, #ff6b6b);
+  border-color: var(--red, #ff6b6b);
+  color: #fff;
 }
 .modal-foot .btn:disabled {
   opacity: 0.45;
