@@ -44,19 +44,21 @@
   let currentRoom = null; // sala abierta en el modal
   let mergeNeighborId = null;
 
-  /* ── Modales ── */
-  function openModal(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    modal.hidden = false;
-    modal.setAttribute('aria-hidden', 'false');
+  /* ── Bottom sheet único (secciones ocultas por tipo) ── */
+  const sheetEl = document.getElementById('sheet');
+  function openSheet(kind) {
+    if (!sheetEl) return;
+    sheetEl.querySelectorAll('.sheet-section').forEach((s) => {
+      s.hidden = s.id !== `sheet-${kind}`;
+    });
+    sheetEl.hidden = false;
+    sheetEl.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
-  function closeModals() {
-    document.querySelectorAll('.modal').forEach((m) => {
-      m.hidden = true;
-      m.setAttribute('aria-hidden', 'true');
-    });
+  function closeSheet() {
+    if (!sheetEl) return;
+    sheetEl.hidden = true;
+    sheetEl.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
@@ -105,7 +107,14 @@
   /* ── Paneo (persistente) ── */
   let panX = 0;
   let panY = 0;
+  let userAdjusted = false; // el usuario paneó (o restauró paneo): no recentres al redimensionar
   const PAN_KEY = 'village-pan';
+
+  // Alto real del nav superior → token CSS que dimensiona el mapa full-bleed.
+  function syncNavHeight() {
+    const nav = document.querySelector('.app-nav');
+    if (nav) document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+  }
   function applyPan() {
     if (canvas) canvas.style.transform = `translate(${panX}px, ${panY}px)`;
   }
@@ -160,6 +169,7 @@
     function endDrag(e) {
       if (dragging) {
         suppressClick = true; // el click sintético del arrastre no debe activar nada
+        userAdjusted = true;
         savePan();
         if (e && e.pointerId != null) {
           try { viewport.releasePointerCapture(e.pointerId); } catch (_) { /* noop */ }
@@ -264,7 +274,7 @@
       window.toast.show('Solo puedes tener una de estas en la colonia.', { type: 'info' });
       return;
     }
-    closeModals();
+    closeSheet();
     placing = roomType;
     placingWidth = meta.baseWidth || 2;
     moveMode = null;
@@ -273,7 +283,7 @@
 
   function enterMove(room) {
     const meta = roomMeta[room.room_type] || {};
-    closeModals();
+    closeSheet();
     placing = null;
     moveMode = room.id;
     placingWidth = room.width;
@@ -413,7 +423,7 @@
         statusEl.textContent += ' · Nodo crítico: no se puede mover ni destruir sin aislar otras salas.';
       }
     }
-    openModal('room-modal');
+    openSheet('room');
   }
 
   /* ── Delegación de clicks ── */
@@ -441,11 +451,14 @@
 
     switch (el.dataset.action) {
       case 'close':
-        closeModals();
+        closeSheet();
         break;
       case 'open-build':
         exitPlacement();
-        openModal('build-modal');
+        openSheet('build');
+        break;
+      case 'open-members':
+        openSheet('members');
         break;
       case 'cancel-place':
         exitPlacement();
@@ -482,13 +495,13 @@
         mutate('/api/village/dev/refill', {});
         break;
       case 'open-invite':
-        openModal('invite-modal');
+        openSheet('invite');
         break;
       case 'invite':
         mutate('/api/village/invite', { friendId: Number(el.dataset.friendId) }, { reload: false }).then((ok) => {
           if (ok) {
             window.toast.show('Invitación enviada.', { type: 'success' });
-            closeModals();
+            closeSheet();
           }
         });
         break;
@@ -501,7 +514,9 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && placing) exitPlacement();
+    if (e.key !== 'Escape') return;
+    if (placing || moveMode) exitPlacement();
+    else if (sheetEl && !sheetEl.hidden) closeSheet();
   });
 
   /* ── Crear colonia ── */
@@ -534,8 +549,21 @@
 
   /* ── Arranque ── */
   if (canvas) {
+    syncNavHeight();
     layout();
-    if (!restorePan()) centerOnNucleo();
+    if (restorePan()) userAdjusted = true;
+    else centerOnNucleo();
+
+    // Al redimensionar/rotar: recalcula el alto del nav y recentra en el Núcleo
+    // salvo que el usuario ya haya ajustado su vista (paneo propio).
+    let resizeRaf = 0;
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        syncNavHeight();
+        if (!userAdjusted) centerOnNucleo();
+      });
+    });
   }
   if (document.querySelector('[data-countdown]')) {
     tickCountdowns();
