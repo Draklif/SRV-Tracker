@@ -1,11 +1,12 @@
-/* nav.css — Barra de navegación. Tinta navy + tajo de marca, en ambos temas. */
+/* nav.css — Barra de navegación. Sigue el tema (oscura en dark, clara en light)
+   vía tokens --nav-*; el tajo de marca usa el acento activo. */
 
 .app-nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--nav-bg);
+  color: var(--nav-fg);
   border-bottom: 3px solid var(--brand);
 }
 
@@ -25,7 +26,7 @@
   font-weight: 900;
   text-transform: uppercase;
   font-size: var(--fs-lg);
-  color: var(--paper);
+  color: var(--nav-fg);
 }
 .app-nav .brand-mark {
   color: var(--brand);
@@ -47,7 +48,7 @@
   text-transform: uppercase;
   font-size: var(--fs-sm);
   letter-spacing: 0.03em;
-  color: rgba(246, 244, 237, 0.6);
+  color: var(--nav-fg-dim);
   transform: skewX(var(--skew));
   transition: background-color var(--transition), color var(--transition),
     transform var(--transition);
@@ -64,23 +65,23 @@
   align-items: center;
   gap: var(--space-3);
 }
-/* El botón ghost vive sobre fondo negro: forzamos tinta clara. */
+/* El botón ghost vive sobre la nav: hereda el color de la barra según el tema. */
 .app-nav .btn-ghost {
-  color: var(--paper);
-  border-color: var(--paper);
+  color: var(--nav-fg);
+  border-color: var(--nav-fg);
 }
 .app-nav .btn-ghost:hover {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--nav-fg);
+  color: var(--nav-bg);
 }
 
 .nav-avatar {
   display: inline-flex;
   transition: transform var(--transition);
 }
-/* La nav es negra en ambos temas: el borde del avatar siempre claro. */
+/* El borde del avatar sigue el color de la nav según el tema. */
 .app-nav .avatar {
-  border-color: var(--paper);
+  border-color: var(--nav-fg);
 }
 .nav-avatar:hover {
   transform: rotate(4deg) scale(1.08);

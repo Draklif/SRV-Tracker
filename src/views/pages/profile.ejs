@@ -117,6 +117,25 @@
           </select>
         </div>
 
+        <div class="field">
+          <label for="accent">Color de acento</label>
+          <%
+            // Etiquetas del selector de acento (los valores viven en profileValidators).
+            const accentLabels = {
+              blue: '🔵 Azul', red: '🔴 Rojo', green: '🟢 Verde',
+              purple: '🟣 Morado', pink: '🩷 Rosa',
+            };
+          %>
+          <select id="accent" name="accent">
+            <% accents.forEach((a) => { %>
+            <option value="<%= a %>" <%= values.accent === a ? 'selected' : '' %>>
+              <%= accentLabels[a] || a %>
+            </option>
+            <% }) %>
+          </select>
+          <small class="field-hint">Cambia los acentos de la app en modo claro y oscuro.</small>
+        </div>
+
         <button class="btn btn-primary" type="submit">Guardar cambios</button>
       </form>
     </section>

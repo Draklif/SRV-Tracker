@@ -16,7 +16,7 @@
     z-index: 60;
     height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: var(--ink);
+    background: var(--nav-bg);
     border-top: 3px solid var(--brand);
   }
 
@@ -25,7 +25,7 @@
     place-items: center;
     gap: 2px;
     padding-top: var(--space-2);
-    color: rgba(246, 244, 237, 0.55);
+    color: var(--nav-fg-dim);
     font-size: var(--fs-xs);
     font-weight: var(--fw-bold);
     transition: color var(--transition), transform var(--transition);
@@ -40,7 +40,7 @@
   }
 
   .bottom-nav-item.is-active {
-    color: var(--paper);
+    color: var(--nav-fg);
   }
   .bottom-nav-item.is-active .bottom-nav-icon {
     transform: translateY(-1px) scale(1.12);

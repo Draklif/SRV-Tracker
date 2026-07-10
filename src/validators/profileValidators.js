@@ -17,11 +17,15 @@ const TIMEZONES = [
 
 const THEMES = ['dark', 'light'];
 
+// Colores de acento seleccionables (mapeados a tokens --brand-* en tokens.css).
+const ACCENTS = ['blue', 'red', 'green', 'purple', 'pink'];
+
 const profileSchema = z.object({
   displayName: z.string().trim().min(1, 'Escribe un nombre').max(40, 'Máximo 40 caracteres'),
   bio: z.string().trim().max(160, 'Máximo 160 caracteres').optional().or(z.literal('')),
   timezone: z.enum(TIMEZONES, { errorMap: () => ({ message: 'Zona horaria no válida' }) }),
   theme: z.enum(THEMES, { errorMap: () => ({ message: 'Tema no válido' }) }),
+  accent: z.enum(ACCENTS, { errorMap: () => ({ message: 'Color no válido' }) }),
 });
 
 const passwordChangeSchema = z
@@ -35,4 +39,4 @@ const passwordChangeSchema = z
     message: 'Las contraseñas no coinciden',
   });
 
-module.exports = { profileSchema, passwordChangeSchema, TIMEZONES, THEMES };
+module.exports = { profileSchema, passwordChangeSchema, TIMEZONES, THEMES, ACCENTS };

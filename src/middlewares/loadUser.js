@@ -22,6 +22,7 @@ module.exports = function loadUser(req, res, next) {
       req.user = user;
       res.locals.user = user;
       res.locals.theme = user.theme;
+      res.locals.accent = user.accent;
       res.locals.pendingFriendCount = friendshipService.incomingCount(user.id);
     } else {
       // Sesión apuntando a un usuario inexistente: la limpiamos.
@@ -30,5 +31,6 @@ module.exports = function loadUser(req, res, next) {
   }
 
   res.locals.theme = res.locals.theme || 'dark';
+  res.locals.accent = res.locals.accent || 'blue';
   next();
 };

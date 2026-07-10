@@ -13,7 +13,7 @@ const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
 const { NotFoundError } = require('../utils/errors');
 const { levelProgress } = require('../utils/level');
-const { profileSchema, passwordChangeSchema, TIMEZONES, THEMES } = require('../validators/profileValidators');
+const { profileSchema, passwordChangeSchema, TIMEZONES, THEMES, ACCENTS } = require('../validators/profileValidators');
 const asyncHandler = require('../utils/asyncHandler');
 const { toFieldErrors } = require('../utils/validation');
 const { addFlash } = require('../utils/flash');
@@ -25,6 +25,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     title: 'Tu perfil',
     timezones: TIMEZONES,
     themes: THEMES,
+    accents: ACCENTS,
     achievements: achievementService.listForUser(req.user.id),
     resources: resourceService.totalsForUser(req.user.id),
     level: levelProgress(req.user.xp),
@@ -37,6 +38,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
       bio: req.user.bio || '',
       timezone: req.user.timezone,
       theme: req.user.theme,
+      accent: req.user.accent,
     },
   });
 }
@@ -60,6 +62,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         bio: req.body.bio,
         timezone: req.body.timezone,
         theme: req.body.theme,
+        accent: req.body.accent,
       },
     });
   }
