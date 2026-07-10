@@ -1,8 +1,13 @@
-    <!-- toast.js va siempre: los mensajes flash se muestran como toasts. -->
+    <!-- Scripts globales (en todas las páginas), en orden de dependencia:
+         toast.js (flashes), api.js (window.api para fetch+CSRF), push.js (SW + opt-in). -->
     <script src="/js/toast.js" defer></script>
-    <!-- push.js va siempre: registra el service worker (PWA) y, en el perfil, gestiona el opt-in. -->
+    <script src="/js/api.js" defer></script>
     <script src="/js/push.js" defer></script>
-    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (src === '/js/toast.js' || src === '/js/push.js') return; %>
+    <%
+      // Evitar duplicar los globales si una página los lista en su array `scripts`.
+      const _globalScripts = ['/js/toast.js', '/js/api.js', '/js/push.js'];
+    %>
+    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (_globalScripts.includes(src)) return; %>
     <script src="<%= src %>" defer></script>
     <% }) %>
   </body>

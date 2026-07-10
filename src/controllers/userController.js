@@ -13,7 +13,14 @@ const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
 const { NotFoundError } = require('../utils/errors');
 const { levelProgress } = require('../utils/level');
-const { profileSchema, passwordChangeSchema, TIMEZONES, THEMES, ACCENTS } = require('../validators/profileValidators');
+const {
+  profileSchema,
+  notificationsSchema,
+  passwordChangeSchema,
+  TIMEZONES,
+  THEMES,
+  ACCENTS,
+} = require('../validators/profileValidators');
 const asyncHandler = require('../utils/asyncHandler');
 const { toFieldErrors } = require('../utils/validation');
 const { addFlash } = require('../utils/flash');
@@ -39,6 +46,8 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
       timezone: req.user.timezone,
       theme: req.user.theme,
       accent: req.user.accent,
+      reminderTime: req.user.notify_reminder_time,
+      streakGuard: req.user.notify_streak_guard,
     },
   });
 }
@@ -63,9 +72,24 @@ const updateProfile = asyncHandler(async (req, res) => {
         timezone: req.body.timezone,
         theme: req.body.theme,
         accent: req.body.accent,
+        reminderTime: req.user.notify_reminder_time,
+        streakGuard: req.user.notify_streak_guard,
       },
     });
   }
+});
+
+const updateNotifications = asyncHandler(async (req, res) => {
+  try {
+    const data = notificationsSchema.parse(req.body);
+    userService.updateNotifyPrefs(req.user.id, data);
+    addFlash(req, 'success', 'Preferencias de notificación guardadas 🔔');
+  } catch (err) {
+    const errors = toFieldErrors(err);
+    if (!errors) throw err;
+    addFlash(req, 'error', errors.reminderTime || 'Revisa la hora del recordatorio.');
+  }
+  return res.redirect('/profile');
 });
 
 const changePassword = asyncHandler(async (req, res) => {
@@ -124,4 +148,12 @@ const showFriend = (req, res) => {
   });
 };
 
-module.exports = { showProfile, updateProfile, changePassword, generateInvite, uploadAvatar, showFriend };
+module.exports = {
+  showProfile,
+  updateProfile,
+  updateNotifications,
+  changePassword,
+  generateInvite,
+  uploadAvatar,
+  showFriend,
+};

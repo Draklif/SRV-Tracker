@@ -180,6 +180,18 @@ a.link:hover {
   box-shadow: var(--shadow-sm);
 }
 
+/* Acción secundaria discreta: menos peso visual que ghost (sin borde marcado). */
+.btn-muted {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+.btn-muted:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  box-shadow: none;
+}
+
 .btn-lg {
   padding: 0.8em 1.9em;
   font-size: var(--fs-base);

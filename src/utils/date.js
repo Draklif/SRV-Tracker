@@ -17,6 +17,23 @@ function todayFor(timezone) {
   }).format(new Date());
 }
 
+/**
+ * Hora local actual en la zona dada. Devuelve { hhmm: 'HH:MM', hour, minute }
+ * en formato 24h. Lo usa el scheduler de recordatorios para comparar contra la
+ * hora elegida por el usuario.
+ */
+function localClock(timezone) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: timezone || 'UTC',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+  const hh = parts.find((p) => p.type === 'hour').value;
+  const mm = parts.find((p) => p.type === 'minute').value;
+  return { hhmm: `${hh}:${mm}`, hour: Number(hh), minute: Number(mm) };
+}
+
 /** Suma (o resta, con n negativo) días a una fecha 'YYYY-MM-DD'. */
 function addDays(dateStr, n) {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -48,4 +65,4 @@ function weekStart(dateStr) {
   return addDays(dateStr, -(isoWeekday(dateStr) - 1));
 }
 
-module.exports = { todayFor, addDays, previousDay, diffDays, isoWeekday, weekStart };
+module.exports = { todayFor, localClock, addDays, previousDay, diffDays, isoWeekday, weekStart };

@@ -98,4 +98,28 @@ function weekProgress(userId, date) {
   return weekProgressFrom(items);
 }
 
-module.exports = { assemble, dayProgress, weekProgress, weekCompletedCount };
+/**
+ * Resumen ligero para el scheduler de recordatorios: cuántos hábitos obligatorios
+ * hoy siguen sin completar, y si alguno de ellos tiene una racha activa en juego.
+ * Reutiliza la misma noción de "obligatorio hoy" que el anillo diario.
+ */
+function reminderSummary(user) {
+  const today = todayFor(user.timezone);
+  const habits = habitService.listActive(user.id);
+  const logs = indexBy(habitLogRepository.findByUserAndDate(user.id, today), 'habit_id');
+  const streaks = indexBy(streakService.findByUser(user.id), 'habit_id');
+
+  let pendingCount = 0;
+  let atRisk = false;
+  for (const h of habits) {
+    if (!isRequiredOn(getSchedule(h), today)) continue;
+    const log = logs[h.id];
+    if (log && log.completed) continue;
+    pendingCount += 1;
+    const streak = streaks[h.id];
+    if (streak && streak.current_streak > 0) atRisk = true;
+  }
+  return { today, pendingCount, atRisk };
+}
+
+module.exports = { assemble, dayProgress, weekProgress, weekCompletedCount, reminderSummary };

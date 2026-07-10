@@ -265,11 +265,32 @@
   margin-bottom: var(--space-4);
   font-size: var(--fs-sm);
 }
+/* Todos los botones del perfil ocupan el ancho de su tarjeta (consistencia). */
+.profile-page .btn {
+  width: 100%;
+}
+.profile-page .form .btn {
+  justify-self: stretch; /* anula el justify-self:start de forms.css */
+}
+
 .push-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--space-2);
+}
+.push-sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-4) 0;
+}
+.push-check {
+  display: flex;
   align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+.push-check input {
+  width: auto;
 }
 
 @media (max-width: 560px) {
@@ -288,10 +309,5 @@
   .ach-grid,
   .res-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  /* Acciones de formulario a ancho completo: más cómodas con el pulgar. */
-  .profile-grid .form .btn {
-    justify-self: stretch;
-    width: 100%;
   }
 }

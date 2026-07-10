@@ -28,6 +28,18 @@ const profileSchema = z.object({
   accent: z.enum(ACCENTS, { errorMap: () => ({ message: 'Color no válido' }) }),
 });
 
+// Preferencias de notificación (formulario propio en el perfil).
+const notificationsSchema = z.object({
+  reminderTime: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Hora no válida (usa HH:MM)'),
+  // El checkbox llega como 'on' si está marcado, o ausente si no.
+  streakGuard: z.preprocess(
+    (v) => v === 'on' || v === true || v === '1' || v === 'true',
+    z.boolean()
+  ),
+});
+
 const passwordChangeSchema = z
   .object({
     currentPassword: z.string().min(1, 'Escribe tu contraseña actual'),
@@ -39,4 +51,11 @@ const passwordChangeSchema = z
     message: 'Las contraseñas no coinciden',
   });
 
-module.exports = { profileSchema, passwordChangeSchema, TIMEZONES, THEMES, ACCENTS };
+module.exports = {
+  profileSchema,
+  notificationsSchema,
+  passwordChangeSchema,
+  TIMEZONES,
+  THEMES,
+  ACCENTS,
+};

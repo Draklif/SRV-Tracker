@@ -13,6 +13,7 @@ router.use(requireAuth);
 
 router.get('/', userController.showProfile);
 router.post('/', verifyCsrf, userController.updateProfile);
+router.post('/notifications', verifyCsrf, userController.updateNotifications);
 router.post('/password', verifyCsrf, userController.changePassword);
 router.post('/invite', verifyCsrf, userController.generateInvite);
 

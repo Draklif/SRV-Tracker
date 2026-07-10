@@ -19,6 +19,11 @@ function updateProfile(id, { displayName, bio, timezone, theme, accent }) {
   });
 }
 
+/** Guarda las preferencias de notificación (datos ya validados). */
+function updateNotifyPrefs(id, { reminderTime, streakGuard }) {
+  return userRepository.updateNotifyPrefs(id, { reminderTime, streakGuard });
+}
+
 /** Cambia la contraseña verificando primero la actual. */
 async function changePassword(id, currentPassword, newPassword) {
   const user = userRepository.findById(id);
@@ -36,4 +41,4 @@ function setAvatar(id, avatarPath) {
   return userRepository.updateAvatar(id, avatarPath);
 }
 
-module.exports = { getById, updateProfile, changePassword, setAvatar };
+module.exports = { getById, updateProfile, updateNotifyPrefs, changePassword, setAvatar };

@@ -31,6 +31,13 @@ const statements = {
   setNotifyEnabled: db.prepare(
     "UPDATE users SET notify_enabled = @enabled, updated_at = datetime('now') WHERE id = @id"
   ),
+  updateNotifyPrefs: db.prepare(`
+    UPDATE users
+    SET notify_reminder_time = @reminderTime, notify_streak_guard = @streakGuard,
+        updated_at = datetime('now')
+    WHERE id = @id
+  `),
+  notifiable: db.prepare('SELECT * FROM users WHERE notify_enabled = 1'),
 };
 
 function create({ username, passwordHash, email, displayName, timezone }) {
@@ -74,6 +81,17 @@ function setNotifyEnabled(id, enabled) {
   statements.setNotifyEnabled.run({ id, enabled: enabled ? 1 : 0 });
 }
 
+/** Guarda las preferencias de recordatorio (hora y aviso de racha). */
+function updateNotifyPrefs(id, { reminderTime, streakGuard }) {
+  statements.updateNotifyPrefs.run({ id, reminderTime, streakGuard: streakGuard ? 1 : 0 });
+  return statements.byId.get(id);
+}
+
+/** Usuarios con el opt-in de notificaciones activo (para el scheduler). */
+function listNotifiable() {
+  return statements.notifiable.all();
+}
+
 module.exports = {
   create,
   findById,
@@ -84,4 +102,6 @@ module.exports = {
   touchLastActive,
   addXp,
   setNotifyEnabled,
+  updateNotifyPrefs,
+  listNotifiable,
 };

@@ -150,8 +150,25 @@
       <div class="push-actions">
         <button type="button" class="btn btn-primary" id="push-enable" hidden>Activar notificaciones</button>
         <button type="button" class="btn btn-ghost" id="push-test" hidden>Enviar prueba</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="push-disable" hidden>Desactivar</button>
+        <button type="button" class="btn btn-muted btn-sm" id="push-disable" hidden>Desactivar</button>
       </div>
+
+      <hr class="push-sep" />
+
+      <form method="post" action="/profile/notifications" class="form push-prefs">
+        <%- include('../partials/csrf-field') %>
+        <div class="field">
+          <label for="reminderTime">Hora del recordatorio diario</label>
+          <input type="time" id="reminderTime" name="reminderTime"
+            value="<%= values.reminderTime %>" required />
+          <small class="field-hint">Te avisamos a esta hora (tu zona) si te faltan hábitos por completar.</small>
+        </div>
+        <label class="push-check">
+          <input type="checkbox" name="streakGuard" <%= values.streakGuard ? 'checked' : '' %> />
+          <span>Avísame por la noche si mi racha está en peligro 🔥</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Guardar preferencias</button>
+      </form>
     </section>
 
     <!-- Contraseña -->

@@ -10,6 +10,7 @@ runMigrations();
 require('./database/seeds/achievements').seedAchievements();
 
 const createApp = require('./app');
+const reminderScheduler = require('./services/reminderScheduler');
 
 /**
  * Punto de entrada. Levanta el servidor HTTP una vez migrada la base de datos.
@@ -18,6 +19,8 @@ function start() {
   const app = createApp();
   const server = app.listen(config.port, () => {
     logger.info(`Tracker escuchando en http://localhost:${config.port} (${config.env})`);
+    // Recordatorios de hábitos (Web Push). No hace nada si VAPID no está configurado.
+    reminderScheduler.start();
   });
 
   // Apagado ordenado.
