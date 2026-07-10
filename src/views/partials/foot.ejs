@@ -1,6 +1,8 @@
     <!-- toast.js va siempre: los mensajes flash se muestran como toasts. -->
     <script src="/js/toast.js" defer></script>
-    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (src === '/js/toast.js') return; %>
+    <!-- push.js va siempre: registra el service worker (PWA) y, en el perfil, gestiona el opt-in. -->
+    <script src="/js/push.js" defer></script>
+    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (src === '/js/toast.js' || src === '/js/push.js') return; %>
     <script src="<%= src %>" defer></script>
     <% }) %>
   </body>

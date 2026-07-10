@@ -28,6 +28,9 @@ const statements = {
   `),
   touchActive: db.prepare("UPDATE users SET last_active_at = datetime('now') WHERE id = ?"),
   addXp: db.prepare('UPDATE users SET xp = xp + @amount WHERE id = @id'),
+  setNotifyEnabled: db.prepare(
+    "UPDATE users SET notify_enabled = @enabled, updated_at = datetime('now') WHERE id = @id"
+  ),
 };
 
 function create({ username, passwordHash, email, displayName, timezone }) {
@@ -66,6 +69,11 @@ function addXp(id, amount) {
   statements.addXp.run({ id, amount });
 }
 
+/** Activa/desactiva el opt-in general de notificaciones del usuario. */
+function setNotifyEnabled(id, enabled) {
+  statements.setNotifyEnabled.run({ id, enabled: enabled ? 1 : 0 });
+}
+
 module.exports = {
   create,
   findById,
@@ -75,4 +83,5 @@ module.exports = {
   updateAvatar,
   touchLastActive,
   addXp,
+  setNotifyEnabled,
 };

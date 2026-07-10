@@ -10,6 +10,7 @@ const socialApiRoutes = require('./api/socialApiRoutes');
 const friendApiRoutes = require('./api/friendApiRoutes');
 const villageRoutes = require('./web/villageRoutes');
 const villageApiRoutes = require('./api/villageApiRoutes');
+const pushApiRoutes = require('./api/pushApiRoutes');
 const socialController = require('../controllers/socialController');
 const requireAuth = require('../middlewares/requireAuth');
 
@@ -45,6 +46,7 @@ router.get('/u/:username', requireAuth, require('../controllers/userController')
 router.use('/api/habits', habitApiRoutes);
 router.use('/api/friends', friendApiRoutes);
 router.use('/api/village', villageApiRoutes);
+router.use('/api/push', pushApiRoutes);
 router.use('/api', socialApiRoutes);
 
 module.exports = router;

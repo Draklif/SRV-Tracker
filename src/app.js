@@ -86,6 +86,7 @@ function createApp() {
   app.locals.habitIcons = constants.HABIT_ICON_SUGGESTIONS;
   app.locals.resourceTypeMeta = constants.RESOURCE_TYPE_META;
   app.locals.schedule = schedule; // helpers de frecuencia para las vistas
+  app.locals.vapidPublicKey = config.push.vapidPublic; // para suscribirse a Web Push
 
   // Rutas de la aplicación.
   app.use('/', routes);

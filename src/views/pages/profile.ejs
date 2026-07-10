@@ -139,6 +139,21 @@
       </form>
     </section>
 
+    <!-- Notificaciones push (recordatorios de hábitos) -->
+    <section class="card" id="push-settings">
+      <h2>Notificaciones</h2>
+      <p class="text-muted push-intro">
+        Recordatorios en tu dispositivo para no perder tus hábitos ni tu racha. Son opcionales
+        y las activas por dispositivo.
+      </p>
+      <p class="push-status text-muted" id="push-status" aria-live="polite"></p>
+      <div class="push-actions">
+        <button type="button" class="btn btn-primary" id="push-enable" hidden>Activar notificaciones</button>
+        <button type="button" class="btn btn-ghost" id="push-test" hidden>Enviar prueba</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="push-disable" hidden>Desactivar</button>
+      </div>
+    </section>
+
     <!-- Contraseña -->
     <section class="card">
       <h2>Cambiar contraseña</h2>

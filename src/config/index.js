@@ -34,6 +34,17 @@ const config = {
 
   defaultTimezone: process.env.DEFAULT_TIMEZONE || 'America/Mexico_City',
 
+  // Web Push (notificaciones). Las claves VAPID se generan en el servidor
+  // (`npx web-push generate-vapid-keys`) y se inyectan como env. Sin ellas, el
+  // envío queda deshabilitado (pushService lo detecta y no hace nada).
+  push: {
+    vapidPublic: process.env.VAPID_PUBLIC_KEY || '',
+    vapidPrivate: process.env.VAPID_PRIVATE_KEY || '',
+    vapidSubject: process.env.VAPID_SUBJECT || 'mailto:admin@example.com',
+    // Hora local (0-23) a la que se avisa "tu racha peligra" si el usuario lo activó.
+    streakGuardHour: Number(process.env.NOTIFY_STREAK_GUARD_HOUR) || 21,
+  },
+
   // Metadatos del sitio para el <head> y las previews sociales (Open Graph).
   site: {
     name: 'Tracker',
