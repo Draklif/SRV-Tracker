@@ -24,9 +24,19 @@
 
   <% if (habits.length) { %>
   <%- include('../partials/day-progress', { dayProgress }) %>
+  <% if (weekProgress.total) { %>
+  <%- include('../partials/week-progress', { weekProgress }) %>
+  <% } %>
 
   <section class="tracker-section">
-    <h2 class="section-title">Hoy</h2>
+    <div class="tracker-head">
+      <h2 class="section-title">Hoy</h2>
+      <label class="hide-done-toggle" title="Ocultar hábitos ya completados">
+        <input type="checkbox" data-hide-done />
+        <span class="hdt-track"><span class="hdt-thumb"></span></span>
+        <span class="hdt-label">Ocultar hechos</span>
+      </label>
+    </div>
     <div class="tracker-list" id="tracker-list">
       <% habits.forEach((habit) => { %>
       <%- include('../partials/tracker-card', { habit }) %>

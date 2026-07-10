@@ -12,9 +12,11 @@
   const target = habit.target_daily;
   const pct = target ? Math.min(100, Math.round((value / target) * 100)) : completed ? 100 : 0;
   const t = habit.type;
+  const isWeekly = sched.type === 'weekly';
+  const weekDone = isWeekly && (habit.weekDone || 0) >= habit.weekTarget;
 %>
-<article class="tracker-card<%= completed ? ' is-complete' : '' %><%= restToday ? ' is-rest' : '' %>"
-  data-habit-id="<%= habit.id %>" data-type="<%= t %>"
+<article class="tracker-card<%= completed ? ' is-complete' : '' %><%= restToday ? ' is-rest' : '' %><%= weekDone ? ' is-week-done' : '' %>"
+  data-habit-id="<%= habit.id %>" data-type="<%= t %>"<%- isWeekly ? ' data-weekly="1"' : '' %>
   data-target="<%= target || '' %>" data-unit="<%= habit.unit || '' %>"
   style="--habit-color: <%= colorHex %>">
 
@@ -61,6 +63,9 @@
       <% (settings.quickAdd || []).forEach((q) => { %>
       <button class="tc-add" data-log="increment" data-amount="<%= q %>">+<%= q %></button>
       <% }) %>
+      <% if (target) { %>
+      <button class="tc-add tc-fill" data-log="fill" title="Completar la meta del día">✓ Meta</button>
+      <% } %>
       <button class="tc-add tc-add-icon" data-log="toggle-manual" title="Editar manualmente">✎</button>
     </div>
     <div class="tc-manual" hidden>

@@ -45,6 +45,9 @@
         return { op: 'toggle' };
       case 'increment':
         return { op: 'increment', amount: Number(btn.dataset.amount) };
+      case 'fill':
+        // Rellena lo que falte hasta la meta del día (deja value/target = target).
+        return { op: 'set', value: Number(card.dataset.target) || 0 };
       case 'scale':
         return { op: 'set', value: Number(btn.dataset.level) };
       case 'set-manual': {
@@ -80,6 +83,7 @@
     if (res.week) {
       const weekEl = card.querySelector('.tc-week');
       if (weekEl) weekEl.textContent = `${res.week.done}/${res.week.target} esta semana`;
+      card.classList.toggle('is-week-done', res.week.done >= res.week.target);
     }
 
     if (type === 'quantity' || type === 'duration') {
@@ -131,6 +135,21 @@
     box.querySelector('[data-day-msg]').textContent = dayMessage(dp);
   }
 
+  function weekMessage(wp) {
+    if (wp.done === wp.total) return '¡Cuotas de la semana cumplidas! 🌟';
+    if (wp.done === 0) return 'Tus hábitos semanales te esperan.';
+    return 'Buen ritmo con tus metas de la semana.';
+  }
+
+  function updateWeekProgress(wp) {
+    const box = document.querySelector('[data-week-progress]');
+    if (!box || !wp) return;
+    box.querySelector('[data-week-done]').textContent = wp.done;
+    box.querySelector('[data-week-total]').textContent = wp.total;
+    box.querySelector('.dp-ring').style.setProperty('--pct', wp.percent);
+    box.querySelector('[data-week-msg]').textContent = weekMessage(wp);
+  }
+
   /** Actualiza la barra de nivel del saludo con el progreso recibido. */
   function updateLevel(progress) {
     if (!progress) return;
@@ -156,6 +175,8 @@
       }
       updateCard(card, res);
       updateDayProgress(res.dayProgress);
+      updateWeekProgress(res.weekProgress);
+      applyHideFilter();
       if (res.rewards) {
         updateLevel(res.rewards.progress);
         if (window.toast) window.toast.rewards(res.rewards);
@@ -168,6 +189,35 @@
   }
 
   // ---- Cableado ------------------------------------------------------------
+
+  // ---- Ocultar hábitos ya completados (toggle sutil, persistido) ----------
+  const HIDE_KEY = 'srv:hideDone';
+  const hideToggle = document.querySelector('[data-hide-done]');
+
+  /** ¿La tarjeta cuenta como "hecha" para el filtro de ocultar? */
+  function cardIsDone(card) {
+    // Los días libres no son obligatorios: no se ocultan como "hechos".
+    if (card.classList.contains('is-rest')) return false;
+    // Semanales: solo cuando cumplen su cuota (no por el registro de hoy).
+    if (card.dataset.weekly === '1') return card.classList.contains('is-week-done');
+    return card.classList.contains('is-complete');
+  }
+
+  function applyHideFilter() {
+    const on = hideToggle && hideToggle.checked;
+    list.querySelectorAll('.tracker-card').forEach((card) => {
+      card.classList.toggle('is-filtered', Boolean(on) && cardIsDone(card));
+    });
+  }
+
+  if (hideToggle) {
+    hideToggle.checked = localStorage.getItem(HIDE_KEY) === '1';
+    hideToggle.addEventListener('change', () => {
+      localStorage.setItem(HIDE_KEY, hideToggle.checked ? '1' : '0');
+      applyHideFilter();
+    });
+    applyHideFilter();
+  }
 
   // ---- Expansión móvil: tap en la cabecera despliega los controles --------
   const isMobile = () => window.matchMedia('(max-width: 560px)').matches;

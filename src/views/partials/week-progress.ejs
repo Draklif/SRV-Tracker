@@ -1,0 +1,19 @@
+<%
+  const wp = weekProgress;
+  const wmsg = wp.done === wp.total
+    ? '¡Cuotas de la semana cumplidas! 🌟'
+    : wp.done === 0
+      ? 'Tus hábitos semanales te esperan.'
+      : 'Buen ritmo con tus metas de la semana.';
+%>
+<section class="day-progress week-progress card" data-week-progress>
+  <div class="dp-ring" style="--pct: <%= wp.percent %>">
+    <div class="dp-ring-inner">
+      <b data-week-done><%= wp.done %></b><span class="dp-slash">/</span><span data-week-total><%= wp.total %></span>
+    </div>
+  </div>
+  <div class="dp-text">
+    <h2>Progreso semanal</h2>
+    <p class="text-muted" data-week-msg><%= wmsg %></p>
+  </div>
+</section>

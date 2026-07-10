@@ -100,6 +100,14 @@
   font-size: var(--fs-xl);
 }
 
+/* Anillo semanal: mismo diseño, acento ámbar para diferenciarlo del diario. */
+.week-progress .dp-ring {
+  background: conic-gradient(var(--accent-yellow) calc(var(--pct) * 1%), var(--surface-2) 0);
+}
+.week-progress .dp-ring-inner b {
+  color: var(--accent-yellow);
+}
+
 /* ---- Sección tracker ---- */
 .section-title {
   font-size: var(--fs-xl);
@@ -111,9 +119,74 @@
   display: grid;
   gap: var(--space-3);
 }
+.tracker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
 .tracker-list {
   display: grid;
   gap: var(--space-3);
+}
+/* Tarjetas ocultas por el toggle "Ocultar hechos". */
+.tracker-card.is-filtered {
+  display: none;
+}
+
+/* ---- Toggle sutil "Ocultar hechos" ---- */
+.hide-done-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  user-select: none;
+  transition: color var(--transition);
+}
+.hide-done-toggle:hover {
+  color: var(--text-muted);
+}
+.hide-done-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.hdt-track {
+  position: relative;
+  width: 30px;
+  height: 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  transition: background var(--transition), border-color var(--transition);
+  flex-shrink: 0;
+}
+.hdt-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: transform var(--transition), background var(--transition);
+}
+.hide-done-toggle input:checked + .hdt-track {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+.hide-done-toggle input:checked + .hdt-track .hdt-thumb {
+  transform: translateX(14px);
+  background: var(--brand);
+}
+.hide-done-toggle input:focus-visible + .hdt-track {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .tracker-card {
@@ -337,6 +410,20 @@
 .tc-add:hover {
   border-color: var(--habit-color);
   transform: translateY(-1px);
+}
+/* Botón por defecto: rellena lo que falte hasta la meta del día. */
+.tc-fill {
+  border-color: color-mix(in srgb, var(--habit-color) 55%, transparent);
+  color: var(--habit-color);
+}
+.tc-fill:hover {
+  background: var(--habit-color);
+  border-color: var(--habit-color);
+  color: #fff;
+}
+/* Ya cumplida la meta: el botón de rellenar no aporta, se oculta. */
+.tracker-card.is-complete .tc-fill {
+  display: none;
 }
 .tc-add-icon {
   margin-left: auto;

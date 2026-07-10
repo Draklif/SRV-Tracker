@@ -19,6 +19,8 @@ const log = asyncHandler(async (req, res) => {
     schedule.type === 'weekly'
       ? { done: dashboardService.weekCompletedCount(habitId, date), target: schedule.timesPerWeek }
       : null;
+  // Anillo semanal agregado (cuántos hábitos semanales cumplieron su cuota).
+  const weekProgress = dashboardService.weekProgress(req.user.id, date);
 
   res.json({
     habitId,
@@ -29,6 +31,7 @@ const log = asyncHandler(async (req, res) => {
     streak: { current: streak.current_streak, longest: streak.longest_streak },
     week, // { done, target } para weekly; null en el resto
     dayProgress,
+    weekProgress, // { done, total, percent } del anillo semanal
     rewards, // XP, subida de nivel y logros para los toasts (null si no aplica)
   });
 });

@@ -28,6 +28,17 @@ function weekCompletedCount(habitId, today) {
   return rows.filter((r) => r.completed).length;
 }
 
+/**
+ * Progreso semanal: cuántos hábitos "N veces/semana" ya cumplieron su cuota
+ * esta semana, sobre el total de hábitos semanales. Análogo al anillo diario.
+ */
+function weekProgressFrom(items) {
+  const weekly = items.filter((i) => i.schedule && i.schedule.type === 'weekly');
+  const done = weekly.filter((i) => (i.weekDone || 0) >= i.weekTarget).length;
+  const total = weekly.length;
+  return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
+}
+
 /** Datos completos del dashboard para un usuario: hábitos con su estado de hoy. */
 function assemble(user) {
   const today = todayFor(user.timezone);
@@ -56,6 +67,7 @@ function assemble(user) {
     today,
     habits: items,
     dayProgress: dayProgressFrom(items),
+    weekProgress: weekProgressFrom(items),
     level: levelProgress(user.xp),
     activity: activityService.feed(user.id, 5),
   };
@@ -72,4 +84,18 @@ function dayProgress(userId, date) {
   return dayProgressFrom(items);
 }
 
-module.exports = { assemble, dayProgress, weekCompletedCount };
+/** Progreso semanal (cuotas cumplidas) — usado tras registrar un hábito. */
+function weekProgress(userId, date) {
+  const items = habitService.listActive(userId).map((h) => {
+    const schedule = getSchedule(h);
+    const item = { schedule };
+    if (schedule.type === 'weekly') {
+      item.weekTarget = schedule.timesPerWeek;
+      item.weekDone = weekCompletedCount(h.id, date);
+    }
+    return item;
+  });
+  return weekProgressFrom(items);
+}
+
+module.exports = { assemble, dayProgress, weekProgress, weekCompletedCount };
