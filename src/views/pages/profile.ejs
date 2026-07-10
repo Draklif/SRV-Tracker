@@ -118,23 +118,20 @@
         </div>
 
         <div class="field">
-          <span class="field-label">Color de acento</span>
+          <label for="accent">Color de acento</label>
           <%
             // Etiquetas del selector de acento (los valores viven en profileValidators).
-            // El color de cada muestra se pinta con la clase .accent-swatch--<a> en CSS.
             const accentLabels = {
               blue: 'Azul', red: 'Rojo', green: 'Verde', purple: 'Morado', pink: 'Rosa',
             };
           %>
-          <div class="accent-picker" role="radiogroup" aria-label="Color de acento">
+          <select id="accent" name="accent">
             <% accents.forEach((a) => { %>
-            <label class="accent-swatch accent-swatch--<%= a %>" title="<%= accentLabels[a] || a %>">
-              <input type="radio" name="accent" value="<%= a %>" <%= values.accent === a ? 'checked' : '' %> />
-              <span class="accent-dot" aria-hidden="true"></span>
-              <span class="accent-name"><%= accentLabels[a] || a %></span>
-            </label>
+            <option value="<%= a %>" <%= values.accent === a ? 'selected' : '' %>>
+              <%= accentLabels[a] || a %>
+            </option>
             <% }) %>
-          </div>
+          </select>
           <small class="field-hint">Cambia los acentos de la app en modo claro y oscuro.</small>
         </div>
 
