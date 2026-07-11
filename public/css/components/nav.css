@@ -94,7 +94,8 @@
 }
 
 /* Badge de solicitudes de amistad en el enlace "Amigos". */
-.nav-link-friends {
+.nav-link-friends,
+.nav-link-profile {
   position: relative;
 }
 .nav-badge {
@@ -113,3 +114,13 @@
   vertical-align: middle;
 }
 .nav-badge[hidden] { display: none; }
+
+/* Variante punto (sin cifra): avisa de que hay novedades sin leer. Discreta a
+   propósito — informa, no reclama atención. */
+.nav-badge.is-dot {
+  min-width: 0;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  vertical-align: super;
+}

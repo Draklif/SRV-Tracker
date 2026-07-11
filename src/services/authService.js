@@ -3,6 +3,7 @@
 const config = require('../config');
 const userRepository = require('../models/userRepository');
 const inviteRepository = require('../models/inviteRepository');
+const changelogService = require('./changelogService');
 const withTransaction = require('../database/withTransaction');
 const password = require('../utils/password');
 const { ValidationError, AuthError } = require('../utils/errors');
@@ -44,7 +45,10 @@ async function register(input) {
         timezone: config.defaultTimezone,
       });
       inviteRepository.markUsed(invite.id, user.id);
-      return user;
+      // Nace al día: las notas de parche de antes de su registro no son "novedad"
+      // para él, así que no le enseñamos el punto de aviso en la navegación.
+      changelogService.markSeen(user.id);
+      return userRepository.findById(user.id);
     });
   } catch (err) {
     // El único UNIQUE que no pre-validamos es el email.

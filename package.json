@@ -1,6 +1,6 @@
 {
   "name": "tracker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Habit tracker gamificado y acogedor para un grupo de amigos",
   "type": "commonjs",
   "main": "src/server.js",

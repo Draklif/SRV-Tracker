@@ -15,6 +15,7 @@
     <span class="bottom-nav-icon">
       <%- include('icon', { name: tab.icon, size: 22 }) %>
       <% if (tab.href === '/social') { %><span class="bottom-nav-badge" data-nav-friend-badge <%= pendingFriendCount ? '' : 'hidden' %>><%= pendingFriendCount %></span><% } %>
+      <% if (tab.href === '/profile') { %><span class="bottom-nav-badge is-dot" data-nav-changelog-badge <%= hasUnseenChangelog ? '' : 'hidden' %>></span><% } %>
     </span>
     <span class="bottom-nav-label"><%= tab.label %></span>
   </a>

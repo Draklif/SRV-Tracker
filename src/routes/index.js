@@ -10,6 +10,7 @@ const socialApiRoutes = require('./api/socialApiRoutes');
 const friendApiRoutes = require('./api/friendApiRoutes');
 const pushApiRoutes = require('./api/pushApiRoutes');
 const socialController = require('../controllers/socialController');
+const changelogController = require('../controllers/changelogController');
 const requireAuth = require('../middlewares/requireAuth');
 
 /**
@@ -37,6 +38,7 @@ router.use('/', authRoutes);
 router.use('/profile', profileRoutes);
 router.use('/habits', habitRoutes);
 router.get('/social', requireAuth, socialController.page);
+router.get('/novedades', requireAuth, changelogController.page);
 router.get('/u/:username', requireAuth, require('../controllers/userController').showFriend);
 
 // API JSON.

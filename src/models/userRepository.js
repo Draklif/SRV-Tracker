@@ -38,6 +38,9 @@ const statements = {
     WHERE id = @id
   `),
   notifiable: db.prepare('SELECT * FROM users WHERE notify_enabled = 1'),
+  setChangelogSeen: db.prepare(
+    "UPDATE users SET changelog_seen = @version, updated_at = datetime('now') WHERE id = @id"
+  ),
 };
 
 function create({ username, passwordHash, email, displayName, timezone }) {
@@ -92,6 +95,11 @@ function listNotifiable() {
   return statements.notifiable.all();
 }
 
+/** Última versión del changelog que el usuario ha visto. */
+function setChangelogSeen(id, version) {
+  statements.setChangelogSeen.run({ id, version });
+}
+
 module.exports = {
   create,
   findById,
@@ -104,4 +112,5 @@ module.exports = {
   setNotifyEnabled,
   updateNotifyPrefs,
   listNotifiable,
+  setChangelogSeen,
 };

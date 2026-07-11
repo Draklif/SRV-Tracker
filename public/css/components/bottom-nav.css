@@ -77,3 +77,13 @@
   font-weight: 900;
 }
 .bottom-nav-badge[hidden] { display: none; }
+
+/* Variante punto (sin cifra): novedades sin leer sobre el icono de "Perfil". */
+.bottom-nav-badge.is-dot {
+  top: -2px;
+  right: -6px;
+  min-width: 0;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+}

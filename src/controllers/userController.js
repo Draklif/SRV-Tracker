@@ -9,6 +9,7 @@ const achievementService = require('../services/achievementService');
 const resourceService = require('../services/resourceService');
 const inviteService = require('../services/inviteService');
 const friendshipService = require('../services/friendshipService');
+const changelogService = require('../services/changelogService');
 const userRepository = require('../models/userRepository');
 const streakRepository = require('../models/streakRepository');
 const { NotFoundError } = require('../utils/errors');
@@ -38,6 +39,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     level: levelProgress(req.user.xp),
     activeInvite: inviteService.getActiveForUser(req.user.id),
     inviteTtlMinutes: inviteService.INVITE_TTL_MINUTES,
+    latestRelease: changelogService.latest(),
     profileErrors,
     passwordErrors,
     values: values || {

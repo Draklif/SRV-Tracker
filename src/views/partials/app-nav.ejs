@@ -9,7 +9,7 @@
       <a href="/" class="nav-link">Inicio</a>
       <a href="/habits" class="nav-link">Hábitos</a>
       <a href="/social" class="nav-link nav-link-friends">Amigos<span class="nav-badge" data-nav-friend-badge <%= pendingFriendCount ? '' : 'hidden' %>><%= pendingFriendCount %></span></a>
-      <a href="/profile" class="nav-link">Perfil</a>
+      <a href="/profile" class="nav-link nav-link-profile">Perfil<span class="nav-badge is-dot" data-nav-changelog-badge <%= hasUnseenChangelog ? '' : 'hidden' %>></span></a>
     </nav>
 
     <div class="app-nav-user">

@@ -438,3 +438,37 @@
     min-height: 44px;
   }
 }
+
+/* ── Novedades ────────────────────────────────────────────────────────────
+   Tarjeta de acceso a /novedades. Solo se resalta si hay algo sin leer; una
+   vez leído queda como un enlace tranquilo al historial. */
+
+.news-section.has-unseen {
+  border-color: var(--brand);
+}
+
+.news-section h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.news-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--danger, #e5484d);
+}
+
+.news-latest {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.news-title {
+  font-weight: var(--fw-bold);
+}
+
+.news-intro {
+  margin-bottom: var(--space-4);
+}
