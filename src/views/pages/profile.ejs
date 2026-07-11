@@ -28,20 +28,11 @@
     </div>
   </header>
 
-  <!-- Dimensiones: en qué áreas de tu vida se ha repartido tu esfuerzo.
-       En la Fase C esta vitrina de tiles la sustituye el radar. -->
+  <!-- Dimensiones: en qué áreas de tu vida se reparte tu esfuerzo. -->
   <section class="card resources-section">
     <h2>Dimensiones</h2>
-    <p class="text-muted res-summary">Dónde has repartido tu esfuerzo</p>
-    <div class="res-grid">
-      <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
-      <div class="res-tile" title="<%= m.desc %>">
-        <span class="res-icon"><%- include('../partials/icon', { name: key, size: 30 }) %></span>
-        <span class="res-total"><%= resources[key] || 0 %></span>
-        <span class="res-name"><%= m.label %></span>
-      </div>
-      <% }) %>
-    </div>
+    <p class="text-muted res-summary">Tu ritmo de siempre, y cómo vas estos 7 días</p>
+    <%- include('../partials/resource-radar', { radar }) %>
   </section>
 
   <!-- Logros e insignias (solo los conseguidos: la vitrina crece contigo) -->

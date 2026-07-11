@@ -34,7 +34,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     themes: THEMES,
     accents: ACCENTS,
     achievements: achievementService.listForUser(req.user.id),
-    resources: resourceService.totalsForUser(req.user.id),
+    radar: resourceService.radarForUser(req.user.id, req.user.timezone),
     level: levelProgress(req.user.xp),
     activeInvite: inviteService.getActiveForUser(req.user.id),
     inviteTtlMinutes: inviteService.INVITE_TTL_MINUTES,
@@ -142,6 +142,9 @@ const showFriend = (req, res) => {
     friend,
     friendStatus: friendshipService.statusWith(req.user.id, friend.id),
     level: levelProgress(friend.xp),
+    // La ventana del radar se calcula en la tz del AMIGO: "sus últimos 7 días"
+    // son los suyos, no los del que mira.
+    radar: resourceService.radarForUser(friend.id, friend.timezone),
     unlocked: achievements.filter((a) => a.unlocked_at),
     totalAchievements: achievements.length,
     topStreaks: streakRepository.topByUser(friend.id, 3),

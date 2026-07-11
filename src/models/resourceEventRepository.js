@@ -39,7 +39,16 @@ const statements = {
     WHERE e.user_id = ? AND e.day >= ?
     GROUP BY ${DIMENSION}
   `),
-  firstDay: db.prepare('SELECT MIN(day) AS day FROM resource_events WHERE user_id = ?'),
+  // Antigüedad POR DIMENSIÓN, no del usuario: el ritmo de un eje debe medirse
+  // sobre el tiempo que lleva existiendo ese eje. Si no, empezar Calma hoy con
+  // 10 meses de cuenta daría "tu ritmo en Calma es 0.05/semana", y abandonar un
+  // eje recién adoptado no produciría abolladura alguna.
+  firstDayByDimension: db.prepare(`
+    SELECT ${DIMENSION} AS resource_type, MIN(e.day) AS day
+    ${FROM_JOINED}
+    WHERE e.user_id = ?
+    GROUP BY ${DIMENSION}
+  `),
 };
 
 /** Inserta el premio si no existía. Devuelve true si se otorgó. */
@@ -57,9 +66,13 @@ function totalsByUserSince(userId, sinceDay) {
   return statements.totalsByUserSince.all(userId, sinceDay);
 }
 
-/** Día del primer evento del usuario (o null). Base de su antigüedad. */
-function firstDay(userId) {
-  return statements.firstDay.get(userId).day;
+/** Día del primer evento de CADA dimensión: { body: '2026-01-04', … }. */
+function firstDayByDimension(userId) {
+  const out = {};
+  for (const row of statements.firstDayByDimension.all(userId)) {
+    if (row.resource_type) out[row.resource_type] = row.day;
+  }
+  return out;
 }
 
-module.exports = { insertIfNew, totalsByUser, totalsByUserSince, firstDay };
+module.exports = { insertIfNew, totalsByUser, totalsByUserSince, firstDayByDimension };

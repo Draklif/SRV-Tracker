@@ -74,7 +74,10 @@
   transform: rotate(0deg) scale(1.03);
 }
 
-/* ---- Recursos generados por los hábitos ---- */
+/* ---- Radar de dimensiones ----
+   Dos polígonos en la misma unidad: el trazo a rayas es tu ritmo habitual, el
+   relleno tus últimos 7 días. Cuando mantienes el ritmo el relleno llega al
+   trazo; donde aflojas, se abolla. Ver partials/resource-radar.ejs. */
 .resources-section h2 {
   font-size: var(--fs-lg);
   display: inline-block;
@@ -85,49 +88,92 @@
   margin: var(--space-2) 0 var(--space-4);
   font-size: var(--fs-sm);
 }
-/* auto-fit: las tarjetas se reparten el 100% del ancho y solo hacen wrap
-   cuando ya no caben (mismo look de sticker que las insignias de logros). */
-.res-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: var(--space-3);
-}
-.res-tile {
+.radar {
   display: grid;
   justify-items: center;
-  text-align: center;
-  gap: 2px;
-  padding: var(--space-4) var(--space-2);
-  background: var(--surface-2);
-  border: 2px solid var(--border-strong);
-  border-radius: var(--radius);
-  transform: rotate(-1deg);
-  transition: transform var(--transition), box-shadow var(--transition);
+  gap: var(--space-3);
 }
-.res-tile:hover {
-  transform: rotate(0deg) translateY(-3px);
-  box-shadow: var(--shadow-sm);
+.radar-empty {
+  margin: 0;
+  font-size: var(--fs-sm);
 }
-.res-icon {
-  display: inline-flex;
-  color: var(--brand);
-  line-height: 0;
+.radar-svg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  overflow: visible;
 }
-.res-total {
+
+/* Rejilla de fondo: presente pero que no compita con los datos. */
+.radar-ring {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+.radar-spoke {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+/* El listón: tu ritmo. A rayas para que se lea como "objetivo", no como dato. */
+.radar-baseline {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+  stroke-linejoin: round;
+}
+
+/* Tu semana. Sólida y en el color de acento: es el protagonista. */
+.radar-current {
+  fill: color-mix(in srgb, var(--brand) 26%, transparent);
+  stroke: var(--brand);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.radar-dot {
+  fill: var(--brand);
+}
+
+.radar-axis .icon {
+  color: var(--text);
+}
+.radar-level {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 900;
-  font-size: var(--fs-xl);
-  line-height: 1.1;
-}
-.res-name {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: var(--fs-xs);
+  font-size: 10px;
   letter-spacing: 0.02em;
+  fill: var(--text-muted);
+}
+
+.radar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  margin: 0;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
+}
+.radar-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.radar-key::before {
+  content: '';
+  width: 16px;
+  height: 0;
+  border-top-width: 3px;
+}
+.radar-key-baseline::before {
+  border-top-style: dashed;
+  border-top-color: var(--text-muted);
+}
+.radar-key-current::before {
+  border-top-style: solid;
+  border-top-color: var(--brand);
 }
 
 /* ---- Logros ---- */

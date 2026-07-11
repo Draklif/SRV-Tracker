@@ -1,0 +1,97 @@
+<%
+  /**
+   * Radar de dimensiones. Espera `radar` (ver resourceService.radarForUser):
+   * [{ key, total, level, baseline, current }, …] con las 6 dimensiones.
+   *
+   * DOS POLÍGONOS EN LA MISMA UNIDAD (puntos por ventana), por eso son
+   * comparables sin normalizar:
+   *   · exterior, a trazos → `baseline`: tu ritmo habitual. El listón.
+   *   · interior, relleno  → `current`:  los últimos 7 días.
+   * Mantener el ritmo ⇒ el relleno llega al trazo y el hexágono se ve sólido.
+   * Donde aflojas, se abolla hacia dentro: esa abolladura es el mensaje.
+   *
+   * El nivel (acumulado de siempre, nunca baja) NO es un radio: va como insignia
+   * junto al icono. Radar = comparación; nivel = progresión. Dos preguntas.
+   */
+  const CX = 150, CY = 138, R = 88;   // centro y radio del hexágono
+  const ICON_R = R + 30;              // anillo donde viven los iconos
+  const FLOOR = 0.10;                 // suelo: un eje a 0 no colapsa al centro
+                                      // (un polígono que pasa por el centro se
+                                      //  auto-interseca y se ve roto)
+
+  // Escala radial: el anillo exterior es el siguiente múltiplo de 5 por encima
+  // del mayor valor del gráfico. Así el polígono CRECE dentro de una banda y de
+  // vez en cuando el gráfico entero "sube de anillo", en vez de tocar siempre el
+  // borde (que es lo que pasaría normalizando al máximo actual: nunca sentirías
+  // que progresas). Que `current` supere a `baseline` en una buena semana no
+  // desborda: la escala se expande para acomodarlo.
+  const peak = Math.max(0, ...radar.map((a) => Math.max(a.baseline, a.current)));
+  const scaleMax = Math.max(5, Math.ceil(peak / 5) * 5);
+
+  // Raíz: comprime la cima. Sin ella, un eje de 21 pts/semana contra otro de 3
+  // sería 7:1 y el hexágono una aguja. La MISMA transformación se aplica a los
+  // dos polígonos, así que "valores iguales ⇒ radios iguales" se conserva y la
+  // comparación sigue siendo válida.
+  const radius = (v) => R * (FLOOR + (1 - FLOOR) * Math.sqrt(Math.max(v, 0) / scaleMax));
+
+  // Vértices en sentido horario desde arriba.
+  const angle = (i) => (-90 + i * 60) * (Math.PI / 180);
+  const at = (i, r) => [CX + r * Math.cos(angle(i)), CY + r * Math.sin(angle(i))];
+  const poly = (values) => values.map((v, i) => at(i, radius(v)).map((n) => n.toFixed(1)).join(',')).join(' ');
+  const grid = (frac) => radar.map((_, i) => at(i, R * frac).map((n) => n.toFixed(1)).join(',')).join(' ');
+
+  const fmt = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+
+  // Sin un solo punto, el radar sería un hexágono diminuto en el centro: un
+  // puntito sin explicación. Mejor no dibujarlo y decir qué hace falta.
+  const hasData = radar.some((a) => a.total > 0);
+%>
+<% if (!hasData) { %>
+<p class="text-muted radar-empty">Aún no hay nada que dibujar. Registra hábitos y el hexágono irá tomando forma.</p>
+<% } else { %>
+<div class="radar">
+  <svg class="radar-svg" viewBox="0 0 300 292" role="img"
+       aria-label="Radar de tus seis dimensiones: tu ritmo habitual frente a los últimos 7 días.">
+
+    <!-- Rejilla de fondo -->
+    <% [0.25, 0.5, 0.75, 1].forEach((f) => { %>
+    <polygon class="radar-ring" points="<%= grid(f) %>" />
+    <% }) %>
+    <% radar.forEach((a, i) => { const [x, y] = at(i, R); %>
+    <line class="radar-spoke" x1="<%= CX %>" y1="<%= CY %>" x2="<%= x.toFixed(1) %>" y2="<%= y.toFixed(1) %>" />
+    <% }) %>
+
+    <!-- Exterior: tu ritmo habitual (media por ventana). El listón a alcanzar. -->
+    <polygon class="radar-baseline" points="<%= poly(radar.map((a) => a.baseline)) %>" />
+
+    <!-- Interior: los últimos 7 días. Se abolla donde aflojas. -->
+    <polygon class="radar-current" points="<%= poly(radar.map((a) => a.current)) %>" />
+
+    <!-- Vértices de la semana -->
+    <% radar.forEach((a, i) => { const [x, y] = at(i, radius(a.current)); %>
+    <circle class="radar-dot" cx="<%= x.toFixed(1) %>" cy="<%= y.toFixed(1) %>" r="3" />
+    <% }) %>
+
+    <!-- Iconos + insignia de nivel. El icono solo es ambiguo, así que cada eje
+         lleva <title> con el nombre y las cifras (tooltip y lector de pantalla). -->
+    <% radar.forEach((a, i) => {
+         const meta = resourceTypeMeta[a.key];
+         const [x, y] = at(i, ICON_R);
+    %>
+    <g class="radar-axis">
+<%# Copy neutro: este partial lo comparten tu perfil y el de un amigo. %>
+      <title><%= meta.label %> · nivel <%= Math.floor(a.level) %> · <%= fmt(a.current) %> pts estos 7 días (ritmo habitual: <%= fmt(a.baseline) %>)</title>
+      <g transform="translate(<%= (x - 10).toFixed(1) %>, <%= (y - 15).toFixed(1) %>)">
+        <%- include('icon', { name: a.key, size: 20 }) %>
+      </g>
+      <text class="radar-level" x="<%= x.toFixed(1) %>" y="<%= (y + 16).toFixed(1) %>" text-anchor="middle">Nv <%= Math.floor(a.level) %></text>
+    </g>
+    <% }) %>
+  </svg>
+
+  <p class="radar-legend">
+    <span class="radar-key radar-key-baseline">Ritmo habitual</span>
+    <span class="radar-key radar-key-current">Estos 7 días</span>
+  </p>
+</div>
+<% } %>

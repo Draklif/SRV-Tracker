@@ -75,39 +75,58 @@ function totalsForUser(userId) {
  * Los dos polígonos se miden en LA MISMA UNIDAD —puntos por ventana—, y por eso
  * son directamente comparables sin normalizar nada:
  *
- *   baseline = total / ventanas_vividas   → el polígono EXTERIOR: tu ritmo habitual
- *   current  = puntos de la ventana actual → el polígono INTERIOR: cómo vas ahora
+ *   baseline → EXTERIOR: tu ritmo ANTES de esta ventana. El listón.
+ *   current  → INTERIOR: lo que llevas en la ventana actual.
  *
- * Mantener tu ritmo ⇒ current ≈ baseline ⇒ los polígonos COINCIDEN. Donde aflojas,
+ * Mantener el ritmo ⇒ current ≈ baseline ⇒ los polígonos COINCIDEN. Donde aflojas,
  * el interior se hunde; donde aprietas, sobresale (y eso es honesto: no se capa,
  * la escala del gráfico se expande para acomodarlo).
  *
+ * DOS SUTILEZAS QUE PARECEN DETALLES Y NO LO SON:
+ *
+ * 1) El baseline EXCLUYE la ventana actual (del numerador Y del denominador). Si
+ *    no, la semana que mides contamina la vara con la que la mides: abandonar un
+ *    eje baja su total, baja su media, y la abolladura sale más pequeña de lo que
+ *    es. Excluyéndola, un ritmo constante sigue dando baseline == current exacto
+ *    (180 pts en 9 ventanas previas = 20/ventana = los 20 de esta), pero ahora la
+ *    comparación no se muerde la cola.
+ *
+ * 2) La antigüedad se mide POR DIMENSIÓN, no por usuario. El "ritmo en Calma" hay
+ *    que medirlo sobre el tiempo que llevas con Calma. Con la antigüedad de la
+ *    cuenta, empezar Calma hoy tras un año de uso daría un ritmo ridículo, y
+ *    abandonar un eje adoptado hace dos semanas no produciría abolladura ninguna.
+ *
  * El divisor es la ventana, no un 7 literal: si RADAR_WINDOW_DAYS sube a 14, el
  * exterior pasa a ser "producción media por quincena" y sigue siendo comparable
- * con el interior. Si fuera un 7 fijo, cambiar la ventana rompería la comparación.
+ * con el interior. Con un 7 fijo, cambiar la ventana rompería la comparación.
  *
- * `ventanas_vividas` tiene SUELO DE 1. Sin él, un usuario de dos días tendría una
- * "media semanal" inflada (sus 6 puntos ÷ 0.28 semanas = 21) y su semana real se
- * vería como un socavón. Con el suelo, un usuario nuevo tiene baseline == current
- * y su hexágono nace sólido, que es lo correcto: aún no tiene un ritmo del que
- * desviarse.
+ * Una dimensión estrenada dentro de la ventana no tiene pasado: baseline 0 y el
+ * vértice sobresale. Correcto — no tenías ritmo del que desviarte, lo estás
+ * creando.
  *
  * `level` va aparte del radar: es la capa de PROGRESIÓN (acumulado de siempre,
  * nunca baja, no se estanca) y se pinta como insignia en cada vértice. El radar
  * es la capa de COMPARACIÓN. Son dos preguntas distintas.
  */
-function computeRadar({ totals, windowTotals, firstDay, today }) {
-  const daysLived = firstDay ? diffDays(today, firstDay) + 1 : 0;
-  const windowsLived = Math.max(daysLived / RADAR_WINDOW_DAYS, 1);
-
+function computeRadar({ totals, windowTotals, firstDays, today }) {
   return RESOURCE_TYPE_KEYS.map((key) => {
     const total = totals[key] || 0;
+    const current = windowTotals[key] || 0;
+    const prior = total - current; // puntos ANTERIORES a la ventana actual
+
+    // Ventanas de historia previa de ESTA dimensión, con suelo de 1: por debajo
+    // de una ventana no hay ritmo que estimar, y dividir por una fracción
+    // diminuta inflaría la media hasta lo absurdo.
+    const firstDay = firstDays[key];
+    const daysLived = firstDay ? diffDays(today, firstDay) + 1 : 0;
+    const priorWindows = Math.max((daysLived - RADAR_WINDOW_DAYS) / RADAR_WINDOW_DAYS, 1);
+
     return {
       key,
       total,
       level: axisLevel(total),
-      baseline: total / windowsLived,
-      current: windowTotals[key] || 0,
+      baseline: prior / priorWindows,
+      current,
     };
   });
 }
@@ -120,7 +139,7 @@ function radarForUser(userId, timezone) {
   return computeRadar({
     totals: byDimension(resourceEventRepository.totalsByUser(userId)),
     windowTotals: byDimension(resourceEventRepository.totalsByUserSince(userId, since)),
-    firstDay: resourceEventRepository.firstDay(userId),
+    firstDays: resourceEventRepository.firstDayByDimension(userId),
     today,
   });
 }
