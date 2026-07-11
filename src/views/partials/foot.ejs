@@ -1,14 +1,14 @@
-    <!-- Scripts globales (en todas las páginas), en orden de dependencia:
-         toast.js (flashes), api.js (window.api para fetch+CSRF), push.js (SW + opt-in). -->
-    <script src="/js/toast.js" defer></script>
-    <script src="/js/api.js" defer></script>
-    <script src="/js/push.js" defer></script>
     <%
-      // Evitar duplicar los globales si una página los lista en su array `scripts`.
+      // Scripts globales (en todas las páginas), en orden de dependencia:
+      // toast.js (flashes), api.js (window.api para fetch+CSRF), push.js (SW + opt-in).
+      // Salen con `?v=<hash>` (app.locals.asset) para el cache busting en móvil.
       const _globalScripts = ['/js/toast.js', '/js/api.js', '/js/push.js'];
+      // Evitar duplicar los globales si una página los lista en su array `scripts`.
+      const _pageScripts = (typeof scripts !== 'undefined' ? scripts : [])
+        .filter((src) => !_globalScripts.includes(src));
     %>
-    <% (typeof scripts !== 'undefined' ? scripts : []).forEach((src) => { if (_globalScripts.includes(src)) return; %>
-    <script src="<%= src %>" defer></script>
+    <% _globalScripts.concat(_pageScripts).forEach((src) => { %>
+    <script src="<%= asset(src) %>" defer></script>
     <% }) %>
   </body>
 </html>

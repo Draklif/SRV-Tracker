@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const config = require('./config');
 const constants = require('./config/constants');
 const schedule = require('./utils/schedule');
+const { asset } = require('./utils/assets');
 const routes = require('./routes');
 const sessionMiddleware = require('./middlewares/session');
 const loadUser = require('./middlewares/loadUser');
@@ -55,11 +56,41 @@ function createApp() {
   app.use(express.json());
 
   // Estáticos: CSS, JS, iconos, imágenes y subidas.
+  //
+  // Las vistas piden los estáticos con `?v=<hash del contenido>` (utils/assets),
+  // así que una URL con `?v` es inmutable por definición: si el archivo cambia,
+  // cambia la URL. Eso permite cachearla un año y arregla el problema de que los
+  // móviles se quedaran con el CSS/JS viejo hasta una semana.
+  //
+  // Lo que llega sin `?v` (sw.js, el manifest y los iconos que este referencia)
+  // debe revalidar siempre: son URLs fijas que sí cambian de contenido, y si el
+  // cliente las cachea se queda clavado en la versión anterior.
   app.use(
     express.static(path.join(__dirname, '..', 'public'), {
-      maxAge: config.isProd ? '7d' : 0,
+      setHeaders(res, filePath) {
+        if (!config.isProd) {
+          res.setHeader('Cache-Control', 'no-store');
+        } else if (res.req.query && res.req.query.v) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (filePath.includes(`${path.sep}uploads${path.sep}`)) {
+          // Los avatares ya llevan timestamp en el nombre, nunca se reescriben.
+          res.setHeader('Cache-Control', 'public, max-age=604800');
+        } else {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      },
     })
   );
+
+  // El HTML (y las respuestas de la API) nunca se cachean: son personales y
+  // deben reflejar el estado actual. Además es lo que cierra el círculo del cache
+  // busting — si el móvil cacheara el HTML, seguiría pidiendo los estáticos con
+  // el `?v=` antiguo. `no-cache` obliga a revalidar, pero deja que el ETag
+  // responda 304 cuando la página no ha cambiado.
+  app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, private');
+    next();
+  });
 
   // Sesión → carga de usuario → token CSRF. En este orden porque loadUser y el
   // token CSRF dependen de la sesión, y las vistas necesitan `user` y `csrfToken`.
@@ -87,6 +118,7 @@ function createApp() {
   app.locals.resourceTypeMeta = constants.RESOURCE_TYPE_META;
   app.locals.schedule = schedule; // helpers de frecuencia para las vistas
   app.locals.vapidPublicKey = config.push.vapidPublic; // para suscribirse a Web Push
+  app.locals.asset = asset; // estáticos con hash de contenido (cache busting)
 
   // Rutas de la aplicación.
   app.use('/', routes);

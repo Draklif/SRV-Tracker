@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text x='12' y='12' font-size='24' text-anchor='middle' dominant-baseline='central' transform='rotate(-10 12 12)' fill='%234f8cff'>★</text></svg>" />
     <!-- PWA: manifest + icono para "Añadir a pantalla de inicio" (necesario para push en iOS). -->
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="<%= asset('/icons/apple-touch-icon.png') %>" />
     <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
     <meta name="csrf-token" content="<%= csrfToken %>" />
     <% } %>
@@ -44,18 +44,24 @@
     <meta name="twitter:description" content="<%= _ogDesc %>" />
     <meta name="twitter:image" content="<%= _ogImage %>" />
 
-    <link rel="stylesheet" href="/css/tokens.css" />
-    <link rel="stylesheet" href="/css/reset.css" />
-    <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/css/components/forms.css" />
-    <link rel="stylesheet" href="/css/components/avatar.css" />
-    <link rel="stylesheet" href="/css/components/nav.css" />
-    <link rel="stylesheet" href="/css/components/bottom-nav.css" />
-    <link rel="stylesheet" href="/css/components/toast.css" />
-    <link rel="stylesheet" href="/css/components/feed.css" />
-    <link rel="stylesheet" href="/css/components/user-row.css" />
-    <% (typeof styles !== 'undefined' ? styles : []).forEach((href) => { %>
-    <link rel="stylesheet" href="<%= href %>" />
+    <%
+      // Los estáticos salen con `?v=<hash>` (app.locals.asset) para que el móvil
+      // no se quede con una versión vieja en caché. Ver src/utils/assets.js.
+      const _globalStyles = [
+        '/css/tokens.css',
+        '/css/reset.css',
+        '/css/base.css',
+        '/css/components/forms.css',
+        '/css/components/avatar.css',
+        '/css/components/nav.css',
+        '/css/components/bottom-nav.css',
+        '/css/components/toast.css',
+        '/css/components/feed.css',
+        '/css/components/user-row.css',
+      ];
+    %>
+    <% _globalStyles.concat(typeof styles !== 'undefined' ? styles : []).forEach((href) => { %>
+    <link rel="stylesheet" href="<%= asset(href) %>" />
     <% }) %>
   </head>
   <body>
