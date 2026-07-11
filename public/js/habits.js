@@ -60,7 +60,9 @@
     resetForm();
     el('habit-modal-title').textContent = 'Nuevo hábito';
     // Flujo por pasos: cada sección se revela y la anterior se oculta
-    // (01 Tipo → 02 Recurso → 03 Detalles) para que el modal no crezca.
+    // (01 Tipo → 02 Dimensión → 03 Detalles) para que el modal no crezca.
+    el('resource-step-tag').textContent = '02 · Dimensión';
+    el('resource-back').hidden = false;
     el('details-step-tag').textContent = '03 · Detalles';
     el('details-back').hidden = false;
     toggleDynamicFields(null);
@@ -72,12 +74,16 @@
     resetForm();
     const cfg = JSON.parse(card.dataset.json);
     el('habit-modal-title').textContent = 'Editar hábito';
-    // Tipo y recurso son inmutables: al editar se va directo a los detalles.
+    // El tipo es inmutable (invalidaría los registros ya hechos), así que su paso
+    // se salta. La dimensión SÍ se puede corregir, y al hacerlo se lleva consigo
+    // todo el histórico del hábito: se muestra su selector con la actual marcada.
     el('type-picker-wrap').hidden = true;
-    el('resource-picker-wrap').hidden = true;
     el('details-step-tag').textContent = 'Detalles';
     el('details-back').hidden = true; // sin volver atrás al editar
-    el('habit-resource').value = cfg.resourceType || '';
+    el('resource-step-tag').textContent = 'Dimensión';
+    el('resource-back').hidden = true; // no hay paso anterior al que volver
+    selectResource(cfg.resourceType || '', { advance: false });
+    el('resource-picker-wrap').hidden = false;
 
     el('habit-details').hidden = false;
     el('habit-save').disabled = false;
@@ -141,12 +147,16 @@
     goToStep('resource');
   }
 
-  function selectResource(resource) {
+  // Marca la dimensión elegida. Al CREAR avanza al paso de detalles; al EDITAR el
+  // selector convive con los detalles en pantalla, así que avanzar los ocultaría.
+  function selectResource(resource, opts) {
     el('habit-resource').value = resource;
     document.querySelectorAll('.resource-option').forEach((b) => {
       b.classList.toggle('is-selected', b.dataset.resource === resource);
     });
-    goToStep('details');
+    const isEditing = Boolean(el('habit-id').value);
+    const advance = opts && 'advance' in opts ? opts.advance : !isEditing;
+    if (advance) goToStep('details');
   }
 
   function syncColorSelection(color) {
@@ -263,7 +273,7 @@
       return;
     }
     if (!val('habit-resource')) {
-      showError({ message: 'Elige un recurso.' });
+      showError({ message: 'Elige una dimensión.' });
       return;
     }
     const sched = readSchedule();

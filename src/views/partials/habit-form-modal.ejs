@@ -27,11 +27,13 @@
         </div>
       </div>
 
-      <!-- Paso 2: recurso que genera el hábito (aparece al elegir tipo) -->
+      <!-- Paso 2: dimensión de vida a la que aporta el hábito. A diferencia del
+           tipo, SÍ es editable después: corregirla mueve todo su histórico. Por eso
+           al editar este paso también se muestra (sin numerar y sin "Atrás"). -->
       <div class="form-step" id="resource-picker-wrap" hidden>
         <div class="step-head">
-          <span class="step-tag">02 · Recurso</span>
-          <button type="button" class="step-back" data-back="type">← Atrás</button>
+          <span class="step-tag" id="resource-step-tag">02 · Dimensión</span>
+          <button type="button" class="step-back" id="resource-back" data-back="type">← Atrás</button>
         </div>
         <div class="type-picker resource-picker">
           <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>

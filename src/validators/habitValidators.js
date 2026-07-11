@@ -7,7 +7,7 @@ const { HABIT_COLOR_KEYS, RESOURCE_TYPE_KEYS } = require('../config/constants');
 const name = z.string().trim().min(1, 'Ponle un nombre').max(40, 'Máximo 40 caracteres');
 const icon = z.string().trim().min(1, 'Elige un icono').max(8, 'Icono demasiado largo');
 const color = z.enum(HABIT_COLOR_KEYS, { errorMap: () => ({ message: 'Color no válido' }) });
-const resourceType = z.enum(RESOURCE_TYPE_KEYS, { errorMap: () => ({ message: 'Elige un recurso' }) });
+const resourceType = z.enum(RESOURCE_TYPE_KEYS, { errorMap: () => ({ message: 'Elige una dimensión' }) });
 
 const optionalUnit = z.string().trim().max(12, 'Máximo 12 caracteres').optional().or(z.literal(''));
 const positive = z.coerce

@@ -6,14 +6,18 @@ const { RESOURCE_RULES, RESOURCE_TYPE_KEYS } = require('../config/constants');
 const { isProgress } = require('../utils/logProgress');
 
 /**
- * Otorga recursos de forma idempotente (índice único user+resource+reason+
- * source+day). Devuelve la cantidad otorgada (0 si ya existía). Nunca resta.
+ * Otorga puntos de forma idempotente (índice único user+reason+source+day).
+ * Devuelve la cantidad otorgada (0 si ya existía). Nunca resta.
+ *
+ * `resourceType` va a NULL cuando la fuente es un hábito: la dimensión se deduce
+ * del hábito al leer, no se copia aquí. Solo se pasa para fuentes que no sean
+ * hábitos (aún no hay ninguna).
  */
 function award(userId, resourceType, amount, reason, sourceType, sourceId, day) {
   if (amount <= 0) return 0;
   const inserted = resourceEventRepository.insertIfNew({
     user_id: userId,
-    resource_type: resourceType,
+    resource_type: sourceType === 'habit' ? null : resourceType,
     amount,
     reason,
     source_type: sourceType,
@@ -24,26 +28,28 @@ function award(userId, resourceType, amount, reason, sourceType, sourceId, day) 
 }
 
 /**
- * Genera el recurso del hábito al registrar un avance: +ON_PROGRESS por avance
+ * Genera los puntos del hábito al registrar un avance: +ON_PROGRESS por avance
  * real y +ON_COMPLETE adicional al alcanzar la meta diaria (completar da la
- * suma). Idempotente por día. Todo se acumula en el ledger del usuario. No
- * devuelve nada al cliente (no altera los toasts).
+ * suma). Idempotente por día. No devuelve nada al cliente (no altera los toasts).
+ *
+ * En qué dimensión caen no se decide aquí: se deriva del hábito al leer, así que
+ * si el usuario reetiqueta el hábito, estos puntos se mudan con él.
  */
 function processLog({ habit, log, date }) {
-  if (!habit || !habit.resource_type) return;
+  if (!habit) return;
   withTransaction(() => {
     if (isProgress(log)) {
-      award(habit.user_id, habit.resource_type, RESOURCE_RULES.ON_PROGRESS, 'resource_progress', 'habit', habit.id, date);
+      award(habit.user_id, null, RESOURCE_RULES.ON_PROGRESS, 'resource_progress', 'habit', habit.id, date);
       if (log.completed) {
-        award(habit.user_id, habit.resource_type, RESOURCE_RULES.ON_COMPLETE, 'resource_complete', 'habit', habit.id, date);
+        award(habit.user_id, null, RESOURCE_RULES.ON_COMPLETE, 'resource_complete', 'habit', habit.id, date);
       }
     }
   });
 }
 
 /**
- * Totales del usuario por recurso: objeto con las 4 claves de recurso, cada una
- * con su total acumulado (0 por defecto). Para la vitrina del perfil.
+ * Totales del usuario por dimensión: objeto con las 6 claves, cada una con su
+ * total acumulado (0 por defecto). Para la vitrina del perfil.
  */
 function totalsForUser(userId) {
   const totals = Object.fromEntries(RESOURCE_TYPE_KEYS.map((k) => [k, 0]));

@@ -28,10 +28,11 @@
     </div>
   </header>
 
-  <!-- Recursos generados: en qué áreas se ha repartido tu esfuerzo. -->
+  <!-- Dimensiones: en qué áreas de tu vida se ha repartido tu esfuerzo.
+       En la Fase C esta vitrina de tiles la sustituye el radar. -->
   <section class="card resources-section">
-    <h2>Recursos</h2>
-    <p class="text-muted res-summary">Lo que han generado tus hábitos</p>
+    <h2>Dimensiones</h2>
+    <p class="text-muted res-summary">Dónde has repartido tu esfuerzo</p>
     <div class="res-grid">
       <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
       <div class="res-tile" title="<%= m.desc %>">

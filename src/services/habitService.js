@@ -124,14 +124,22 @@ function create(user, data) {
   return { habit, rewards: ctx.rewards };
 }
 
-/** Actualiza un hábito. El tipo es inmutable (protege el histórico). */
+/**
+ * Actualiza un hábito.
+ *
+ * El TIPO sigue siendo inmutable: pasar de `checkbox` a `quantity` invalidaría
+ * los valores ya registrados en habit_logs.
+ *
+ * La DIMENSIÓN sí se puede cambiar, y al cambiarla se lleva consigo todo el
+ * histórico de puntos del hábito (los eventos no guardan la dimensión, la
+ * deducen del hábito). Es deliberado: cambiarla es corregir una etiqueta mal
+ * puesta, y esos puntos siempre fueron de la dimensión correcta. Si lo que
+ * cambió es el hábito en sí, lo honesto es archivarlo y crear otro.
+ */
 function update(id, userId, data) {
   const existing = getOwned(id, userId);
   if (data.type !== existing.type) {
     throw new ValidationError({ type: 'No se puede cambiar el tipo de un hábito' });
-  }
-  if (data.resourceType !== existing.resource_type) {
-    throw new ValidationError({ resourceType: 'No se puede cambiar el recurso de un hábito' });
   }
   validateBusiness(data);
   const columns = deriveColumns(data);
@@ -139,6 +147,7 @@ function update(id, userId, data) {
     name: data.name,
     icon: data.icon,
     color: data.color,
+    resource_type: data.resourceType,
     unit: columns.unit,
     target_daily: columns.target_daily,
     settings: JSON.stringify(buildSettings(data)),

@@ -56,40 +56,66 @@ const HABIT_ICON_SUGGESTIONS = Object.freeze([
 ]);
 
 /**
- * Tipos de recurso. Cada hábito genera uno al registrarse, así que el total por
- * usuario es un vector de 4 números: no cuánto esfuerzo hizo (eso es el XP,
- * un escalar) sino en qué áreas lo repartió.
+ * Las seis DIMENSIONES de vida. Cada hábito pertenece a una, y registrarlo
+ * genera puntos en ella. Por eso el total de un usuario es un VECTOR de seis
+ * números, no un escalar: el XP dice cuánto esfuerzo hizo, las dimensiones
+ * dicen en qué áreas lo repartió. De ahí sale el radar del perfil.
+ *
+ * (En el código se siguen llamando "recursos" —`resource_type`,
+ * `resource_events`— por continuidad con el esquema; en la UI son dimensiones.)
  */
 const RESOURCE_TYPES = Object.freeze({
-  WATER: 'water', // Agua → agua
-  ENERGY: 'energy', // Ejercicio / sueño → energía
-  KNOWLEDGE: 'knowledge', // Lectura → conocimiento
-  FOOD: 'food', // Comida saludable → comida
+  BODY: 'body', // Ejercicio, dormir, comer, hidratarse
+  MIND: 'mind', // Leer, estudiar, aprender
+  CALM: 'calm', // Meditar, escribir, respirar
+  SOCIAL: 'social', // Gente: llamar, quedar, escribir
+  CRAFT: 'craft', // Crear, trabajo profundo, proyectos
+  ORDER: 'order', // Limpiar, finanzas, papeleo
 });
 
 const RESOURCE_TYPE_KEYS = Object.freeze(Object.values(RESOURCE_TYPES));
 
 /**
- * Metadatos de cada recurso para la UI (etiqueta, icono, descripción).
- * Fuente única para el selector del formulario y la vitrina del perfil.
+ * Metadatos de cada dimensión para la UI (etiqueta, icono, descripción).
+ * Fuente única para el selector del formulario y el radar del perfil.
  * Mismo patrón que HABIT_TYPE_META.
  */
 const RESOURCE_TYPE_META = Object.freeze({
-  water: { label: 'Agua', icon: '💧', desc: 'Hidratación y limpieza' },
-  energy: { label: 'Energía', icon: '⚡', desc: 'Movimiento, ejercicio y descanso' },
-  knowledge: { label: 'Conocimiento', icon: '📚', desc: 'Lectura y estudio' },
-  food: { label: 'Comida', icon: '🍎', desc: 'Nutrición y alimentación' },
+  body: { label: 'Cuerpo', icon: '🏃', desc: 'Ejercicio, sueño, comida, agua' },
+  mind: { label: 'Mente', icon: '📚', desc: 'Leer, estudiar, aprender' },
+  calm: { label: 'Calma', icon: '🧘', desc: 'Meditar, escribir, respirar' },
+  social: { label: 'Social', icon: '💬', desc: 'Cuidar a los tuyos' },
+  craft: { label: 'Oficio', icon: '🎨', desc: 'Crear, construir, trabajo profundo' },
+  order: { label: 'Orden', icon: '🧹', desc: 'Casa, cuentas, papeleo' },
 });
 
 /**
- * Recursos generados por registrar un hábito. Como el XP, nunca se restan.
- * Un avance real otorga ON_PROGRESS; alcanzar la meta diaria otorga
- * ON_COMPLETE adicional (completar da la suma). Idempotente por día.
+ * Puntos generados por registrar un hábito, en la dimensión del hábito. Como el
+ * XP, nunca se restan. Un avance real otorga ON_PROGRESS; alcanzar la meta
+ * diaria otorga ON_COMPLETE adicional (completar da la suma, 3). Idempotente
+ * por día: el techo de un hábito es 3 pts/día, 21 pts/semana.
  */
 const RESOURCE_RULES = Object.freeze({
   ON_PROGRESS: 1, // Registrar cualquier avance real en un hábito
   ON_COMPLETE: 2, // Alcanzar la meta diaria (además del avance)
 });
+
+/**
+ * Curva del nivel de cada dimensión (la insignia de cada vértice del radar):
+ * nivel(total) = 1 + √(total / base). Es la inversa continua de la curva de XP
+ * (`base·n²`, ver utils/level.js) pero con su propia escala: los puntos de
+ * dimensión se acumulan a ~3/día/hábito frente a los ~15/día del XP.
+ *
+ * El nivel es la capa de PROGRESIÓN (acumulado de siempre, nunca baja). El
+ * radar es la capa de COMPARACIÓN (media semanal vs. últimos 7 días). Van
+ * aparte a propósito: la media semanal se estanca, el nivel no.
+ */
+const RESOURCE_LEVEL_BASE = 20;
+
+/** Ventana RODANTE del polígono interior del radar. Rodante y no semana natural
+ *  a propósito: con semana de calendario el radar estaría hundido cada lunes y
+ *  lleno cada domingo, un artefacto que parecería una señal. */
+const RADAR_WINDOW_DAYS = 7;
 
 /** Emojis permitidos como reacciones en el feed (solo reacciones, sin comentarios). */
 const REACTIONS = Object.freeze(['👏', '🔥', '💪', '❤️', '🎉', '🌱']);
@@ -151,6 +177,8 @@ module.exports = {
   RESOURCE_TYPE_KEYS,
   RESOURCE_TYPE_META,
   RESOURCE_RULES,
+  RESOURCE_LEVEL_BASE,
+  RADAR_WINDOW_DAYS,
   REACTIONS,
   XP_RULES,
   LEVEL_CURVE,

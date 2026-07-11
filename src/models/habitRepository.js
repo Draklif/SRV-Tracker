@@ -21,8 +21,9 @@ const statements = {
   `),
   update: db.prepare(`
     UPDATE habits
-    SET name = @name, icon = @icon, color = @color, unit = @unit,
-        target_daily = @target_daily, settings = @settings, updated_at = datetime('now')
+    SET name = @name, icon = @icon, color = @color, resource_type = @resource_type,
+        unit = @unit, target_daily = @target_daily, settings = @settings,
+        updated_at = datetime('now')
     WHERE id = @id
   `),
   setArchived: db.prepare(`
