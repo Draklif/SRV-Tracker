@@ -28,10 +28,10 @@
     </div>
   </header>
 
-  <!-- Recursos generados (se acumulan en la pool para la futura aldea) -->
+  <!-- Recursos generados: en qué áreas se ha repartido tu esfuerzo. -->
   <section class="card resources-section">
     <h2>Recursos</h2>
-    <p class="text-muted res-summary">Lo que tus hábitos han aportado a la aldea</p>
+    <p class="text-muted res-summary">Lo que han generado tus hábitos</p>
     <div class="res-grid">
       <% Object.entries(resourceTypeMeta).forEach(([key, m]) => { %>
       <div class="res-tile" title="<%= m.desc %>">

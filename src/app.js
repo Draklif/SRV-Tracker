@@ -21,8 +21,7 @@ const errorHandler = require('./middlewares/errorHandler');
  * Separar la creación del `listen` facilita las pruebas de integración.
  */
 function createApp() {
-  // Conecta los subscribers del bus de eventos (gamificación, y en el futuro
-  // feed, tiempo real, aldea…).
+  // Conecta los subscribers del bus de eventos (gamificación, feed, recursos).
   require('./events/subscribers').registerAll();
 
   const app = express();

@@ -26,8 +26,8 @@ function award(userId, resourceType, amount, reason, sourceType, sourceId, day) 
 /**
  * Genera el recurso del hábito al registrar un avance: +ON_PROGRESS por avance
  * real y +ON_COMPLETE adicional al alcanzar la meta diaria (completar da la
- * suma). Idempotente por día. Todo va a la pool global (por usuario) para la
- * futura aldea. No devuelve nada al cliente (no altera los toasts).
+ * suma). Idempotente por día. Todo se acumula en el ledger del usuario. No
+ * devuelve nada al cliente (no altera los toasts).
  */
 function processLog({ habit, log, date }) {
   if (!habit || !habit.resource_type) return;
@@ -42,7 +42,7 @@ function processLog({ habit, log, date }) {
 }
 
 /**
- * Totales del usuario por recurso: objeto con las 5 claves de recurso, cada una
+ * Totales del usuario por recurso: objeto con las 4 claves de recurso, cada una
  * con su total acumulado (0 por defecto). Para la vitrina del perfil.
  */
 function totalsForUser(userId) {

@@ -17,10 +17,6 @@ const statements = {
     SELECT resource_type, SUM(amount) AS total
     FROM resource_events WHERE user_id = ? GROUP BY resource_type
   `),
-  globalTotals: db.prepare(`
-    SELECT resource_type, SUM(amount) AS total
-    FROM resource_events GROUP BY resource_type
-  `),
 };
 
 /** Inserta el premio si no existía. Devuelve true si se otorgó. */
@@ -33,9 +29,4 @@ function totalsByUser(userId) {
   return statements.totalsByUser.all(userId);
 }
 
-/** Pool global (para la aldea futura): [{ resource_type, total }]. */
-function globalTotals() {
-  return statements.globalTotals.all();
-}
-
-module.exports = { insertIfNew, totalsByUser, globalTotals };
+module.exports = { insertIfNew, totalsByUser };

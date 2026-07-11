@@ -8,8 +8,6 @@ const habitRoutes = require('./web/habitRoutes');
 const habitApiRoutes = require('./api/habitApiRoutes');
 const socialApiRoutes = require('./api/socialApiRoutes');
 const friendApiRoutes = require('./api/friendApiRoutes');
-const villageRoutes = require('./web/villageRoutes');
-const villageApiRoutes = require('./api/villageApiRoutes');
 const pushApiRoutes = require('./api/pushApiRoutes');
 const socialController = require('../controllers/socialController');
 const requireAuth = require('../middlewares/requireAuth');
@@ -38,14 +36,12 @@ router.get('/', homeController.index);
 router.use('/', authRoutes);
 router.use('/profile', profileRoutes);
 router.use('/habits', habitRoutes);
-router.use('/village', villageRoutes);
 router.get('/social', requireAuth, socialController.page);
 router.get('/u/:username', requireAuth, require('../controllers/userController').showFriend);
 
 // API JSON.
 router.use('/api/habits', habitApiRoutes);
 router.use('/api/friends', friendApiRoutes);
-router.use('/api/village', villageApiRoutes);
 router.use('/api/push', pushApiRoutes);
 router.use('/api', socialApiRoutes);
 

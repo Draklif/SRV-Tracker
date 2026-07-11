@@ -6,9 +6,6 @@ const db = require('../database/connection');
  * Acceso a datos de amistades. Único lugar con SQL de la tabla `friendships`.
  * Una fila = solicitud (pending) o amistad (accepted); la dirección la dan
  * requester/addressee. Las consultas de "amigos" miran AMBAS direcciones.
- *
- * FUTURO aldea: este patrón de membresía (requester/addressee + status) es el
- * sustrato para villages/village_members. Ver plan del sistema de amigos.
  */
 
 const statements = {

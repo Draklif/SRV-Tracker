@@ -86,7 +86,7 @@ function log(habitId, user, input) {
     return { log: logRow, streak };
   });
 
-  // Los subscribers (gamificación, feed, y en el futuro aldea) reaccionan aquí.
+  // Los subscribers (gamificación, feed, recursos) reaccionan aquí.
   const newlyCompleted = Boolean(
     state && state.completed && !(existing && existing.completed)
   );
