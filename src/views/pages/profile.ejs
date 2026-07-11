@@ -59,28 +59,6 @@
   </section>
 
   <div class="profile-grid">
-    <!-- Novedades: el único aviso de cambios en la app. Sin popups. -->
-    <% if (latestRelease) { %>
-    <section class="card news-section <%= hasUnseenChangelog ? 'has-unseen' : '' %>">
-      <h2>
-        Novedades
-        <% if (hasUnseenChangelog) { %><span class="news-dot" aria-label="Sin leer"></span><% } %>
-      </h2>
-      <p class="news-latest">
-        <span class="chip"><%= latestRelease.version %></span>
-        <span class="news-title"><%= latestRelease.title %></span>
-      </p>
-      <p class="text-muted news-intro">
-        <%= hasUnseenChangelog
-          ? 'Hay cambios que aún no has leído.'
-          : 'Estás al día. Aquí se cuenta lo que va cambiando.' %>
-      </p>
-      <a href="/novedades" class="btn <%= hasUnseenChangelog ? 'btn-primary' : 'btn-ghost' %>">
-        <%= hasUnseenChangelog ? 'Ver qué hay de nuevo' : 'Ver historial' %>
-      </a>
-    </section>
-    <% } %>
-
     <!-- Datos del perfil -->
     <section class="card">
       <h2>Tu perfil</h2>
@@ -155,32 +133,6 @@
       </form>
     </section>
 
-    <!-- Contraseña -->
-    <section class="card">
-      <h2>Cambiar contraseña</h2>
-      <form method="post" action="/profile/password" class="form" novalidate>
-        <%- include('../partials/csrf-field') %>
-
-        <%- include('../partials/field', { field: {
-          name: 'currentPassword', label: 'Contraseña actual', type: 'password',
-          error: passwordErrors.currentPassword, required: true, autocomplete: 'current-password'
-        } }) %>
-
-        <%- include('../partials/field', { field: {
-          name: 'newPassword', label: 'Nueva contraseña', type: 'password',
-          error: passwordErrors.newPassword, required: true, autocomplete: 'new-password',
-          hint: 'Mínimo 8 caracteres'
-        } }) %>
-
-        <%- include('../partials/field', { field: {
-          name: 'newPasswordConfirm', label: 'Repite la nueva', type: 'password',
-          error: passwordErrors.newPasswordConfirm, required: true, autocomplete: 'new-password'
-        } }) %>
-
-        <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
-      </form>
-    </section>
-
     <!-- Notificaciones push (recordatorios de hábitos) -->
     <section class="card" id="push-settings">
       <h2>Notificaciones</h2>
@@ -212,6 +164,54 @@
         <button class="btn btn-primary" type="submit">Guardar preferencias</button>
       </form>
     </section>
+
+    <!-- Contraseña -->
+    <section class="card">
+      <h2>Cambiar contraseña</h2>
+      <form method="post" action="/profile/password" class="form" novalidate>
+        <%- include('../partials/csrf-field') %>
+
+        <%- include('../partials/field', { field: {
+          name: 'currentPassword', label: 'Contraseña actual', type: 'password',
+          error: passwordErrors.currentPassword, required: true, autocomplete: 'current-password'
+        } }) %>
+
+        <%- include('../partials/field', { field: {
+          name: 'newPassword', label: 'Nueva contraseña', type: 'password',
+          error: passwordErrors.newPassword, required: true, autocomplete: 'new-password',
+          hint: 'Mínimo 8 caracteres'
+        } }) %>
+
+        <%- include('../partials/field', { field: {
+          name: 'newPasswordConfirm', label: 'Repite la nueva', type: 'password',
+          error: passwordErrors.newPasswordConfirm, required: true, autocomplete: 'new-password'
+        } }) %>
+
+        <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
+      </form>
+    </section>
+
+    <!-- Novedades: el único aviso de cambios en la app. Sin popups. -->
+    <% if (latestRelease) { %>
+    <section class="card news-section <%= hasUnseenChangelog ? 'has-unseen' : '' %>">
+      <h2>
+        Novedades
+        <% if (hasUnseenChangelog) { %><span class="news-dot" aria-label="Sin leer"></span><% } %>
+      </h2>
+      <p class="news-latest">
+        <span class="chip"><%= latestRelease.version %></span>
+        <span class="news-title"><%= latestRelease.title %></span>
+      </p>
+      <p class="text-muted news-intro">
+        <%= hasUnseenChangelog
+          ? 'Hay cambios que aún no has leído.'
+          : 'Estás al día. Aquí se cuenta lo que va cambiando.' %>
+      </p>
+      <a href="/novedades" class="btn <%= hasUnseenChangelog ? 'btn-primary' : 'btn-ghost' %>">
+        <%= hasUnseenChangelog ? 'Ver qué hay de nuevo' : 'Ver historial' %>
+      </a>
+    </section>
+    <% } %>
 
     <!-- Invitaciones: cada persona puede invitar a alguien más -->
     <section class="card invite-section">
