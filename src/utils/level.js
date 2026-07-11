@@ -1,6 +1,6 @@
 'use strict';
 
-const { LEVEL_CURVE } = require('../config/constants');
+const { LEVEL_CURVE, RESOURCE_LEVEL_BASE } = require('../config/constants');
 
 /**
  * Curva de nivel: el nivel n empieza al acumular `base * (n-1)^2` de XP.
@@ -34,4 +34,20 @@ function levelProgress(xp) {
   };
 }
 
-module.exports = { xpForLevel, levelFromXp, levelProgress };
+/**
+ * Nivel de una DIMENSIÓN a partir de su total acumulado. Es la inversa continua
+ * de la curva de XP (`base·n²`), con su propia escala: las dimensiones se
+ * acumulan a ~3 pts/día/hábito frente a los ~15 del XP.
+ *
+ * Continua (no entera) a propósito: así cada registro la mueve un poco. Y el
+ * `+1` es el SUELO: una dimensión sin tocar vale 1, nunca 0 — lo que impide que
+ * un vértice colapse al centro del radar y deforme el polígono.
+ *
+ * La raíz comprime la cima: sin ella, 600 puntos contra 10 serían 60:1 y el
+ * hexágono sería una aguja. Con ella son ~3.8:1, distinguibles sin deformar.
+ */
+function axisLevel(total) {
+  return 1 + Math.sqrt(Math.max(total, 0) / RESOURCE_LEVEL_BASE);
+}
+
+module.exports = { xpForLevel, levelFromXp, levelProgress, axisLevel };
