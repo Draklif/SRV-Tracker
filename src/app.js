@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
@@ -54,6 +55,22 @@ function createApp() {
   // Parsers de body (formularios y JSON de la API).
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+  // Manifest de la PWA. Se sirve desde una ruta (antes que express.static, que si
+  // no se lo quedaría él) para inyectar los iconos con `?v=<hash>`.
+  //
+  // Es lo que hace que un cambio de icono llegue de verdad al móvil: si el icono
+  // se sirviera siempre desde `/icons/icon-192.png`, un cliente que ya tuviera esa
+  // URL en caché no volvería a pedirla —la cree fresca— y seguiría enseñando el
+  // icono viejo. Con el hash la URL es nueva, así que no puede tener nada cacheado.
+  const manifestFile = path.join(__dirname, '..', 'public', 'manifest.webmanifest');
+  app.get('/manifest.webmanifest', (req, res) => {
+    const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+    manifest.icons = manifest.icons.map((icon) => ({ ...icon, src: asset(icon.src) }));
+    res.type('application/manifest+json');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.send(JSON.stringify(manifest, null, 2));
+  });
 
   // Estáticos: CSS, JS, iconos, imágenes y subidas.
   //

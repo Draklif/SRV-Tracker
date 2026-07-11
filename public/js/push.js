@@ -17,8 +17,10 @@
   function ensureServiceWorker() {
     if (!('serviceWorker' in navigator)) return Promise.reject(new Error('SW no soportado'));
     if (!swReadyPromise) {
+      // `updateViaCache: 'none'` — nunca leer sw.js de la caché HTTP. Si no, un
+      // móvil que lo tenga cacheado puede tardar días en ver una versión nueva.
       swReadyPromise = navigator.serviceWorker
-        .register('/sw.js')
+        .register('/sw.js', { updateViaCache: 'none' })
         .then(() => navigator.serviceWorker.ready);
     }
     return swReadyPromise;

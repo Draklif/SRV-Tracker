@@ -7,7 +7,7 @@
     <meta name="theme-color" content="<%= (typeof theme !== 'undefined' && theme === 'light') ? '#f0eee6' : '#0f1420' %>" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text x='12' y='12' font-size='24' text-anchor='middle' dominant-baseline='central' transform='rotate(-10 12 12)' fill='%234f8cff'>★</text></svg>" />
     <!-- PWA: manifest + icono para "Añadir a pantalla de inicio" (necesario para push en iOS). -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href="<%= asset('/manifest.webmanifest') %>" />
     <link rel="apple-touch-icon" href="<%= asset('/icons/apple-touch-icon.png') %>" />
     <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
     <meta name="csrf-token" content="<%= csrfToken %>" />
