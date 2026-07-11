@@ -131,7 +131,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 8.5em;
+  min-width: 9.5em; /* lo ancho que pide "IMPORTANTE", la etiqueta más larga */
   padding: 0.2em 0.65em;
   border-radius: var(--radius-sm);
   transform: skewX(var(--skew));
@@ -144,13 +144,21 @@
   white-space: nowrap;
   color: var(--on-brand);
 }
+/* El rojo se reserva para lo que pide algo del usuario. Lo eliminado es una
+   noticia tranquila: no hay nada que hacer al respecto. */
+.changelog-tag.tag-important { background: var(--danger, #e5484d); }
 .changelog-tag.tag-new { background: var(--brand); }
 .changelog-tag.tag-change { background: var(--info); color: var(--ink); }
 .changelog-tag.tag-fix { background: var(--warn); color: var(--ink); }
-.changelog-tag.tag-remove { background: var(--danger, #e5484d); }
+.changelog-tag.tag-remove { background: var(--text-faint); }
 
 .changelog-text {
   overflow-wrap: anywhere;
+}
+
+/* Lo importante se lee aunque vengas en diagonal. */
+.changelog-item:has(.tag-important) .changelog-text {
+  font-weight: var(--fw-bold);
 }
 
 /* En móvil la etiqueta va encima del texto: en una columna estrecha, dos

@@ -7,9 +7,11 @@
  * Reglas al añadir una versión:
  *  - se pone arriba del todo (el array va de más nueva a más vieja);
  *  - la `version` es única y sube respecto a la anterior;
- *  - cada item lleva `type`: 'new' (algo que antes no existía), 'change' (algo
- *    que funcionaba distinto), 'fix' (algo que estaba roto) o 'remove' (algo
- *    que ya no está).
+ *  - cada item lleva `type`: 'important' (pide algo del usuario: si no lo hace,
+ *    algo no funcionará como espera), 'new' (algo que antes no existía),
+ *    'change' (algo que funcionaba distinto), 'fix' (algo que estaba roto) o
+ *    'remove' (algo que ya no está). 'important' va siempre el primero de su
+ *    versión, y se usa con cuentagotas: si todo es importante, nada lo es.
  *
  * Se escribe para quien usa la app, no para quien la programa: nada de nombres
  * de tabla ni de commits. Lo que cambia para él y por qué le conviene.
@@ -21,6 +23,13 @@ const CHANGELOG = Object.freeze([
     title: 'Dimensiones de vida',
     items: [
       {
+        type: 'important',
+        text:
+          'Repasa tus hábitos de siempre. Al cambiar los recursos por las dimensiones, cada ' +
+          'hábito tuvo que caer en alguna, y ese reparto es solo una suposición nuestra. Edita ' +
+          'cada uno y elige la dimensión que de verdad lo describe para tener un registro correcto en tu perfil!',
+      },
+      {
         type: 'new',
         text:
           'Tus hábitos ahora pertenecen a una de seis dimensiones: 🏃 Cuerpo, 📚 Mente, ' +
@@ -31,8 +40,7 @@ const CHANGELOG = Object.freeze([
         type: 'remove',
         text:
           'Se van los recursos antiguos (agua, energía, conocimiento y comida). Eran una ' +
-          'metáfora que no decía nada sobre ti. Tus hábitos se han repartido entre las nuevas ' +
-          'dimensiones; si alguno quedó en la que no era, cámbialo y listo.',
+          'metáfora que no decía nada sobre ti.',
       },
       {
         type: 'new',
@@ -56,9 +64,7 @@ const CHANGELOG = Object.freeze([
       {
         type: 'new',
         text:
-          'Esta misma página. A partir de ahora los cambios se cuentan aquí, con un punto ' +
-          'discreto en Perfil cuando haya algo nuevo. Sin ventanas emergentes mientras ' +
-          'registras tus hábitos.',
+          'Esta misma página. A partir de ahora los cambios se cuentan aquí! ',
       },
     ],
   },
@@ -154,8 +160,7 @@ const CHANGELOG = Object.freeze([
         type: 'new',
         text:
           'Cada hábito aporta a un recurso (agua, energía, conocimiento o comida) y el perfil ' +
-          'enseña cómo los repartes. Un primer intento de responder a "¿en qué estoy gastando ' +
-          'mi esfuerzo?".',
+          'enseña cómo los repartes.',
       },
       {
         type: 'fix',
@@ -211,7 +216,7 @@ const CHANGELOG = Object.freeze([
         type: 'new',
         text:
           'Logros. Se desbloquean solos según lo que vas haciendo y se quedan en la vitrina de ' +
-          'tu perfil. No te decimos cuáles hay: se descubren.',
+          'tu perfil.',
       },
       {
         type: 'new',
@@ -234,7 +239,7 @@ const CHANGELOG = Object.freeze([
       {
         type: 'new',
         text:
-          'La app existe. Te creas una cuenta, tienes tu perfil con avatar y bio, y ya puedes ' +
+          'Bienvenido a Tracker! Te creas una cuenta, tienes tu perfil con avatar y bio, y ya puedes ' +
           'empezar a apuntar lo que haces cada día.',
       },
       {
@@ -247,8 +252,7 @@ const CHANGELOG = Object.freeze([
       {
         type: 'new',
         text:
-          'Un tablero con lo de hoy: entras, registras lo que has hecho y te vas. Esa es toda ' +
-          'la ceremonia.',
+          'Un tablero con lo de hoy: entras, registras lo que has hecho y te vas.',
       },
       {
         type: 'new',

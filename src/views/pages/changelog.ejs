@@ -15,7 +15,10 @@
 
   <%
     // Las etiquetas de cada tipo de cambio (el color lo pone changelog.css).
-    const TYPE_LABELS = { new: 'Nuevo', change: 'Cambia', fix: 'Arreglado', remove: 'Eliminado' };
+    const TYPE_LABELS = {
+      important: 'Importante', new: 'Nuevo', change: 'Cambia',
+      fix: 'Arreglado', remove: 'Eliminado',
+    };
   %>
   <ol class="changelog-list">
     <% entries.forEach((entry, i) => { %>

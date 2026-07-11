@@ -11,7 +11,7 @@ const CHANGELOG = require('../src/config/changelog');
  * aparece nunca, y eso no lo detecta ningún otro test.
  */
 
-const TYPES = ['new', 'change', 'fix', 'remove'];
+const TYPES = ['important', 'new', 'change', 'fix', 'remove'];
 
 test('las versiones son únicas', () => {
   const versions = CHANGELOG.map((e) => e.version);
