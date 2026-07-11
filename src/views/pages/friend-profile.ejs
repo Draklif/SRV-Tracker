@@ -1,4 +1,4 @@
-<% const pageScripts = ['/js/api.js', '/js/friends.js']; %>
+<% const pageScripts = ['/js/api.js', '/js/friends.js', '/js/achievements.js']; %>
 <%- include('../partials/head', { title, styles: ['/css/pages/profile.css', '/css/pages/friend.css'] }) %>
 
 <%- include('../partials/app-nav') %>
@@ -6,19 +6,22 @@
 <main class="container profile-page" id="friends-hub">
   <a class="back-link" href="/social">← Volver al feed</a>
 
-  <header class="profile-header card">
+  <header class="profile-header friend-header card">
     <%- include('../partials/avatar', { avatarUser: friend, size: 'lg' }) %>
     <div class="profile-id">
       <h1><%= friend.display_name %></h1>
       <p class="text-muted">@<%= friend.username %></p>
       <% if (friend.bio) { %><p class="profile-bio"><%= friend.bio %></p><% } %>
+    </div>
+    <!-- Acción de amistad y nivel juntos: la bio se queda con todo el ancho. -->
+    <div class="friend-meta">
       <div class="user-row profile-friend-action" data-user-id="<%= friend.id %>" data-username="<%= friend.username %>" data-row-mode="directory">
         <%- include('../partials/user-row-action', { rel: friendStatus.rel, friendshipId: friendStatus.friendshipId, rowUser: friend }) %>
       </div>
-    </div>
-    <div class="profile-level">
-      <span class="chip">Nivel <%= level.level %></span>
-      <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+      <div class="profile-level">
+        <span class="chip">Nivel <%= level.level %></span>
+        <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+      </div>
     </div>
   </header>
 
