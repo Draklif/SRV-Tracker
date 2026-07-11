@@ -20,12 +20,14 @@
     <div class="profile-id">
       <h1><%= user.display_name %></h1>
       <p class="text-muted">@<%= user.username %></p>
-      <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
     </div>
-    <div class="profile-level">
-      <span class="chip">Nivel <%= level.level %></span>
-      <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+    <div class="profile-meta">
+      <div class="profile-level">
+        <span class="chip">Nivel <%= level.level %></span>
+        <span class="profile-xp text-muted"><%= level.xp %> XP</span>
+      </div>
     </div>
+    <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
   </header>
 
   <!-- Dimensiones: en qué áreas de tu vida se reparte tu esfuerzo. -->

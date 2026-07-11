@@ -6,11 +6,28 @@
   gap: var(--space-6);
 }
 
+/* Cabecera en cuadrícula por áreas. Escritorio: el avatar manda a la izquierda,
+   nombre y bio crecen en la columna central, el nivel/XP se ancla arriba a la
+   derecha y el botón de amistad abajo a la derecha. En móvil (ver más abajo) la
+   bio pasa a una fila propia a todo el ancho. */
 .profile-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'avatar id  meta'
+    'avatar bio bio';
   align-items: center;
-  gap: var(--space-5);
+  column-gap: var(--space-5);
+  row-gap: var(--space-3);
   transform: rotate(var(--tilt));
+}
+.profile-header > .avatar,
+.avatar-upload-form {
+  grid-area: avatar;
+}
+.profile-id {
+  grid-area: id;
+  min-width: 0;
 }
 .profile-id h1 {
   font-size: var(--fs-2xl);
@@ -20,17 +37,35 @@
   font-weight: var(--fw-bold);
 }
 .profile-bio {
-  margin-top: var(--space-2);
+  grid-area: bio;
+  align-self: start;
   color: var(--text-muted);
 }
 
+/* Esquina superior derecha: el nivel y, colgando justo debajo, el botón de
+   amistad al ancho de la pill. Al ocupar una sola celda, la bio se queda con la
+   fila entera de abajo. */
+.profile-meta {
+  grid-area: meta;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+}
 /* Nivel + XP en una sola fila: menos altura, mejor uso del espacio. */
 .profile-level {
-  margin-left: auto;
-  flex-shrink: 0; /* no se comprime aunque la bio sea larga */
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-3);
+}
+.profile-friend-action .user-row-action {
+  width: 100%;
+}
+.profile-friend-action .icon-btn {
+  flex: 1;
+  min-height: 34px;
 }
 /* La pill de nivel nunca parte su texto ("Nivel 12" en una línea). */
 .profile-level .chip {
@@ -358,18 +393,48 @@
 @media (max-width: 560px) {
   .profile-header {
     transform: none;
-    flex-wrap: wrap;
-    gap: var(--space-3) var(--space-4);
+    column-gap: var(--space-4);
   }
   .profile-id h1 {
     font-size: var(--fs-xl);
   }
-  .profile-level {
-    margin-left: 0;
-    width: 100%;
-  }
   .ach-grid,
   .res-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile L y menos: no caben tres columnas sin que el nivel se coma el nombre.
+   El nivel baja bajo el @usuario y el botón de amistad se queda con una fila
+   entera al pie de la tarjeta, a todo el ancho. */
+@media (max-width: 430px) {
+  .profile-header {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'avatar id'
+      'avatar level'
+      'bio    bio'
+      'action action';
+  }
+  /* En el perfil propio no hay botón de amistad: esa fila sobra. */
+  .profile-header:not(:has(.profile-friend-action)) {
+    grid-template-areas:
+      'avatar id'
+      'avatar level'
+      'bio    bio';
+  }
+  /* El envoltorio desaparece y sus dos hijos pasan a ser celdas de la cuadrícula. */
+  .profile-meta {
+    display: contents;
+  }
+  .profile-level {
+    grid-area: level;
+    justify-self: start;
+  }
+  .profile-friend-action {
+    grid-area: action;
+  }
+  .profile-friend-action .icon-btn {
+    min-height: 44px;
   }
 }

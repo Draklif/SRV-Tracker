@@ -2,15 +2,53 @@
   // Bloque de botones de una fila de usuario según la relación (`rel`).
   // Se renderiza en la vista inicial y lo devuelve la API tras cada acción,
   // así el markup vive en un solo sitio. `friendshipId` puede ser null.
+  //
+  // `compact`: variante del perfil (/u/:username). Un botón cuadrado con solo el
+  // icono del estado, para no robarle ancho a la bio. Las listas del hub siguen
+  // con los botones etiquetados.
   const fid = typeof friendshipId !== 'undefined' ? friendshipId : null;
   const uname = (typeof rowUser !== 'undefined' && rowUser) ? rowUser.username : '';
+  const isCompact = typeof compact !== 'undefined' && compact;
 %>
 <span class="user-row-action" data-row-action>
   <% if (rel === 'self') { %>
-    <span class="chip chip-muted">Tú</span>
+    <% if (!isCompact) { %><span class="chip chip-muted">Tú</span><% } %>
+
+  <% } else if (isCompact && rel === 'friends') { %>
+    <%# Ya sois amigos: "Agregado ✓" se vuelve "Eliminar ✕" al apuntarlo. %>
+    <button type="button" class="icon-btn icon-btn-ok" data-friend-action="remove"
+      data-friendship-id="<%= fid %>" aria-label="Eliminar de amigos">
+      <span class="icon-btn-idle"><%- include('icon', { name: 'check', size: 18 }) %>Agregado</span>
+      <span class="icon-btn-hover"><%- include('icon', { name: 'close', size: 18 }) %>Eliminar</span>
+    </button>
+  <% } else if (isCompact && rel === 'pending_out') { %>
+    <button type="button" class="icon-btn icon-btn-muted" data-friend-action="cancel"
+      data-friendship-id="<%= fid %>" aria-label="Cancelar la solicitud enviada">
+      <span class="icon-btn-idle"><%- include('icon', { name: 'sent', size: 18 }) %>Cancelar</span>
+      <span class="icon-btn-hover"><%- include('icon', { name: 'close', size: 18 }) %>Cancelar</span>
+    </button>
+  <% } else if (isCompact && rel === 'pending_in') { %>
+    <button type="button" class="icon-btn icon-btn-primary" data-friend-action="accept"
+      data-friendship-id="<%= fid %>" aria-label="Aceptar solicitud">
+      <%- include('icon', { name: 'check', size: 18 }) %>Aceptar
+    </button>
+    <button type="button" class="icon-btn icon-btn-muted" data-friend-action="decline"
+      data-friendship-id="<%= fid %>" aria-label="Rechazar solicitud">
+      <%- include('icon', { name: 'close', size: 18 }) %>Rechazar
+    </button>
+  <% } else if (isCompact) { %>
+    <button type="button" class="icon-btn icon-btn-primary" data-friend-action="request"
+      data-username="<%= uname %>" aria-label="Agregar a amigos">
+      <%- include('icon', { name: 'plus', size: 18 }) %>Agregar
+    </button>
+
   <% } else if (rel === 'friends') { %>
-    <span class="chip chip-ok">Amigos ✓</span>
-    <button type="button" class="btn btn-ghost btn-sm" data-friend-action="remove" data-friendship-id="<%= fid %>">Quitar</button>
+    <%# El propio chip es el toggle: al pulsarlo deja de ser amigo. %>
+    <button type="button" class="chip chip-ok chip-toggle" title="Quitar de amigos"
+      data-friend-action="remove" data-friendship-id="<%= fid %>">
+      <span class="chip-toggle-idle">Amigos ✓</span>
+      <span class="chip-toggle-hover">Quitar ✕</span>
+    </button>
   <% } else if (rel === 'pending_out') { %>
     <span class="chip chip-muted">Solicitud enviada</span>
     <button type="button" class="btn btn-ghost btn-sm" data-friend-action="cancel" data-friendship-id="<%= fid %>">Cancelar</button>

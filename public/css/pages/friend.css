@@ -9,41 +9,6 @@
   color: var(--brand);
 }
 
-/* ---- Cabecera del perfil de amigo ----
-   La acción de amistad y el nivel viven en la misma columna a la derecha; así la
-   bio ocupa el ancho completo y en móvil el hueco junto al avatar no queda vacío. */
-.friend-meta {
-  margin-left: auto;
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-2);
-}
-.friend-header .profile-friend-action {
-  margin-top: 0;
-}
-.friend-header .profile-level {
-  margin-left: 0;
-}
-
-@media (max-width: 560px) {
-  .friend-header {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    column-gap: var(--space-4);
-    row-gap: var(--space-3);
-  }
-  /* Nombre y bio bajan a una fila propia, a lo ancho de la tarjeta. */
-  .friend-header .profile-id {
-    grid-column: 1 / -1;
-  }
-  .friend-header .profile-level {
-    width: auto;
-  }
-}
-
 .friend-section-title {
   font-size: var(--fs-lg);
   display: inline-block;

@@ -6,23 +6,24 @@
 <main class="container profile-page" id="friends-hub">
   <a class="back-link" href="/social">← Volver al feed</a>
 
-  <header class="profile-header friend-header card">
+  <header class="profile-header card">
     <%- include('../partials/avatar', { avatarUser: friend, size: 'lg' }) %>
     <div class="profile-id">
       <h1><%= friend.display_name %></h1>
       <p class="text-muted">@<%= friend.username %></p>
-      <% if (friend.bio) { %><p class="profile-bio"><%= friend.bio %></p><% } %>
     </div>
-    <!-- Acción de amistad y nivel juntos: la bio se queda con todo el ancho. -->
-    <div class="friend-meta">
-      <div class="user-row profile-friend-action" data-user-id="<%= friend.id %>" data-username="<%= friend.username %>" data-row-mode="directory">
-        <%- include('../partials/user-row-action', { rel: friendStatus.rel, friendshipId: friendStatus.friendshipId, rowUser: friend }) %>
-      </div>
+    <%# Nivel y botón comparten celda (esquina superior derecha). En móvil pequeño
+        el envoltorio se disuelve (display:contents) y cada uno va a su fila. %>
+    <div class="profile-meta">
       <div class="profile-level">
         <span class="chip">Nivel <%= level.level %></span>
         <span class="profile-xp text-muted"><%= level.xp %> XP</span>
       </div>
+      <div class="user-row profile-friend-action" data-user-id="<%= friend.id %>" data-username="<%= friend.username %>" data-row-mode="directory">
+        <%- include('../partials/user-row-action', { rel: friendStatus.rel, friendshipId: friendStatus.friendshipId, rowUser: friend, compact: true }) %>
+      </div>
     </div>
+    <% if (friend.bio) { %><p class="profile-bio"><%= friend.bio %></p><% } %>
   </header>
 
   <!-- El radar es público entre amigos: se ve su forma, no sus hábitos. -->

@@ -15,9 +15,14 @@ const { friendRequestSchema } = require('../validators/friendValidators');
  *  - `pendingCount`/`friendsCount`: para refrescar badges y contadores.
  */
 
-/** Renderiza el bloque de botones de una fila de usuario para un estado dado. */
-function actionHtml(res, { rel, friendshipId, rowUser }) {
-  return renderPartial(res, 'partials/user-row-action', { rel, friendshipId, rowUser });
+/**
+ * Renderiza el bloque de botones de una fila de usuario para un estado dado.
+ * Fuera del hub la petición viene del perfil, que usa la variante compacta
+ * (un solo botón cuadrado con el icono del estado).
+ */
+function actionHtml(req, res, { rel, friendshipId, rowUser }) {
+  const compact = req.query.hub !== '1';
+  return renderPartial(res, 'partials/user-row-action', { rel, friendshipId, rowUser, compact });
 }
 
 /** Fragmentos del hub (listas completas) para sincronizar todas las pestañas. */
@@ -56,7 +61,7 @@ const request = asyncHandler(async (req, res) => {
   await respond(req, res, {
     rel,
     autoAccepted,
-    actionHtml: await actionHtml(res, { rel, friendshipId: friendship.id, rowUser }),
+    actionHtml: await actionHtml(req, res, { rel, friendshipId: friendship.id, rowUser }),
   });
 });
 
@@ -65,7 +70,7 @@ const accept = asyncHandler(async (req, res) => {
   const friendship = friendshipService.accept(req.user.id, req.params.id);
   await respond(req, res, {
     rel: 'friends',
-    actionHtml: await actionHtml(res, { rel: 'friends', friendshipId: friendship.id }),
+    actionHtml: await actionHtml(req, res, { rel: 'friends', friendshipId: friendship.id }),
   });
 });
 
@@ -76,7 +81,7 @@ function makeDeleteHandler(serviceFn) {
     const rowUser = userRepository.findById(otherUserId);
     await respond(req, res, {
       rel: 'none',
-      actionHtml: await actionHtml(res, { rel: 'none', friendshipId: null, rowUser }),
+      actionHtml: await actionHtml(req, res, { rel: 'none', friendshipId: null, rowUser }),
     });
   });
 }
