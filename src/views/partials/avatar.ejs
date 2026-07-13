@@ -6,9 +6,21 @@
   const palette = ['#4f8cff', '#2b5fd9', '#39c6d6', '#e8945a', '#8f7bf2', '#d97ba8'];
   const seed = (au.username || label).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const bg = palette[seed % palette.length];
+  // Cosméticos equipados de ESTA persona. Salen del blob `cosmetics` que ya
+  // trae la fila (cero consultas por avatar); si la consulta no lo seleccionó,
+  // `cos` queda vacío y el retrato se pinta como siempre.
+  const cos = cosmeticsFor(au);
 %>
-<% if (au.avatar_path) { %>
-<img class="avatar avatar-<%= sz %>" src="<%= au.avatar_path %>" alt="Avatar de <%= label %>" />
-<% } else { %>
-<span class="avatar avatar-<%= sz %> avatar-initials" style="background: <%= bg %>"><%= initial %></span>
-<% } %>
+<span class="avatar-wrap avatar-wrap-<%= sz %> <%= cosmeticFrameClasses(cos.avatar_frame) %>">
+  <% if (au.avatar_path) { %>
+  <img class="avatar avatar-<%= sz %>" src="<%= au.avatar_path %>" alt="Avatar de <%= label %>" />
+  <% } else { %>
+  <span class="avatar avatar-<%= sz %> avatar-initials" style="background: <%= bg %>"><%= initial %></span>
+  <% } %>
+  <% if (cos.avatar_frame) { %>
+  <span class="cos-frame <%= cos.avatar_frame.css %>" aria-hidden="true"></span>
+  <% } %>
+  <% if (cos.avatar_deco) { %>
+  <span class="cos-deco <%= cos.avatar_deco.css %>" aria-hidden="true"><%= cos.avatar_deco.glyph %></span>
+  <% } %>
+</span>

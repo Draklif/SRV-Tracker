@@ -11,6 +11,7 @@
    derecha y el botón de amistad abajo a la derecha. En móvil (ver más abajo) la
    bio pasa a una fila propia a todo el ancho. */
 .profile-header {
+  position: relative; /* ancla el botón flotante de la colección */
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
@@ -21,13 +22,51 @@
   row-gap: var(--space-3);
   transform: rotate(var(--tilt));
 }
-.profile-header > .avatar,
+
+/* Botón flotante a la colección: gemelo del badge de cámara del avatar, pero
+   anclado a la esquina inferior derecha de la tarjeta. */
+.profile-collection-fab {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  /* Por encima del marco de tarjeta (::after de .cos-card, que si no lo taparía). */
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--brand);
+  color: #fff;
+  border: 2.5px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: var(--shadow-ink-sm);
+  transform: rotate(-6deg);
+  transition: transform 240ms var(--ease-spring), background-color var(--transition);
+}
+.profile-collection-fab:hover,
+.profile-collection-fab:focus-visible {
+  transform: rotate(0deg) scale(1.1);
+  background: var(--brand-strong);
+}
+/* El avatar va envuelto en .avatar-wrap (apila retrato + marco + decoración,
+   ver cosmetics.css); en el perfil propio ese envoltorio vive dentro del form
+   de subida. Ambos casos ocupan la misma celda. */
+.profile-header > .avatar-wrap,
 .avatar-upload-form {
   grid-area: avatar;
 }
 .profile-id {
   grid-area: id;
   min-width: 0;
+}
+
+/* Título, colgando del nombre. */
+.profile-tagline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-2);
 }
 .profile-id h1 {
   font-size: var(--fs-2xl);

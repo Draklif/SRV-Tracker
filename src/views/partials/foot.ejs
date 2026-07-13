@@ -2,7 +2,7 @@
       // Scripts globales (en todas las páginas), en orden de dependencia:
       // toast.js (flashes), api.js (window.api para fetch+CSRF), push.js (SW + opt-in).
       // Salen con `?v=<hash>` (app.locals.asset) para el cache busting en móvil.
-      const _globalScripts = ['/js/toast.js', '/js/api.js', '/js/push.js'];
+      const _globalScripts = ['/js/toast.js', '/js/api.js', '/js/push.js', '/js/cosmetics.js'];
       // Evitar duplicar los globales si una página los lista en su array `scripts`.
       const _pageScripts = (typeof scripts !== 'undefined' ? scripts : [])
         .filter((src) => !_globalScripts.includes(src));

@@ -6,11 +6,16 @@
 <main class="container profile-page" id="friends-hub">
   <a class="back-link" href="/social">← Volver al feed</a>
 
-  <header class="profile-header card">
+  <%
+    // Los cosméticos del amigo visten SU tarjeta (ver profile.ejs).
+    const cos = cosmeticsFor(friend);
+  %>
+  <header class="profile-header card <%= cosmeticCardClasses(cos) %>">
     <%- include('../partials/avatar', { avatarUser: friend, size: 'lg' }) %>
     <div class="profile-id">
       <h1><%= friend.display_name %></h1>
       <p class="text-muted">@<%= friend.username %></p>
+      <%- include('../partials/profile-tagline', { tagCos: cos }) %>
     </div>
     <%# Nivel y botón comparten celda (esquina superior derecha). En móvil pequeño
         el envoltorio se disuelve (display:contents) y cada uno va a su fila. %>

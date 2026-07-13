@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const config = require('./config');
 const constants = require('./config/constants');
 const schedule = require('./utils/schedule');
+const cosmeticsService = require('./services/cosmeticsService');
 const { asset } = require('./utils/assets');
 const routes = require('./routes');
 const sessionMiddleware = require('./middlewares/session');
@@ -132,6 +133,13 @@ function createApp() {
   app.locals.habitColorKeys = constants.HABIT_COLOR_KEYS;
   app.locals.habitIcons = constants.HABIT_ICON_SUGGESTIONS;
   app.locals.resourceTypeMeta = constants.RESOURCE_TYPE_META;
+  // Resuelve los cosméticos equipados de CUALQUIER fila de usuario que traiga la
+  // columna `cosmetics`. Va en locals (y no en cada controlador) porque el
+  // avatar se pinta en el feed, en las listas y en la nav.
+  app.locals.cosmeticsFor = cosmeticsService.resolve;
+  app.locals.cosmeticRarities = cosmeticsService.RARITIES; // color de cada rareza
+  app.locals.cosmeticCardClasses = cosmeticsService.cardClasses; // clases de la tarjeta
+  app.locals.cosmeticFrameClasses = cosmeticsService.frameWrapClasses; // gap/borde del marco
   app.locals.schedule = schedule; // helpers de frecuencia para las vistas
   app.locals.vapidPublicKey = config.push.vapidPublic; // para suscribirse a Web Push
   app.locals.asset = asset; // estáticos con hash de contenido (cache busting)

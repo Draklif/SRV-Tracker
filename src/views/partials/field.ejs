@@ -1,6 +1,6 @@
 <%
   const f = Object.assign(
-    { type: 'text', value: '', error: null, required: false, autocomplete: null, placeholder: '', hint: null },
+    { type: 'text', value: '', error: null, required: false, autocomplete: null, placeholder: '', hint: null, maxlength: null },
     field
   );
 %>
@@ -14,6 +14,7 @@
     <%= f.required ? 'required' : '' %>
     <% if (f.autocomplete) { %>autocomplete="<%= f.autocomplete %>"<% } %>
     <% if (f.placeholder) { %>placeholder="<%= f.placeholder %>"<% } %>
+    <% if (f.maxlength) { %>maxlength="<%= f.maxlength %>"<% } %>
   />
   <% if (f.error) { %>
   <small class="field-error"><%= f.error %></small>

@@ -6,6 +6,9 @@ const db = require('../database/connection');
  * Acceso a datos del feed de actividad. El feed está acotado a un conjunto de
  * autores (@ids, JSON de user_id = amigos + uno mismo); el service lo calcula.
  * Se ligan como JSON + json_each porque better-sqlite3 no liga arrays.
+ *
+ * `u.cosmetics` viaja con cada fila para que el avatar del feed pueda pintar el
+ * marco de su dueño sin una consulta extra por item (ver partials/avatar.ejs).
  */
 
 const statements = {
@@ -13,18 +16,18 @@ const statements = {
     'INSERT INTO activity_events (user_id, type, payload) VALUES (@user_id, @type, @payload)'
   ),
   byId: db.prepare(`
-    SELECT ae.*, u.username, u.display_name, u.avatar_path
+    SELECT ae.*, u.username, u.display_name, u.avatar_path, u.cosmetics
     FROM activity_events ae JOIN users u ON u.id = ae.user_id
     WHERE ae.id = ?
   `),
   feed: db.prepare(`
-    SELECT ae.*, u.username, u.display_name, u.avatar_path
+    SELECT ae.*, u.username, u.display_name, u.avatar_path, u.cosmetics
     FROM activity_events ae JOIN users u ON u.id = ae.user_id
     WHERE ae.user_id IN (SELECT value FROM json_each(@ids))
     ORDER BY ae.id DESC LIMIT @limit
   `),
   after: db.prepare(`
-    SELECT ae.*, u.username, u.display_name, u.avatar_path
+    SELECT ae.*, u.username, u.display_name, u.avatar_path, u.cosmetics
     FROM activity_events ae JOIN users u ON u.id = ae.user_id
     WHERE ae.id > @after AND ae.user_id IN (SELECT value FROM json_each(@ids))
     ORDER BY ae.id ASC LIMIT 20

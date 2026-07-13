@@ -1,0 +1,13 @@
+<%
+  // Título (objeto del catálogo) bajo el nombre. Se usa en el perfil propio y en
+  // el de un amigo. Si no hay título equipado no pinta nada: quien no tenga
+  // cosméticos ve su perfil exactamente como antes.
+  const tagTitle = tagCos.title;
+%>
+<% if (tagTitle) { %>
+<div class="profile-tagline">
+  <span class="cos-title" style="--rarity-color: <%= cosmeticRarities[tagTitle.rarity].color %>">
+    <span><%= tagTitle.text %></span>
+  </span>
+</div>
+<% } %>

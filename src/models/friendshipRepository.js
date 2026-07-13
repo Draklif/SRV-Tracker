@@ -37,7 +37,7 @@ const statements = {
 
   // Amigos aceptados con datos de usuario (para "Mis amigos").
   friends: db.prepare(`
-    SELECT u.id, u.username, u.display_name, u.avatar_path, u.xp, f.id AS friendship_id
+    SELECT u.id, u.username, u.display_name, u.avatar_path, u.cosmetics, u.xp, f.id AS friendship_id
     FROM friendships f
     JOIN users u ON u.id = CASE WHEN f.requester_id = @id THEN f.addressee_id ELSE f.requester_id END
     WHERE (f.requester_id = @id OR f.addressee_id = @id) AND f.status = 'accepted'
@@ -46,14 +46,14 @@ const statements = {
 
   // Solicitudes entrantes (otros me pidieron a mí, pendientes).
   incoming: db.prepare(`
-    SELECT f.id AS friendship_id, u.id, u.username, u.display_name, u.avatar_path
+    SELECT f.id AS friendship_id, u.id, u.username, u.display_name, u.avatar_path, u.cosmetics
     FROM friendships f JOIN users u ON u.id = f.requester_id
     WHERE f.addressee_id = @id AND f.status = 'pending'
     ORDER BY f.created_at DESC
   `),
   // Solicitudes salientes (yo pedí, pendientes).
   outgoing: db.prepare(`
-    SELECT f.id AS friendship_id, u.id, u.username, u.display_name, u.avatar_path
+    SELECT f.id AS friendship_id, u.id, u.username, u.display_name, u.avatar_path, u.cosmetics
     FROM friendships f JOIN users u ON u.id = f.addressee_id
     WHERE f.requester_id = @id AND f.status = 'pending'
     ORDER BY f.created_at DESC
@@ -65,7 +65,7 @@ const statements = {
   // Directorio: todos los usuarios menos yo, con el estado de relación derivado.
   // pending_out = yo la envié; pending_in = me la enviaron; friends = aceptada.
   directory: db.prepare(`
-    SELECT u.id, u.username, u.display_name, u.avatar_path, u.xp,
+    SELECT u.id, u.username, u.display_name, u.avatar_path, u.cosmetics, u.xp,
            f.id AS friendship_id,
            CASE
              WHEN f.status = 'accepted' THEN 'friends'

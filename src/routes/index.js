@@ -9,8 +9,10 @@ const habitApiRoutes = require('./api/habitApiRoutes');
 const socialApiRoutes = require('./api/socialApiRoutes');
 const friendApiRoutes = require('./api/friendApiRoutes');
 const pushApiRoutes = require('./api/pushApiRoutes');
+const cosmeticsApiRoutes = require('./api/cosmeticsApiRoutes');
 const socialController = require('../controllers/socialController');
 const changelogController = require('../controllers/changelogController');
+const cosmeticsController = require('../controllers/cosmeticsController');
 const requireAuth = require('../middlewares/requireAuth');
 
 /**
@@ -39,12 +41,14 @@ router.use('/profile', profileRoutes);
 router.use('/habits', habitRoutes);
 router.get('/social', requireAuth, socialController.page);
 router.get('/novedades', requireAuth, changelogController.page);
+router.get('/coleccion', requireAuth, cosmeticsController.page);
 router.get('/u/:username', requireAuth, require('../controllers/userController').showFriend);
 
 // API JSON.
 router.use('/api/habits', habitApiRoutes);
 router.use('/api/friends', friendApiRoutes);
 router.use('/api/push', pushApiRoutes);
+router.use('/api/cosmetics', cosmeticsApiRoutes);
 router.use('/api', socialApiRoutes);
 
 module.exports = router;

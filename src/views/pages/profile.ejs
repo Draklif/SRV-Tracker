@@ -6,7 +6,12 @@
 <main class="container profile-page">
   <%- include('../partials/flash') %>
 
-  <header class="profile-header card">
+  <%
+    // Cosméticos equipados: visten la tarjeta (fondo y marco) y añaden título.
+    // Sin nada equipado, `cos` queda vacío y la cabecera se pinta como siempre.
+    const cos = cosmeticsFor(user);
+  %>
+  <header class="profile-header card <%= cosmeticCardClasses(cos) %>">
     <!-- Tocar el avatar abre el selector; elegir imagen la sube al instante. -->
     <form method="post" action="/profile/avatar" enctype="multipart/form-data" class="avatar-upload-form">
       <%- include('../partials/csrf-field') %>
@@ -20,6 +25,7 @@
     <div class="profile-id">
       <h1><%= user.display_name %></h1>
       <p class="text-muted">@<%= user.username %></p>
+      <%- include('../partials/profile-tagline', { tagCos: cos }) %>
     </div>
     <div class="profile-meta">
       <div class="profile-level">
@@ -28,6 +34,11 @@
       </div>
     </div>
     <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
+    <!-- Puerta a los cosméticos: botón flotante en la esquina, como el de la
+         cámara sobre el avatar. En móvil no hay pestaña propia para la colección. -->
+    <a href="/coleccion" class="profile-collection-fab" title="Tu colección" aria-label="Tu colección">
+      <%- include('../partials/icon', { name: 'gem', size: 20 }) %>
+    </a>
   </header>
 
   <!-- Dimensiones: en qué áreas de tu vida se reparte tu esfuerzo. -->
@@ -78,6 +89,7 @@
           <small class="field-error"><%= profileErrors.bio %></small>
           <% } %>
         </div>
+
 
         <div class="field">
           <label for="timezone">Zona horaria</label>
