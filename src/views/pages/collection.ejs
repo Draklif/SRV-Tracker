@@ -81,6 +81,7 @@
         data-bare="<%= item.replaceBorder ? '1' : '' %>"
         data-gap="<%= item.gap ? '1' : '' %>"
         data-inner="<%= item.innerBorder ? '1' : '' %>"
+        data-ink="<%= item.ink || '' %>"
         <%= item.owned ? '' : 'disabled' %>
         aria-pressed="<%= isEquipped %>"
         title="<%= item.owned ? `${item.name} · ${rarity.label}` : `${item.name} · ${rarity.label} (aún no lo tienes)` %>">

@@ -340,11 +340,52 @@
   font-weight: 900;
 }
 
+/* Una sola columna (móvil): orden natural del documento. */
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
+}
+
+/* Dos columnas: novedades e invitación cuelgan de notificaciones; contraseña
+   sigue a "Tu perfil" en su columna.
+   "Tu perfil" ABARCA dos filas a propósito: es la card más alta y, si ocupara
+   una sola fila, estiraría esa fila y novedades quedaría flotando muy por debajo
+   de notificaciones en vez de pegada a ella. */
+@media (min-width: 680px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'main notif'
+      'main news'
+      'pass invite';
+  }
+  .profile-main-section {
+    grid-area: main;
+  }
+  #push-settings {
+    grid-area: notif;
+  }
+  .password-section {
+    grid-area: pass;
+  }
+  .news-section {
+    grid-area: news;
+  }
+  .invite-section {
+    grid-area: invite;
+  }
+}
+
+/* Tres columnas: novedades bajo notificaciones, invitación bajo contraseña. */
+@media (min-width: 1000px) {
+  .profile-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'main notif pass'
+      'main news  invite';
+  }
 }
 
 .profile-grid h2 {

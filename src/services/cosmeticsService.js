@@ -23,6 +23,7 @@ const { ValidationError, NotFoundError, ForbiddenError } = require('../utils/err
  *   - cos-card: abre el contexto de apilado del fondo/marco.
  *   - cos-card-bare: oculta el borde base cuando el marco trae el suyo propio.
  *   - cos-cframe-gap: mete el marco hacia dentro (separado del borde de la card).
+ *   - cos-ink-dark|light: el fondo declara su tono y la tarjeta ajusta la tinta.
  */
 function cardClasses(cos) {
   const bg = cos.card_bg;
@@ -31,6 +32,7 @@ function cardClasses(cos) {
     bg || frame ? 'cos-card' : '',
     frame && frame.replaceBorder ? 'cos-card-bare' : '',
     frame && frame.gap ? 'cos-cframe-gap' : '',
+    bg && bg.ink ? `cos-ink-${bg.ink}` : '',
     bg ? bg.css : '',
     frame ? frame.css : '',
   ]

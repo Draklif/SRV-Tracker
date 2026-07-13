@@ -61,6 +61,10 @@
 
     if (slot === 'card_bg' || slot === 'card_frame') {
       swapClass(preview, slot === 'card_bg' ? 'cos-bg-' : 'cos-cframe-', item ? item.css : null);
+      // El fondo declara el tono de la tarjeta: la tinta se ajusta con él.
+      if (slot === 'card_bg') {
+        swapClass(preview, 'cos-ink-', item && item.ink ? 'cos-ink-' + item.ink : null);
+      }
       // `cos-card` abre el contexto de apilado del fondo/marco: solo estorba si
       // no hay ninguno de los dos puestos.
       const hasAny =

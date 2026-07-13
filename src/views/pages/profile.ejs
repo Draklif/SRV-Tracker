@@ -71,7 +71,7 @@
 
   <div class="profile-grid">
     <!-- Datos del perfil -->
-    <section class="card">
+    <section class="card profile-main-section">
       <h2>Tu perfil</h2>
       <form method="post" action="/profile" class="form" novalidate>
         <%- include('../partials/csrf-field') %>
@@ -178,7 +178,7 @@
     </section>
 
     <!-- Contraseña -->
-    <section class="card">
+    <section class="card password-section">
       <h2>Cambiar contraseña</h2>
       <form method="post" action="/profile/password" class="form" novalidate>
         <%- include('../partials/csrf-field') %>

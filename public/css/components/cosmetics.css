@@ -312,6 +312,34 @@
   border-radius: var(--radius);
 }
 
+/* ---------------------------------------------------------------------------
+   Tinta de la tarjeta (config `ink` del fondo)
+   Un fondo OPACO ya no sigue al tema: un cielo nocturno es oscuro también en
+   modo claro, y la tinta oscura del tema encima sería ilegible. Por eso el fondo
+   declara su tono y la tarjeta redefine sus tokens de texto SOLO en su subárbol.
+   Es la misma idea que ya usa la app: los componentes consumen tokens semánticos,
+   así que basta redefinirlos aquí para que todo dentro se recoloree.
+
+   Hay que reponer también `color`, porque el color heredado del body ya está
+   resuelto: redefinir --text no lo recalcularía por sí solo.
+   --------------------------------------------------------------------------- */
+.cos-ink-dark {
+  --text: #f2f3f7;
+  --text-muted: #a6adc2;
+  --text-faint: #6d7590;
+  --border: rgba(246, 244, 237, 0.12);
+  --border-strong: rgba(246, 244, 237, 0.38);
+  color: var(--text);
+}
+.cos-ink-light {
+  --text: #1a2233;
+  --text-muted: #59617a;
+  --text-faint: #969db4;
+  --border: rgba(19, 26, 41, 0.14);
+  --border-strong: rgba(19, 26, 41, 0.5);
+  color: var(--text);
+}
+
 /* ---- Fondos (pintan ::before) ---- */
 .cos-bg-cuadricula::before {
   background-image:
@@ -330,13 +358,10 @@
   );
 }
 
+/* Crepúsculo: OPACO a propósito (ver `ink` en el catálogo). Se ve igual en tema
+   claro y oscuro, y siempre lleva tinta clara encima. */
 .cos-bg-crepusculo::before {
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, #ff8a3d 22%, transparent),
-    transparent 55%,
-    color-mix(in srgb, var(--brand) 30%, transparent)
-  );
+  background: linear-gradient(160deg, #93502c, #4c3059 52%, #1f1b3a);
 }
 
 .cos-bg-vetas::before {
@@ -349,9 +374,10 @@
     radial-gradient(120% 80% at 100% 0%, var(--brand-soft), transparent 60%);
 }
 
-/* Nocturno: un cielo con estrellas que parpadean muy despacio. */
+/* Nocturno: un cielo con estrellas que parpadean muy despacio. OPACO a propósito
+   (ver `ink` en el catálogo): un cielo nocturno es oscuro también en tema claro. */
 .cos-bg-nocturno::before {
-  background-color: rgba(12, 16, 34, 0.55);
+  background-color: #0d1226;
   background-image:
     radial-gradient(1.5px 1.5px at 12% 24%, #fff, transparent),
     radial-gradient(1.5px 1.5px at 78% 16%, #cfe2ff, transparent),
@@ -361,13 +387,16 @@
     radial-gradient(130% 90% at 20% 0%, rgba(143, 123, 242, 0.35), transparent 65%);
   animation: cos-stars 4.5s var(--ease) infinite;
 }
+/* El titileo va por brillo, NO por opacidad: bajar la opacidad dejaría asomar la
+   superficie de la tarjeta y en tema claro el fondo se lavaría, perdiendo el
+   contraste que la tinta clara da por hecho. */
 @keyframes cos-stars {
   0%,
   100% {
-    opacity: 0.75;
+    filter: brightness(1);
   }
   50% {
-    opacity: 1;
+    filter: brightness(1.3);
   }
 }
 

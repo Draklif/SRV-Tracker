@@ -67,11 +67,16 @@ const ITEMS = Object.freeze([
   { key: 'deco-corona', slot: 'avatar_deco', name: 'Corona', rarity: 'legendary', price: 1800, css: 'cos-deco-corona', glyph: '👑' },
 
   // ---- Fondos de tarjeta ----
+  // `ink`: qué tono tiene el fondo, para que la tarjeta use letras legibles
+  // encima. 'dark' = fondo oscuro → tinta clara; 'light' = fondo claro → tinta
+  // oscura. Sin `ink`, el fondo es translúcido y sigue al tema (la tinta del
+  // tema ya contrasta). OJO: un fondo con `ink` debe pintarse OPACO, si no en el
+  // otro tema cambiaría de tono y la tinta forzada quedaría ilegible.
   { key: 'bg-cuadricula', slot: 'card_bg', name: 'Cuadrícula', rarity: 'common', price: 120, css: 'cos-bg-cuadricula' },
   { key: 'bg-papel', slot: 'card_bg', name: 'Papel viejo', rarity: 'common', price: 120, css: 'cos-bg-papel' },
-  { key: 'bg-crepusculo', slot: 'card_bg', name: 'Crepúsculo', rarity: 'uncommon', price: 320, css: 'cos-bg-crepusculo' },
+  { key: 'bg-crepusculo', slot: 'card_bg', name: 'Crepúsculo', rarity: 'uncommon', price: 320, css: 'cos-bg-crepusculo', ink: 'dark' },
   { key: 'bg-vetas', slot: 'card_bg', name: 'Vetas', rarity: 'rare', price: 600, css: 'cos-bg-vetas' },
-  { key: 'bg-nocturno', slot: 'card_bg', name: 'Nocturno', rarity: 'epic', price: 1000, css: 'cos-bg-nocturno' },
+  { key: 'bg-nocturno', slot: 'card_bg', name: 'Nocturno', rarity: 'epic', price: 1000, css: 'cos-bg-nocturno', ink: 'dark' },
 
   // ---- Marcos de tarjeta ----
   // `replaceBorder`: oculta el borde base de la .card (los marcos con contorno
