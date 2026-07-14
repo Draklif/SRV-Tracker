@@ -1,0 +1,51 @@
+<%
+  /**
+   * La barra de filtros del catálogo de cosméticos. Una sola, compartida por la
+   * Colección y la Tienda: las dos pintan el MISMO catálogo, así que se busca
+   * igual en las dos. Lo único que cambia es el interruptor de la derecha, que
+   * cada página pasa ya montado.
+   *
+   * Todo el catálogo viaja en la página, así que filtrar es solo esconder: ni una
+   * petición. Lo hace public/js/cosmetic-filters.js leyendo los data-* de aquí.
+   *
+   * Parámetros:
+   *   slots            los huecos de la página ({ key, label, … }) → una pill cada uno
+   *   cosmeticRarities catálogo de rarezas → opciones del desplegable
+   *   toggle           HTML del interruptor propio de la página ('' si no hay)
+   */
+  const toggleHtml = typeof toggle !== 'undefined' ? toggle : '';
+%>
+<div class="cos-filters" role="search">
+  <div class="cos-filters-row">
+    <div class="field cos-search">
+      <%- include('icon', { name: 'search', size: 18 }) %>
+      <input type="search" data-cos-search autocomplete="off"
+        placeholder="Buscar un objeto…" aria-label="Buscar un objeto por su nombre" />
+    </div>
+
+    <div class="field cos-rarity">
+      <select data-cos-rarity aria-label="Filtrar por rareza">
+        <option value="">Todas las rarezas</option>
+        <% Object.entries(cosmeticRarities).forEach(([key, r]) => { %>
+        <option value="<%= key %>"><%= r.label %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+
+  <div class="cos-filters-foot">
+    <%# Las categorías son excluyentes (una o todas): pills, no casillas. %>
+    <div class="cos-pills" role="group" aria-label="Filtrar por categoría">
+      <button type="button" class="cos-pill is-active" data-cos-slot="" aria-pressed="true">Todos</button>
+      <% slots.forEach((slot) => { %>
+      <button type="button" class="cos-pill" data-cos-slot="<%= slot.key %>" aria-pressed="false"><%= slot.label %></button>
+      <% }) %>
+    </div>
+
+    <%- toggleHtml %>
+  </div>
+</div>
+
+<p class="cos-empty text-muted" data-cos-empty hidden>
+  No hay ningún objeto que encaje con eso.
+</p>

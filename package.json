@@ -1,6 +1,6 @@
 {
   "name": "tracker",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Habit tracker gamificado y acogedor para un grupo de amigos",
   "type": "commonjs",
   "main": "src/server.js",
@@ -13,6 +13,8 @@
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "grant:cosmetics": "node src/database/seeds/grantAllCosmetics.js",
+    "backfill:coins": "node src/database/seeds/backfillCoins.js",
+    "dev:shop": "node src/database/seeds/devShop.js",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {

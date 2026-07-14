@@ -1,0 +1,56 @@
+/* toggle.css — El interruptor sutil de "ocultar cosas de la lista".
+   Nació en el Inicio ("Ocultar hechos") y lo reusa la Colección ("Ocultar los que
+   no tienes"): mismo gesto, misma pinta, un solo sitio donde vive. */
+
+.hide-done-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  user-select: none;
+  transition: color var(--transition);
+}
+.hide-done-toggle:hover {
+  color: var(--text-muted);
+}
+.hide-done-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.hdt-track {
+  position: relative;
+  width: 30px;
+  height: 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  transition: background var(--transition), border-color var(--transition);
+  flex-shrink: 0;
+}
+.hdt-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: transform var(--transition), background var(--transition);
+}
+.hide-done-toggle input:checked + .hdt-track {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+.hide-done-toggle input:checked + .hdt-track .hdt-thumb {
+  transform: translateX(14px);
+  background: var(--brand);
+}
+.hide-done-toggle input:focus-visible + .hdt-track {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}

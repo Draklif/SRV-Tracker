@@ -1,6 +1,6 @@
-/* collection.css — Página de Colección: vista previa + rejilla por huecos.
-   La pinta de los cosméticos vive en components/cosmetics.css; aquí solo el
-   escaparate que los muestra. */
+/* collection.css — Página de Colección: el cromo que rodea la rejilla.
+   La ficha y la rejilla viven en components/cosmetic-tile.css (las comparte con
+   la Tienda); la pinta de los cosméticos, en components/cosmetics.css. */
 
 .collection-page {
   padding-block: var(--space-6) var(--space-8);
@@ -20,184 +20,25 @@
   margin-top: var(--space-2);
 }
 
-.col-count {
-  font-weight: var(--fw-bold);
-}
-
-/* ---- Un bloque por hueco ---- */
-.col-slot h2 {
-  font-size: var(--fs-lg);
-}
-.col-slot-desc {
-  margin-bottom: var(--space-4);
-  font-size: var(--fs-sm);
-}
-
-.col-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+/* ---- Cabecera de la rejilla ----
+   Mismo título subrayado que el "Hoy" del Inicio. `.section-title` se estiliza
+   por página (social.css tiene la suya, distinta), así que aquí va la del Inicio.
+   Los filtros que van justo debajo viven en components/cosmetic-filters.css: son
+   los mismos que los de la Tienda. */
+.col-head {
+  display: flex;
+  align-items: center;
   gap: var(--space-3);
+  flex-wrap: wrap;
 }
-/* Los títulos son más largos que un marco: su hueco pide columnas más anchas y
-   el texto más pequeño para que quepa entero sin recortarse. */
-.col-slot[data-slot='title'] .col-grid {
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-}
-.col-slot[data-slot='title'] .cos-title {
-  font-size: var(--fs-xs);
-  /* Menos aire lateral que en el perfil: en la miniatura el tag no debe quedar
-     tan ancho, para que los títulos largos se centren bien. */
-  padding-inline: 8px;
-  letter-spacing: 0.01em;
-}
-
-/* ---- Ficha de objeto ---- */
-.col-item {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-2);
-  background: var(--surface-2);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font: inherit;
-  cursor: pointer;
-  transition: transform 200ms var(--ease-spring), border-color var(--transition);
-}
-/* El borde YA lleva el color de la rareza (variable --rarity-color en el botón),
-   así que la etiqueta de texto sobra. En su lugar, cada rareza reacciona al
-   pasar por encima con su propio gesto: cuanto más rara, más se nota. */
-.col-item {
-  border-color: color-mix(in srgb, var(--rarity-color) 45%, var(--border));
-}
-.col-item.is-equipped {
-  border-color: var(--rarity-color);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Común: un empujón sobrio hacia arriba. */
-.col-item.is-owned[data-rarity='common']:hover {
-  transform: translateY(-3px);
-  border-color: var(--rarity-color);
-}
-/* Poco común: sube y se tiñe el borde. */
-.col-item.is-owned[data-rarity='uncommon']:hover {
-  transform: translateY(-4px);
-  border-color: var(--rarity-color);
-  box-shadow: 0 6px 0 -2px color-mix(in srgb, var(--rarity-color) 60%, transparent);
-}
-/* Raro: halo azul y ligero crecimiento. */
-.col-item.is-owned[data-rarity='rare']:hover {
-  transform: translateY(-4px) scale(1.03);
-  border-color: var(--rarity-color);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--rarity-color) 70%, transparent);
-}
-/* Muy raro: halo morado que late mientras el ratón está encima. */
-.col-item.is-owned[data-rarity='epic']:hover {
-  transform: translateY(-5px) scale(1.04);
-  border-color: var(--rarity-color);
-  animation: col-hover-pulse 1.3s var(--ease) infinite;
-}
-/* Legendario: crece más, se endereza y brilla en dorado con un vaivén. */
-.col-item.is-owned[data-rarity='legendary']:hover {
-  border-color: var(--rarity-color);
-  animation: col-hover-legendary 1.1s var(--ease) infinite;
-}
-
-@keyframes col-hover-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 10px color-mix(in srgb, var(--rarity-color) 55%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 20px color-mix(in srgb, var(--rarity-color) 90%, transparent);
-  }
-}
-@keyframes col-hover-legendary {
-  0%,
-  100% {
-    transform: translateY(-5px) scale(1.05) rotate(-1.5deg);
-    box-shadow: 0 0 16px color-mix(in srgb, var(--rarity-color) 75%, transparent);
-  }
-  50% {
-    transform: translateY(-6px) scale(1.06) rotate(1.5deg);
-    box-shadow: 0 0 26px color-mix(in srgb, var(--rarity-color) 100%, transparent);
-  }
-}
-
-/* Lo que aún no tienes se ve, pero apagado: enseña la meta sin fingir que la
-   tienes. Nada de esto es necesario para nada, así que tampoco insiste. */
-.col-item.is-locked {
-  cursor: not-allowed;
-  opacity: 0.4;
-  filter: grayscale(1);
-}
-
-.col-item-art {
-  display: grid;
-  place-items: center;
-  min-height: 46px;
-  max-width: 100%;
-}
-/* Retrato de mentira para enseñar cómo queda un marco. */
-.col-item-face {
-  background: var(--brand-deep);
-}
-.col-item-glyph {
-  font-size: 1.8rem;
-  line-height: 1;
-}
-
-/* Muestra de fondo/marco de tarjeta: una card en miniatura. */
-.col-swatch {
-  width: 62px;
-  height: 40px;
-  background: var(--surface);
-  border: var(--card-border);
-  border-radius: var(--radius-sm);
-}
-/* Si el marco reemplaza el borde de la tarjeta, la miniatura tampoco lleva el
-   borde base: se ve como se verá de verdad, sin doble marco. (Especificidad
-   por encima de `.col-swatch` para ganarle a su `border`.) */
-.col-swatch.cos-card-bare {
-  border-color: transparent;
-}
-
-.col-item-name {
-  font-weight: var(--fw-bold);
-  font-size: var(--fs-sm);
-  text-align: center;
-}
-
-.col-item-lock,
-.col-item-check {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  font-size: var(--fs-sm);
-}
-.col-item-check {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  background: var(--rarity-color);
-  color: var(--ink);
-  border-radius: 50%;
-  font-weight: var(--fw-bold);
+.section-title {
+  font-size: var(--fs-xl);
+  padding-bottom: var(--space-2);
+  border-bottom: 3px solid var(--brand);
+  display: inline-block;
 }
 
 .col-hint {
   text-align: center;
   font-size: var(--fs-sm);
-}
-
-/* Sin movimiento no hay parpadeos en el hover: el borde de color ya distingue
-   la rareza por sí solo. */
-@media (prefers-reduced-motion: reduce) {
-  .col-item.is-owned:hover {
-    animation: none !important;
-  }
 }

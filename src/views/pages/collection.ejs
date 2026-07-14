@@ -1,4 +1,4 @@
-<%- include('../partials/head', { title, styles: ['/css/pages/profile.css', '/css/pages/collection.css'] }) %>
+<%- include('../partials/head', { title, styles: ['/css/pages/profile.css', '/css/components/toggle.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/pages/collection.css'] }) %>
 
 <%- include('../partials/app-nav') %>
 
@@ -49,13 +49,22 @@
     <% if (user.bio) { %><p class="profile-bio"><%= user.bio %></p><% } %>
   </section>
 
-  <p class="col-count text-muted">
-    <% if (collection.ownedCount === 0) { %>
-      Aún no tienes objetos. Los conseguirás en la tienda, el pase y las cajas.
-    <% } else { %>
-      <%= collection.ownedCount %> <%= collection.ownedCount === 1 ? 'objeto conseguido' : 'objetos conseguidos' %>
-    <% } %>
-  </p>
+  <div class="col-head">
+    <h2 class="section-title">Tus objetos</h2>
+  </div>
+
+  <%# La misma barra que la Tienda (buscador, rareza y pills). Lo único propio de
+      aquí es el interruptor: en la Tienda filtra el bolsillo, aquí el armario. %>
+  <%- include('../partials/cosmetic-filters', {
+    slots: collection.slots,
+    cosmeticRarities,
+    toggle: `
+      <label class="hide-done-toggle" title="Ocultar los objetos que aún no tienes">
+        <input type="checkbox" data-hide-locked />
+        <span class="hdt-track"><span class="hdt-thumb"></span></span>
+        <span class="hdt-label">Ocultar los que no tengo</span>
+      </label>`,
+  }) %>
 
   <% collection.slots.forEach((slot) => { %>
   <section class="card col-slot" data-slot="<%= slot.key %>">
@@ -64,56 +73,22 @@
 
     <div class="col-grid">
       <% slot.items.forEach((item) => { %>
-      <%
-        const rarity = cosmeticRarities[item.rarity];
-        const isEquipped = slot.equippedKey === item.key;
-      %>
-      <button type="button"
-        class="col-item <%= item.owned ? 'is-owned' : 'is-locked' %> <%= isEquipped ? 'is-equipped' : '' %>"
-        style="--rarity-color: <%= rarity.color %>"
-        data-slot="<%= slot.key %>"
-        data-rarity="<%= item.rarity %>"
-        data-key="<%= item.key %>"
-        data-css="<%= item.css || '' %>"
-        data-glyph="<%= item.glyph || '' %>"
-        data-text="<%= item.text || '' %>"
-        data-color="<%= rarity.color %>"
-        data-bare="<%= item.replaceBorder ? '1' : '' %>"
-        data-gap="<%= item.gap ? '1' : '' %>"
-        data-inner="<%= item.innerBorder ? '1' : '' %>"
-        data-ink="<%= item.ink || '' %>"
-        <%= item.owned ? '' : 'disabled' %>
-        aria-pressed="<%= isEquipped %>"
-        title="<%= item.owned ? `${item.name} · ${rarity.label}` : `${item.name} · ${rarity.label} (aún no lo tienes)` %>">
-
-        <span class="col-item-art">
-          <% if (slot.key === 'avatar_frame') { %>
-          <span class="avatar-wrap avatar-wrap-sm <%= cosmeticFrameClasses(item) %>">
-            <span class="avatar avatar-sm avatar-initials col-item-face"></span>
-            <span class="cos-frame <%= item.css %>" aria-hidden="true"></span>
-          </span>
-          <% } else if (slot.key === 'avatar_deco') { %>
-          <span class="col-item-glyph"><%= item.glyph %></span>
-          <% } else if (slot.key === 'title') { %>
-          <span class="cos-title" style="--rarity-color: <%= rarity.color %>"><span><%= item.text %></span></span>
-          <% } else { %>
-          <span class="col-swatch cos-card <%= item.replaceBorder ? 'cos-card-bare' : '' %> <%= item.gap ? 'cos-cframe-gap' : '' %> <%= item.css %>" aria-hidden="true"></span>
-          <% } %>
-        </span>
-
-        <span class="col-item-name"><%= item.name %></span>
-        <% if (!item.owned) { %><span class="col-item-lock">🔒</span><% } %>
-        <% if (isEquipped) { %><span class="col-item-check">✓</span><% } %>
-      </button>
+      <%- include('../partials/cosmetic-tile', {
+        item,
+        slot: slot.key,
+        rarity: cosmeticRarities[item.rarity],
+        mode: 'collection',
+        equipped: slot.equippedKey === item.key,
+      }) %>
       <% }) %>
     </div>
   </section>
   <% }) %>
 
   <p class="col-hint text-muted">
-    Los objetos que aún no tienes se conseguirán en la tienda. Todavía no está
-    abierta 🌱
+    ¿Te falta algo? Lo que aún no tienes está esperándote en la
+    <a href="/tienda">tienda</a>.
   </p>
 </main>
 
-<%- include('../partials/foot', { scripts: ['/js/collection.js'] }) %>
+<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/collection.js'] }) %>

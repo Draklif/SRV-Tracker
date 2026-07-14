@@ -73,11 +73,16 @@
 
   /**
    * Muestra las recompensas de una respuesta de la API (si las hay):
-   * XP ganado, logros desbloqueados y subida de nivel.
+   * XP ganado, monedas, logros desbloqueados y subida de nivel.
    */
   function rewards(r) {
     if (!r) return;
     if (r.xpGained > 0) show(`+${r.xpGained} XP`, { type: 'xp', duration: 2200 });
+    if (r.coinsGained > 0) {
+      show(`+${r.coinsGained} monedas`, { type: 'coin', duration: 2200 });
+      // El saldo del nav sube al vuelo, sin recargar.
+      if (window.coins) window.coins.add(r.coinsGained);
+    }
     (r.achievements || []).forEach((a, i) => setTimeout(() => achievement(a), 350 * (i + 1)));
     if (r.leveledUp) {
       setTimeout(() => {

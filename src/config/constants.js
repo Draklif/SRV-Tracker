@@ -138,6 +138,34 @@ const XP_RULES = Object.freeze({
   }),
 });
 
+/**
+ * Reglas de MONEDA. Espejo de XP_RULES: el mismo hecho que da XP da monedas,
+ * pero con su propia escala. Ritmo "medio": ≈38 monedas al día con 4 hábitos
+ * cumplidos (4×(2+5) + 10), o sea el objeto común (120) en ~3 días y el
+ * legendario (2000) en ~2 meses.
+ *
+ * Estos son los valores BASE. El ritmo real se ajusta con el multiplicador
+ * config.economy.coinRate (COIN_RATE en el entorno), que se aplica SOLO al
+ * acuñar. Los precios del catálogo NO se reescalan nunca: si se movieran, una
+ * compra de ayer valdría otra cosa hoy y el histórico dejaría de cuadrar.
+ */
+const COIN_RULES = Object.freeze({
+  HABIT_LOG: 2, // Registrar cualquier avance en un hábito
+  DAILY_TARGET: 5, // Alcanzar la meta diaria de un hábito (1×/día/hábito)
+  DAY_COMPLETE: 10, // Completar todos los hábitos activos del día
+  ACHIEVEMENT: 25, // Desbloquear un logro (plano: no depende de su xp_reward)
+  // Bonus por hito de racha (días => monedas). Las CLAVES deben ser las mismas
+  // que las de XP_RULES.STREAK_MILESTONES: el backfill invierte el XP de una
+  // fila vieja para saber de qué hito era (ver src/utils/coinRules.js).
+  STREAK_MILESTONES: Object.freeze({
+    7: 20,
+    14: 40,
+    30: 80,
+    50: 120,
+    100: 200,
+  }),
+});
+
 /** Curva de nivel: XP acumulado necesario para alcanzar el nivel n. */
 const LEVEL_CURVE = Object.freeze({
   base: 50, // xpForLevel(n) = base * n^2
@@ -181,6 +209,7 @@ module.exports = {
   RADAR_WINDOW_DAYS,
   REACTIONS,
   XP_RULES,
+  COIN_RULES,
   LEVEL_CURVE,
   INVITE_TTL_MINUTES,
   ROLES,

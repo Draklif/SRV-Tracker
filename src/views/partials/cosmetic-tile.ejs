@@ -1,0 +1,81 @@
+<%
+  /**
+   * La ficha de un cosmético. Una sola, compartida por la colección (equipar) y
+   * la tienda (comprar), porque las dos pintan el MISMO catálogo: tenerla dos
+   * veces sería garantizar que se separan.
+   *
+   * Parámetros:
+   *   item     objeto del catálogo, ya con `owned` (y `affordable` en la tienda)
+   *   slot     clave del hueco ('avatar_frame' | 'avatar_deco' | 'card_bg' | …)
+   *   rarity   cosmeticRarities[item.rarity] → { label, color }
+   *   mode     'collection' (equipar) | 'shop' (comprar)
+   *   equipped si está puesto ahora mismo (solo en la colección)
+   *
+   * Los data-* son el contrato con public/js/collection.js y public/js/shop.js:
+   * de ahí sale la vista previa en vivo sin pedirle nada al servidor. La tienda
+   * los emite todos igual (aunque no los use) para que ambas páginas hablen el
+   * mismo idioma.
+   */
+  const isShop = mode === 'shop';
+  // En la tienda solo se puede pulsar lo que no tienes y te alcanza; en la
+  // colección, solo lo que tienes.
+  const disabled = isShop ? (item.owned || !item.affordable) : !item.owned;
+
+  let state;
+  if (isShop) state = item.owned ? 'is-owned' : (item.affordable ? 'is-buyable' : 'is-unaffordable');
+  else state = item.owned ? 'is-owned' : 'is-locked';
+
+  let hint;
+  if (!isShop) hint = item.owned ? `${item.name} · ${rarity.label}` : `${item.name} · ${rarity.label} (aún no lo tienes)`;
+  else if (item.owned) hint = `${item.name} · ${rarity.label} (ya es tuyo)`;
+  else hint = `${item.name} · ${rarity.label} · ${item.price} monedas`;
+%>
+<button type="button"
+  class="col-item <%= state %> <%= equipped ? 'is-equipped' : '' %>"
+  style="--rarity-color: <%= rarity.color %>"
+  data-slot="<%= slot %>"
+  data-rarity="<%= item.rarity %>"
+  data-key="<%= item.key %>"
+  data-css="<%= item.css || '' %>"
+  data-glyph="<%= item.glyph || '' %>"
+  data-text="<%= item.text || '' %>"
+  data-color="<%= rarity.color %>"
+  data-bare="<%= item.replaceBorder ? '1' : '' %>"
+  data-gap="<%= item.gap ? '1' : '' %>"
+  data-inner="<%= item.innerBorder ? '1' : '' %>"
+  data-ink="<%= item.ink || '' %>"
+  data-name="<%= item.name %>"
+  <% if (isShop) { %>data-price="<%= item.price %>"<% } %>
+  <%= disabled ? 'disabled' : '' %>
+  aria-pressed="<%= equipped ? 'true' : 'false' %>"
+  title="<%= hint %>">
+
+  <span class="col-item-art">
+    <% if (slot === 'avatar_frame') { %>
+    <span class="avatar-wrap avatar-wrap-sm <%= cosmeticFrameClasses(item) %>">
+      <span class="avatar avatar-sm avatar-initials col-item-face"></span>
+      <span class="cos-frame <%= item.css %>" aria-hidden="true"></span>
+    </span>
+    <% } else if (slot === 'avatar_deco') { %>
+    <span class="col-item-glyph"><%= item.glyph %></span>
+    <% } else if (slot === 'title') { %>
+    <span class="cos-title" style="--rarity-color: <%= rarity.color %>"><span><%= item.text %></span></span>
+    <% } else { %>
+    <span class="col-swatch cos-card <%= item.replaceBorder ? 'cos-card-bare' : '' %> <%= item.gap ? 'cos-cframe-gap' : '' %> <%= item.css %>" aria-hidden="true"></span>
+    <% } %>
+  </span>
+
+  <span class="col-item-name"><%= item.name %></span>
+  <% if (isShop) { %>
+    <% if (item.owned) { %>
+    <span class="col-item-check">✓</span>
+    <% } else { %>
+    <span class="col-item-price">
+      <%- include('icon', { name: 'coin', size: 12 }) %><%= item.price %>
+    </span>
+    <% } %>
+  <% } else { %>
+    <% if (!item.owned) { %><span class="col-item-lock">🔒</span><% } %>
+    <% if (equipped) { %><span class="col-item-check">✓</span><% } %>
+  <% } %>
+</button>

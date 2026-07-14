@@ -28,6 +28,14 @@ const statements = {
   `),
   touchActive: db.prepare("UPDATE users SET last_active_at = datetime('now') WHERE id = ?"),
   addXp: db.prepare('UPDATE users SET xp = xp + @amount WHERE id = @id'),
+  addCoins: db.prepare('UPDATE users SET coins = coins + @amount WHERE id = @id'),
+  // La guarda va DENTRO del UPDATE: si no hay saldo, `changes` es 0 y nadie ha
+  // tocado nada. Un "leer saldo, comparar, restar" en tres pasos deja una rendija
+  // entre la lectura y la resta; esto no la tiene, y por eso el saldo no puede
+  // quedarse en negativo aunque lleguen dos compras a la vez.
+  spendCoins: db.prepare(
+    'UPDATE users SET coins = coins - @amount WHERE id = @id AND coins >= @amount'
+  ),
   setNotifyEnabled: db.prepare(
     "UPDATE users SET notify_enabled = @enabled, updated_at = datetime('now') WHERE id = @id"
   ),
@@ -79,6 +87,16 @@ function addXp(id, amount) {
   statements.addXp.run({ id, amount });
 }
 
+/** Suma monedas al saldo (la verdad vive en coin_events). */
+function addCoins(id, amount) {
+  statements.addCoins.run({ id, amount });
+}
+
+/** Resta monedas SOLO si las hay. Devuelve false si no alcanzaba (y no toca nada). */
+function spendCoins(id, amount) {
+  return statements.spendCoins.run({ id, amount }).changes > 0;
+}
+
 /** Activa/desactiva el opt-in general de notificaciones del usuario. */
 function setNotifyEnabled(id, enabled) {
   statements.setNotifyEnabled.run({ id, enabled: enabled ? 1 : 0 });
@@ -109,6 +127,8 @@ module.exports = {
   updateAvatar,
   touchLastActive,
   addXp,
+  addCoins,
+  spendCoins,
   setNotifyEnabled,
   updateNotifyPrefs,
   listNotifiable,

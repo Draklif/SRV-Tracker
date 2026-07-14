@@ -45,6 +45,18 @@ const config = {
     streakGuardHour: Number(process.env.NOTIFY_STREAK_GUARD_HOUR) || 21,
   },
 
+  // Economía de monedas. `coinRate` multiplica lo que se ACUÑA, nunca los precios
+  // del catálogo (que son contenido versionado): subirlo a 2 hace que se gane el
+  // doble DESDE ESE MOMENTO, sin migración, sin tocar código y sin revaluar ni una
+  // moneda ya ganada (el índice único de coin_events impide recalcular el pasado).
+  // 0 congela la economía sin apagar la tienda. Un valor absurdo cae a 1.
+  economy: {
+    coinRate: (() => {
+      const n = Number(process.env.COIN_RATE);
+      return Number.isFinite(n) && n >= 0 ? n : 1;
+    })(),
+  },
+
   // Metadatos del sitio para el <head> y las previews sociales (Open Graph).
   site: {
     name: 'Tracker',

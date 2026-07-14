@@ -1,5 +1,5 @@
 <% const pageScripts = ['/js/api.js', '/js/tracker.js']; %>
-<%- include('../partials/head', { title, styles: ['/css/pages/home.css'] }) %>
+<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/pages/home.css'] }) %>
 
 <%- include('../partials/app-nav') %>
 
@@ -72,6 +72,10 @@
     <a class="quick-link card" href="/habits">
       <span class="ql-icon"><%- include('../partials/icon', { name: 'target', size: 24 }) %></span>
       <span class="ql-label">Hábitos</span>
+    </a>
+    <a class="quick-link card" href="/tienda">
+      <span class="ql-icon"><%- include('../partials/icon', { name: 'bag', size: 24 }) %></span>
+      <span class="ql-label">Tienda</span>
     </a>
     <a class="quick-link card" href="/social">
       <span class="ql-icon"><%- include('../partials/icon', { name: 'users', size: 24 }) %></span>

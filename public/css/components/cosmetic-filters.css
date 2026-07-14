@@ -1,0 +1,129 @@
+/* cosmetic-filters.css — La barra de filtros del catálogo (Colección y Tienda).
+   El buscador y el desplegable son un `.field` de toda la vida (el mismo de los
+   formularios y del buscador de Amigos); las pills, el mismo gesto que las
+   pestañas de Amigos. Nada nuevo que aprender: se filtra igual en todas partes. */
+
+.cos-filters {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cos-filters-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* El buscador manda: se come el ancho que sobra. El desplegable solo pide lo
+   suyo, y en pantallas estrechas cae a la línea de abajo a ancho completo. */
+.cos-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.cos-rarity {
+  position: relative;
+  flex: 0 1 200px;
+  min-width: 150px;
+}
+
+/* La lupa vive dentro del campo: marca qué es sin gastar una etiqueta. */
+.cos-search .icon {
+  position: absolute;
+  left: 0.75em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  pointer-events: none;
+  transition: color var(--transition);
+}
+.cos-search input {
+  padding-left: 2.5em;
+}
+.cos-search:focus-within .icon {
+  color: var(--brand);
+}
+/* La cruz nativa de <input type="search"> desentona con el resto: fuera. */
+.cos-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Desplegable con la misma piel que el input: la flecha nativa la pone cada
+   sistema a su manera, así que se apaga y se dibuja aquí. */
+.cos-rarity select {
+  appearance: none;
+  padding-right: 2.2em;
+  cursor: pointer;
+}
+.cos-rarity::after {
+  content: '';
+  position: absolute;
+  right: 1em;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* ---- Pills de categoría + interruptor de la página ---- */
+.cos-filters-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.cos-pills {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.cos-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition),
+    color var(--transition);
+}
+.cos-pill:hover {
+  background: var(--surface-2);
+}
+.cos-pill.is-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.cos-pill:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ---- Lo que los filtros esconden ----
+   Una ficha que no encaja se va; y un hueco sin fichas se va entero: su título y
+   su descripción sobre una rejilla vacía solo harían ruido. */
+.col-item.is-filtered,
+.col-slot.is-filtered {
+  display: none;
+}
+
+.cos-empty {
+  text-align: center;
+  padding-block: var(--space-6);
+}

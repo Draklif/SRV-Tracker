@@ -51,6 +51,17 @@
   letter-spacing: 0.03em;
 }
 
+/* Monedas: hermano del toast de XP, pero dorado (ver COIN_RULES). */
+.toast-coin {
+  background: var(--yellow);
+  color: var(--ink);
+  border-left-color: var(--ink);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-base);
+  letter-spacing: 0.03em;
+}
+
 .toast-level {
   background: var(--yellow);
   color: var(--ink);

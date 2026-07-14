@@ -137,4 +137,25 @@
       window.toast.show(err.message, { type: 'warn' });
     }
   });
+
+  // ---- Filtros -------------------------------------------------------------
+  // El buscador, la rareza y las pills los monta cosmetic-filters.js: los mismos
+  // que en la Tienda. Lo propio de aquí es el armario: "ocultar los que no tengo"
+  // (mismo gesto que "Ocultar hechos" del Inicio, y se recuerda entre visitas).
+  const HIDE_KEY = 'srv:hideLocked';
+  const hideToggle = page.querySelector('[data-hide-locked]');
+
+  if (hideToggle) hideToggle.checked = localStorage.getItem(HIDE_KEY) === '1';
+
+  const applyFilters = window.cosmeticFilters.init(page, {
+    extra: (tile) =>
+      !(hideToggle && hideToggle.checked) || !tile.classList.contains('is-locked'),
+  });
+
+  if (hideToggle) {
+    hideToggle.addEventListener('change', () => {
+      localStorage.setItem(HIDE_KEY, hideToggle.checked ? '1' : '0');
+      applyFilters();
+    });
+  }
 })();

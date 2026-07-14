@@ -38,6 +38,22 @@ test('el índice por clave cubre todo el catálogo', () => {
   assert.strictEqual(Object.keys(ITEMS_BY_KEY).length, ITEMS.length);
 });
 
+test('todo objeto tiene precio: la tienda lo cobra', () => {
+  for (const item of ITEMS) {
+    assert.ok(item.price > 0, `${item.key}: sin precio, la tienda no puede venderlo`);
+  }
+});
+
+test('ni el objeto más caro cuesta más de tres meses de juego', () => {
+  // El precio y el ritmo de la moneda son dos números que solo tienen sentido
+  // juntos: 38 monedas al día (ver tests/coins.test.js). Sin esta prueba, subir
+  // un precio o bajar el ritmo puede volver la tienda inalcanzable sin que nadie
+  // se entere. Que la relación entre ambos sea deliberada y no un accidente.
+  const DIA = 38;
+  const dias = Math.max(...ITEMS.map((i) => i.price)) / DIA;
+  assert.ok(dias < 90, `el objeto más caro cuesta ${Math.round(dias)} días de juego`);
+});
+
 test('parseEquipped nunca revienta: la basura equivale a "nada puesto"', () => {
   assert.deepStrictEqual(parseEquipped(null), {});
   assert.deepStrictEqual(parseEquipped(''), {});

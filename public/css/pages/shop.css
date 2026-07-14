@@ -1,0 +1,81 @@
+/* shop.css — Página de Tienda: cromo y panel de confirmación.
+   La ficha y la rejilla las comparte con la Colección: components/cosmetic-tile.css. */
+
+.shop-page {
+  padding-block: var(--space-6) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.shop-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.shop-intro h1 {
+  font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+
+/* El saldo, grande y a la vista: es la información que decide todo lo demás. */
+.shop-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--yellow);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+.shop-balance b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Los filtros (buscador, rareza y pills) viven en components/cosmetic-filters.css:
+   son los mismos que los de la Colección. */
+
+/* ---- Confirmación de compra ---- */
+.shop-confirm[hidden] {
+  display: none;
+}
+.shop-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+.shop-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.shop-confirm-panel {
+  position: relative;
+  width: min(420px, 100%);
+  display: grid;
+  gap: var(--space-3);
+  text-align: center;
+}
+.shop-confirm-panel h2 {
+  font-size: var(--fs-xl);
+}
+.shop-confirm-item {
+  font-size: var(--fs-lg);
+}
+.shop-confirm-after {
+  font-size: var(--fs-sm);
+}
+.shop-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}

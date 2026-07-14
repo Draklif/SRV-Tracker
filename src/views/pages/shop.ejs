@@ -1,0 +1,68 @@
+<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/pages/shop.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container shop-page">
+  <%- include('../partials/flash') %>
+
+  <header class="shop-intro">
+    <h1>Tienda</h1>
+    <span class="shop-balance">
+      <%- include('../partials/icon', { name: 'coin', size: 18 }) %>
+      <b data-coin-value><%= shop.balance %></b>
+    </span>
+  </header>
+
+  <%# La barra la comparten Tienda y Colección: mismo buscador, mismo desplegable
+      y mismas pills. Aquí el interruptor es el del bolsillo. %>
+  <%- include('../partials/cosmetic-filters', {
+    slots: shop.slots,
+    cosmeticRarities,
+    toggle: `
+      <label class="hide-done-toggle" title="Ocultar lo que ya tienes y lo que no te alcanza">
+        <input type="checkbox" data-shop-affordable />
+        <span class="hdt-track"><span class="hdt-thumb"></span></span>
+        <span class="hdt-label">Solo lo que puedo comprar</span>
+      </label>`,
+  }) %>
+
+  <% shop.slots.forEach((slot) => { %>
+  <section class="card col-slot" data-slot="<%= slot.key %>">
+    <h2><%= slot.label %></h2>
+    <p class="text-muted col-slot-desc"><%= slot.desc %></p>
+
+    <div class="col-grid">
+      <% slot.items.forEach((item) => { %>
+      <%- include('../partials/cosmetic-tile', {
+        item,
+        slot: slot.key,
+        rarity: cosmeticRarities[item.rarity],
+        mode: 'shop',
+        equipped: false,
+      }) %>
+      <% }) %>
+    </div>
+  </section>
+  <% }) %>
+</main>
+
+<!-- Confirmación de compra. Oculta hasta que se pulsa una ficha: el gasto de
+     monedas no debe ocurrir por un clic accidental. -->
+<div class="shop-confirm" id="shop-confirm" hidden>
+  <div class="shop-confirm-backdrop" data-shop-cancel></div>
+  <div class="shop-confirm-panel card" role="dialog" aria-modal="true" aria-labelledby="shop-confirm-title">
+    <h2 id="shop-confirm-title">¿Lo compras?</h2>
+    <p class="shop-confirm-item">
+      <b data-confirm-name></b> · <span data-confirm-price></span> monedas
+    </p>
+    <p class="text-muted shop-confirm-after">
+      Te quedarán <b data-confirm-left></b> monedas.
+    </p>
+    <div class="shop-confirm-actions">
+      <button type="button" class="btn btn-ghost" data-shop-cancel>Ahora no</button>
+      <button type="button" class="btn" data-shop-accept>Comprar</button>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/shop.js'] }) %>
