@@ -36,9 +36,14 @@
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition), box-shadow var(--transition);
 }
-.habit-card:hover {
-  transform: translateX(6px);
-  box-shadow: -3px 4px 0 color-mix(in srgb, var(--habit-color) 45%, transparent);
+/* Solo con puntero real: en táctil el :hover se queda "pegado" tras pulsar y la
+   tarjeta se quedaba desplazada a la derecha (y en pantallas estrechas, pegada
+   al borde). Ahí no hay hover que mostrar, así que no se aplica. */
+@media (hover: hover) and (pointer: fine) {
+  .habit-card:hover {
+    transform: translateX(6px);
+    box-shadow: -3px 4px 0 color-mix(in srgb, var(--habit-color) 45%, transparent);
+  }
 }
 .habit-card.is-archived {
   opacity: 0.65;
