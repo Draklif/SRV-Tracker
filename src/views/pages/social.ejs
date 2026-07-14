@@ -54,12 +54,13 @@
 
   <!-- Descubrir -->
   <section class="tab-panel <%= isTab('discover') %>" data-panel="discover" <%= activeTab === 'discover' ? '' : 'hidden' %>>
+    <%# Sin botón: friends.js filtra al teclear (3+ letras). El submit sigue ahí
+        como respaldo sin JS: Enter recarga /social?tab=discover&q=… %>
     <form class="search-form" method="get" action="/social">
       <input type="hidden" name="tab" value="discover" />
       <div class="field">
-        <input type="search" name="q" value="<%= search %>" placeholder="Buscar por nombre o usuario…" aria-label="Buscar personas" />
+        <input type="search" name="q" value="<%= search %>" placeholder="Buscar por nombre o usuario…" aria-label="Buscar personas" autocomplete="off" />
       </div>
-      <button class="btn btn-primary" type="submit">Buscar</button>
     </form>
     <div data-discover-body>
       <%- include('../partials/discover-list', { directory }) %>

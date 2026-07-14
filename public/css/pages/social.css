@@ -147,8 +147,5 @@
   flex: 1;
   min-width: 0;
 }
-.search-form .btn {
-  align-self: stretch;
-}
 
 .empty-note { padding: var(--space-4); }

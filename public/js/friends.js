@@ -51,6 +51,43 @@
     if (el && typeof count === 'number') el.textContent = count;
   }
 
+  // ---- Buscador en vivo (pestaña "Descubrir") -------------------------------
+  // Filtra al teclear a partir de 3 letras; con el campo vacío vuelve al
+  // directorio completo. Entre 1 y 2 letras no se toca la lista (demasiado ruido
+  // para una consulta tan corta).
+  const MIN_QUERY = 3;
+
+  if (isHub && searchInput) {
+    const form = searchInput.closest('.search-form');
+    let timer = null;
+    let seq = 0; // descarta respuestas que llegan tarde y pisarían a una más nueva
+
+    async function runSearch() {
+      const q = searchInput.value.trim();
+      if (q.length > 0 && q.length < MIN_QUERY) return;
+      const mine = ++seq;
+      try {
+        const res = await window.api.get(`/api/friends/directory?q=${encodeURIComponent(q)}`);
+        if (mine === seq && res.discoverHtml != null) discoverBody.innerHTML = res.discoverHtml;
+      } catch (err) {
+        if (window.toast) window.toast.show(err.message, { type: 'info' });
+      }
+    }
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(runSearch, 250);
+    });
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault(); // con JS no recargamos: buscamos en el sitio
+        clearTimeout(timer);
+        runSearch();
+      });
+    }
+  }
+
   // ---- Acciones (delegadas) -------------------------------------------------
   function url(base) {
     if (!isHub) return base;

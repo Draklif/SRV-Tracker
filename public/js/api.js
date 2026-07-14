@@ -35,6 +35,7 @@
   }
 
   window.api = {
+    get: (url) => request('GET', url),
     post: (url, body) => request('POST', url, body),
     patch: (url, body) => request('PATCH', url, body),
     del: (url) => request('DELETE', url),

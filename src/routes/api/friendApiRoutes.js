@@ -9,7 +9,10 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-// Todas son mutaciones → CSRF por header (igual que socialApiRoutes).
+// Lectura: el buscador en vivo de "Descubrir" (sin CSRF, no muta nada).
+router.get('/directory', friendController.directory);
+
+// El resto son mutaciones → CSRF por header (igual que socialApiRoutes).
 router.post('/request', verifyCsrf, friendController.request);
 router.post('/:id/accept', verifyCsrf, friendController.accept);
 router.post('/:id/decline', verifyCsrf, friendController.decline);

@@ -56,49 +56,16 @@
   flex-shrink: 0;
 }
 
-/* Variantes de chip para estado de relación. */
-.chip-ok {
-  background: var(--success);
-}
-
-/* Chip que además actúa como botón: "Amigos ✓" se convierte en "Quitar ✕"
-   al apuntarlo, para que se entienda que pulsarlo deshace la amistad. */
-.chip-toggle {
-  border: 0;
-  cursor: pointer;
-  transition: background-color var(--transition), color var(--transition);
-}
-.chip-toggle-hover {
-  display: none;
-}
-.chip-toggle:hover,
-.chip-toggle:focus-visible {
-  background: var(--surface-2);
-  color: var(--text-muted);
-}
-.chip-toggle:hover .chip-toggle-idle,
-.chip-toggle:focus-visible .chip-toggle-idle {
-  display: none;
-}
-.chip-toggle:hover .chip-toggle-hover,
-.chip-toggle:focus-visible .chip-toggle-hover {
-  display: inline;
-}
-.chip-toggle:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
 .chip-muted {
   background: var(--surface-2);
   color: var(--text-muted);
   box-shadow: none;
 }
 
-/* ---- Botón de amistad compacto (variante del perfil) ----
-   Icono + etiqueta corta: "Agregar" (+), "Cancelar" (avión, solicitud enviada) y
-   "Agregado" (visto) cuando ya sois amigos, que pasa a "Eliminar" (✕) al apuntarlo.
-   Del tamaño de la pill de nivel para no robarle ancho a la bio. */
+/* ---- Botón de amistad ----
+   Icono + etiqueta corta: "Agregar" (+), "Enviada" (avión, solicitud pendiente) y
+   "Agregado" (visto) cuando ya sois amigos. Al apuntarlo, icono y etiqueta pasan a
+   la acción que se ejecutará. Único en el hub y en el perfil. */
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -184,4 +151,19 @@
 
 .profile-friend-action:hover {
   background: transparent;
+}
+
+/* En pantallas estrechas la fila no da para nombre + etiqueta (y con dos botones,
+   como en las solicitudes recibidas, la fila desbordaba y provocaba scroll
+   horizontal en toda la página): dejamos solo el icono, en botón cuadrado.
+   El perfil no entra aquí porque su botón ocupa una fila propia. */
+@media (max-width: 480px) {
+  .user-row:not(.profile-friend-action) .icon-btn {
+    width: 40px;
+    padding: 0;
+    gap: 0;
+  }
+  .user-row:not(.profile-friend-action) .icon-btn-label {
+    display: none;
+  }
 }

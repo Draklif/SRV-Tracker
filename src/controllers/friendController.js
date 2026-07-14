@@ -52,6 +52,16 @@ async function respond(req, res, base) {
   res.json(body);
 }
 
+/**
+ * GET /api/friends/directory?q= — resultados de "Descubrir" ya renderizados.
+ * Lo usa el buscador en vivo del hub (filtra al teclear, sin recargar).
+ */
+const directory = asyncHandler(async (req, res) => {
+  const search = typeof req.query.q === 'string' ? req.query.q : '';
+  const list = friendshipService.directory(req.user.id, search);
+  res.json({ ok: true, discoverHtml: await renderPartial(res, 'partials/discover-list', { directory: list }) });
+});
+
 /** POST /api/friends/request — envía (o auto-acepta) una solicitud. */
 const request = asyncHandler(async (req, res) => {
   const { username } = friendRequestSchema.parse(req.body);
@@ -90,4 +100,4 @@ const decline = makeDeleteHandler(friendshipService.decline);
 const cancel = makeDeleteHandler(friendshipService.cancel);
 const remove = makeDeleteHandler(friendshipService.remove);
 
-module.exports = { request, accept, decline, cancel, remove };
+module.exports = { directory, request, accept, decline, cancel, remove };
