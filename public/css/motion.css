@@ -1,0 +1,385 @@
+/* motion.css — La capa de movimiento de la app, y su interruptor.
+ *
+ * Aquí vive TODO lo que se mueve por cuenta de la interfaz: la transición entre
+ * pantallas, la barra de carga de navegación, la entrada de las tarjetas y el
+ * brillo de los skeletons. Se carga la última para poder apagar lo de los demás.
+ *
+ * El interruptor es `data-motion="off"` en <html> (preferencia del perfil, ver
+ * la migración 0018). Apagado congela el cromo de la app, pero NO los efectos de
+ * los cosméticos equipados (.cos-frame, .cos-deco, .cos-card, .cos-title): esos
+ * son contenido que la persona compró, no ruido de la interfaz. Los cosméticos
+ * sí paran con el ajuste de accesibilidad del sistema (lo hace cosmetics.css).
+ *
+ * Los skeletons NO desaparecen con el interruptor: siguen ahí, quietos. Marcan
+ * dónde va a aparecer el contenido, y eso no es decoración: es la maqueta.
+ */
+
+/* ---- Tokens de movimiento ---- */
+:root {
+  --sk-base: color-mix(in srgb, var(--text) 9%, transparent);
+  --sk-sheen: color-mix(in srgb, var(--text) 16%, transparent);
+  --sk-radius: var(--radius-sm);
+}
+
+/* =========================================================================
+   1. Transición entre pantallas (View Transitions, MPA)
+   ========================================================================= */
+
+/* El navegador anima la navegación completa: la vieja se va, la nueva entra. Las
+   navs llevan nombre propio, así que el navegador las trata como el MISMO
+   elemento entre páginas y no parpadean: se quedan quietas mientras el contenido
+   cambia debajo. Donde no hay soporte (Firefox), la navegación es la de siempre:
+   no se pierde nada. */
+@view-transition {
+  navigation: auto;
+}
+
+.app-nav {
+  view-transition-name: app-nav;
+}
+.bottom-nav {
+  view-transition-name: bottom-nav;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 160ms var(--ease) both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-in 260ms var(--ease) both;
+  }
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* =========================================================================
+   2. Barra de carga de navegación
+   ========================================================================= */
+
+/* El hueco real de una app así (páginas del servidor) no está DENTRO de la
+   pantalla: está ENTRE pantallas. Al pulsar un enlace el navegador se queda en la
+   página vieja mientras pide la nueva, y con red lenta eso parece que la app se
+   ha colgado. Esta barra es la respuesta a esa espera: aparece solo si la
+   navegación tarda (ver motion.js), y por eso en una red normal nunca se ve.
+
+   Es `fixed` y no ocupa hueco en el layout: no puede mover nada de sitio. */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 150; /* sobre las navs (50/60), bajo los toasts (200) */
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms var(--ease);
+}
+.nav-progress.is-active {
+  opacity: 1;
+}
+.nav-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--brand-strong));
+  box-shadow: 0 0 10px var(--brand-glow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  /* La anchura la mueve motion.js: avanza rápido al principio y se va frenando,
+     porque no sabemos cuánto falta. Nunca llega al 100% sola. */
+  transition: transform 240ms var(--ease);
+}
+
+/* =========================================================================
+   3. Skeletons
+   ========================================================================= */
+
+/* Un skeleton es un trozo de maqueta con el TAMAÑO EXACTO de lo que va a llegar.
+   Si no coincide, al cargar el contenido todo salta: el remedio sería peor que
+   la enfermedad. Por eso cada variante de abajo copia las medidas del componente
+   real (avatar 36px, fila de usuario, arte de ficha 46px…). */
+
+/* El brillo va en el FONDO del propio elemento, no en un ::after encima.
+ *
+ * Es una decisión, no un descuido: los sitios donde hace falta un skeleton aquí
+ * son elementos que no admiten un pseudo-elemento encima sin romperse. El avatar
+ * es un <img> (un elemento reemplazado: no tiene ::after que pintar), y tanto
+ * .avatar-wrap como .col-item-art son contenedores `grid`, donde un pseudo se
+ * convierte en un ITEM más de la rejilla y descoloca lo que hay dentro. Además,
+ * .avatar-wrap ya usa su ::before para la sombra del marco equipado.
+ *
+ * Pintando el fondo no hay nada que colocar: el elemento se pinta a sí mismo con
+ * sus medidas y su forma reales (borde, radio y la rotación del retrato salen
+ * gratis, porque son las suyas). */
+.sk,
+.avatar.is-loading,
+.col-item-art.is-art-pending {
+  background-color: var(--sk-base);
+  background-image: linear-gradient(90deg, transparent 20%, var(--sk-sheen), transparent 80%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: sk-sheen 1.4s var(--ease) infinite;
+}
+
+@keyframes sk-sheen {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+.sk {
+  border-radius: var(--sk-radius);
+}
+
+/* Líneas de texto. `em` para que sigan al tamaño de letra de su sitio. */
+.sk-line {
+  height: 0.7em;
+  border-radius: var(--radius-pill);
+}
+.sk-line-sm {
+  height: 0.6em;
+}
+
+/* Retrato: mismas medidas y misma inclinación que .avatar (avatar.css), para que
+   al llegar la imagen no se mueva ni un pixel. */
+.sk-avatar {
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  transform: rotate(-3deg);
+}
+
+/* ---- Imagen de avatar todavía en el aire ----
+   La foto la trae la red; hasta que llega, el <img> se pinta a sí mismo como
+   skeleton (ya tiene el borde, el radio y la inclinación de .avatar). Sin esto se
+   ve un recuadro vacío —o el texto `alt` suelto— y al llegar la foto, un tirón.
+   La clase la quita motion.js cuando la imagen ha cargado de verdad. */
+.avatar.is-loading {
+  color: transparent; /* esconde el `alt` mientras tanto */
+}
+
+/* Y entra con un fundido corto: una foto que aparece de golpe es justo lo que se
+   percibe como salto. */
+.avatar.is-ready {
+  animation: sk-reveal 220ms var(--ease) both;
+}
+@keyframes sk-reveal {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---- Fila de usuario (amigos: buscar / listas) ----
+   Copia de .user-row (user-row.css): mismo padding, mismo gap, avatar de 36px y
+   dos líneas de texto. Se pinta desde motion.js mientras vuela el fetch. */
+.sk-user-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+.sk-user-row + .sk-user-row {
+  border-top: 1px solid var(--border);
+}
+.sk-user-row .sk-avatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.sk-user-id {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+.sk-user-row .sk-name {
+  width: min(42%, 160px);
+  height: 0.8em;
+}
+.sk-user-row .sk-handle {
+  width: min(28%, 110px);
+  height: 0.62em;
+}
+/* El botón de acción: 40px, como .icon-btn. En móvil (≤480px) el botón real se
+   queda solo con el icono y se vuelve cuadrado — el skeleton hace lo mismo, o al
+   llegar la lista la fila entera se recolocaría. */
+.sk-user-row .sk-action {
+  width: 104px;
+  height: 40px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .sk-user-row .sk-action {
+    width: 40px;
+  }
+}
+
+/* ---- Arte de una ficha de cosmético (tienda y colección) ----
+   El arte de la ficha es CSS puro (marcos, fondos, títulos): no viaja por la red,
+   pero en un móvil lento sí tarda en estar pintado, y hasta entonces se ve el
+   hueco vacío. El skeleton ocupa exactamente los 46px de .col-item-art, así que
+   la rejilla ya está en su sitio antes de que se pinte nada.
+   La clase la pone el partial y la quita motion.js al primer frame útil. */
+.col-item-art.is-art-pending {
+  width: 62px; /* el ancho de .col-swatch, la más ancha de las artes */
+  border-radius: var(--sk-radius);
+}
+/* Lo de dentro no se ve hasta que el arte está lista: si no, se asomaría a medio
+   pintar por encima del propio skeleton. `visibility` y no `display`, porque el
+   hueco (los 46px de .col-item-art) tiene que seguir ocupado. */
+.col-item-art.is-art-pending > * {
+  visibility: hidden;
+}
+
+/* =========================================================================
+   4. Entrada de las tarjetas
+   ========================================================================= */
+
+/* Cada componente entra cuando le toca: al asomar por el borde de la pantalla,
+   no todos de golpe al cargar la página. Una ficha de la tienda que aparece
+   cuando llegas a ella se siente parte del scroll; la misma ficha animándose
+   cuando está tres pantallas más abajo es una animación que nadie ve.
+ *
+ * Quién entra y cuándo lo decide motion.js (un IntersectionObserver): aquí solo
+ * están los dos estados. `rv` = todavía no le toca. `rv-in` = adelante.
+ *
+ * El escalonado (--rv-i) lo pone también motion.js, por orden dentro del grupo
+ * que asoma a la vez: los de una rejilla entran en cascada, no en bloque. */
+.rv {
+  opacity: 0;
+}
+
+.rv-in {
+  animation: rv-in 560ms var(--ease-spring) backwards;
+  animation-delay: calc(var(--rv-i, 0) * 45ms);
+}
+
+/* `backwards` y NO `forwards`, que es lo que parece que tocaría.
+ *
+ * Una animación con relleno hacia delante se queda mandando sobre la propiedad
+ * cuando termina, y gana en la cascada a las reglas normales. Como este keyframe
+ * anima `transform`, con `forwards` la ficha de la tienda se quedaría clavada en
+ * `transform: none` PARA SIEMPRE: sus efectos de hover (que son transforms:
+ * translateY, scale…) dejarían de verse en cuanto la ficha hubiera entrado.
+ *
+ * Con `backwards` el relleno solo aplica ANTES de arrancar (que es lo que hace
+ * falta: el elemento espera escondido su turno durante el delay), y al acabar
+ * suelta la propiedad y el elemento vuelve a ser suyo. */
+@keyframes rv-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+}
+
+/* Solo en vertical, a propósito: un `translateX` de entrada empujaría el
+   contenido hacia los lados y en móvil eso es lo que provoca scroll horizontal
+   (o lo esconde bajo el `overflow-x: clip` del body, que es peor: se ve un
+   tirón). Hacia arriba no hay borde contra el que chocar. */
+
+/* =========================================================================
+   5. El interruptor
+   ========================================================================= */
+
+/* Apagar el movimiento es apagar la DURACIÓN, no la animación: una animación que
+   dura 1ms termina igual, y termina en el estado final. Poner `animation: none`
+   sobre una entrada que arranca en `opacity: 0` dejaría el elemento invisible
+   para siempre; esto no puede.
+ *
+ * Los cosméticos quedan fuera a propósito (ver la cabecera del archivo). Al
+ * excluir el elemento se excluyen también sus ::before/::after, que es donde
+ * cosmetics.css cuelga los brillos y los giros. */
+:root[data-motion='off'] *:not(.cos-frame, .cos-deco, .cos-card, .cos-title),
+:root[data-motion='off'] *:not(.cos-frame, .cos-deco, .cos-card, .cos-title)::before,
+:root[data-motion='off'] *:not(.cos-frame, .cos-deco, .cos-card, .cos-title)::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0ms !important;
+  transition-duration: 1ms !important;
+  transition-delay: 0ms !important;
+}
+
+/* Y el sistema manda por encima de todo: si el dispositivo pide menos movimiento
+   (ajuste de accesibilidad), la app se para aunque el perfil diga que sí. */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.cos-frame, .cos-deco, .cos-card, .cos-title),
+  *:not(.cos-frame, .cos-deco, .cos-card, .cos-title)::before,
+  *:not(.cos-frame, .cos-deco, .cos-card, .cos-title)::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* La transición entre pantallas no se apaga con duraciones: sus pseudo-elementos
+   viven fuera del árbol normal, así que se quitan a mano. Sin animación, el
+   navegador cambia de pantalla de golpe, que es justo lo que se ha pedido. */
+:root[data-motion='off']::view-transition-group(*),
+:root[data-motion='off']::view-transition-old(root),
+:root[data-motion='off']::view-transition-new(root) {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* El skeleton se queda, pero deja de brillar: sin el reflejo cruzando es un
+   bloque gris quieto, que sigue diciendo "aquí viene algo".
+ *
+ * Hay que quitarle el degradado a mano. Con la regla de arriba la animación dura
+ * 1ms y termina en su último frame, y ese frame tiene el reflejo parado en una
+ * esquina: una mancha clara fija, que es peor que no tener nada. */
+:root[data-motion='off'] .sk,
+:root[data-motion='off'] .avatar.is-loading,
+:root[data-motion='off'] .col-item-art.is-art-pending {
+  background-image: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk,
+  .avatar.is-loading,
+  .col-item-art.is-art-pending {
+    background-image: none !important;
+  }
+}
+
+/* Red de seguridad del revelado. Con el movimiento apagado, motion.js ni siquiera
+   esconde nada (no llega a poner `rv`), así que esto no debería hacer falta
+   nunca. Pero `rv` es una regla que ESCONDE: si por lo que sea se colara —una
+   preferencia que cambia sin recargar, un nodo pintado a destiempo— dejaría un
+   trozo de la app en blanco. Un contenido invisible es un fallo mucho peor que
+   una animación de más, y esto lo hace imposible. */
+:root[data-motion='off'] .rv,
+:root[data-motion='off'] .rv-in {
+  opacity: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv,
+  .rv-in {
+    opacity: 1 !important;
+  }
+}
+
+/* La barra de carga de navegación NO se apaga: no es un adorno, es la única
+   señal de que al pulsar ha pasado algo. Solo deja de deslizarse (la regla de
+   arriba le deja la transición en 1ms), así que salta directa a su sitio. */

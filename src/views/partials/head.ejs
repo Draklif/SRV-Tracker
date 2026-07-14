@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" data-theme="<%= typeof theme !== 'undefined' ? theme : 'dark' %>" data-accent="<%= typeof accent !== 'undefined' ? accent : 'blue' %>">
+<html lang="es" data-theme="<%= typeof theme !== 'undefined' ? theme : 'dark' %>" data-accent="<%= typeof accent !== 'undefined' ? accent : 'blue' %>" data-motion="<%= typeof motion !== 'undefined' ? motion : 'on' %>">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -59,6 +59,10 @@
         '/css/components/toast.css',
         '/css/components/feed.css',
         '/css/components/user-row.css',
+        // La capa de movimiento (transiciones, skeletons) y su interruptor:
+        // la última de las globales, para pintar por encima de los componentes
+        // que cubre.
+        '/css/motion.css',
       ];
     %>
     <% _globalStyles.concat(typeof styles !== 'undefined' ? styles : []).forEach((href) => { %>

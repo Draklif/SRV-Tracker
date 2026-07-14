@@ -17,7 +17,7 @@ const statements = {
   updateProfile: db.prepare(`
     UPDATE users
     SET display_name = @displayName, bio = @bio, timezone = @timezone,
-        theme = @theme, accent = @accent, updated_at = datetime('now')
+        theme = @theme, accent = @accent, motion = @motion, updated_at = datetime('now')
     WHERE id = @id
   `),
   updatePassword: db.prepare(`
@@ -64,8 +64,8 @@ function findByUsername(username) {
   return statements.byUsername.get(username);
 }
 
-function updateProfile(id, { displayName, bio, timezone, theme, accent }) {
-  statements.updateProfile.run({ id, displayName, bio, timezone, theme, accent });
+function updateProfile(id, { displayName, bio, timezone, theme, accent, motion }) {
+  statements.updateProfile.run({ id, displayName, bio, timezone, theme, accent, motion });
   return statements.byId.get(id);
 }
 

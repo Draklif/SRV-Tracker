@@ -20,12 +20,18 @@ const THEMES = ['dark', 'light'];
 // Colores de acento seleccionables (mapeados a tokens --brand-* en tokens.css).
 const ACCENTS = ['blue', 'red', 'green', 'purple', 'pink'];
 
+// Killswitch de animaciones de la interfaz (data-motion en <html>).
+const MOTIONS = ['on', 'off'];
+
 const profileSchema = z.object({
   displayName: z.string().trim().min(1, 'Escribe un nombre').max(40, 'Máximo 40 caracteres'),
   bio: z.string().trim().max(160, 'Máximo 160 caracteres').optional().or(z.literal('')),
   timezone: z.enum(TIMEZONES, { errorMap: () => ({ message: 'Zona horaria no válida' }) }),
   theme: z.enum(THEMES, { errorMap: () => ({ message: 'Tema no válido' }) }),
   accent: z.enum(ACCENTS, { errorMap: () => ({ message: 'Color no válido' }) }),
+  // El checkbox llega como 'on' si está marcado y ausente si no: eso ya es
+  // exactamente el vocabulario de la columna, así que basta con normalizarlo.
+  motion: z.preprocess((v) => (v === 'on' || v === true ? 'on' : 'off'), z.enum(MOTIONS)),
 });
 
 // Preferencias de notificación (formulario propio en el perfil).
@@ -58,4 +64,5 @@ module.exports = {
   TIMEZONES,
   THEMES,
   ACCENTS,
+  MOTIONS,
 };

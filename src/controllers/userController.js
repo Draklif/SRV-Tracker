@@ -21,6 +21,7 @@ const {
   TIMEZONES,
   THEMES,
   ACCENTS,
+  MOTIONS,
 } = require('../validators/profileValidators');
 const asyncHandler = require('../utils/asyncHandler');
 const { toFieldErrors } = require('../utils/validation');
@@ -34,6 +35,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
     timezones: TIMEZONES,
     themes: THEMES,
     accents: ACCENTS,
+    motions: MOTIONS,
     achievements: achievementService.listForUser(req.user.id),
     radar: resourceService.radarForUser(req.user.id, req.user.timezone),
     level: levelProgress(req.user.xp),
@@ -48,6 +50,7 @@ function renderProfile(req, res, { status = 200, profileErrors = {}, passwordErr
       timezone: req.user.timezone,
       theme: req.user.theme,
       accent: req.user.accent,
+      motion: req.user.motion,
       reminderTime: req.user.notify_reminder_time,
       streakGuard: req.user.notify_streak_guard,
     },
@@ -74,6 +77,8 @@ const updateProfile = asyncHandler(async (req, res) => {
         timezone: req.body.timezone,
         theme: req.body.theme,
         accent: req.body.accent,
+        // El checkbox ausente = desmarcado (el navegador no envía nada).
+        motion: req.body.motion === 'on' ? 'on' : 'off',
         reminderTime: req.user.notify_reminder_time,
         streakGuard: req.user.notify_streak_guard,
       },

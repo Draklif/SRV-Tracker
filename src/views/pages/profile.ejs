@@ -145,6 +145,23 @@
           <small class="field-hint">Cambia los acentos de la app en modo claro y oscuro.</small>
         </div>
 
+        <%# El killswitch de las animaciones. Es una casilla y no un desplegable
+            porque es un sí/no: el <select> de al lado (tema, acento) elige entre
+            opciones, esto solo apaga. Desmarcada no se envía nada, y el
+            controlador lee esa ausencia como 'off'. %>
+        <div class="field">
+          <label class="pref-check">
+            <input type="checkbox" name="motion" value="on"
+              <%= values.motion !== 'off' ? 'checked' : '' %> />
+            <span>Animaciones de la interfaz</span>
+          </label>
+          <small class="field-hint">
+            Transiciones entre pantallas y entradas de las tarjetas. Apágalas si prefieres
+            la app quieta o si tu dispositivo va justo; los efectos de tus cosméticos se
+            quedan igual.
+          </small>
+        </div>
+
         <button class="btn btn-primary" type="submit">Guardar cambios</button>
       </form>
     </section>

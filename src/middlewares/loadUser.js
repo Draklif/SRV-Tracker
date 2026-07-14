@@ -25,6 +25,7 @@ module.exports = function loadUser(req, res, next) {
       res.locals.user = user;
       res.locals.theme = user.theme;
       res.locals.accent = user.accent;
+      res.locals.motion = user.motion;
       res.locals.pendingFriendCount = friendshipService.incomingCount(user.id);
       res.locals.hasUnseenChangelog = changelogService.hasUnseen(user);
     } else {
@@ -35,5 +36,7 @@ module.exports = function loadUser(req, res, next) {
 
   res.locals.theme = res.locals.theme || 'dark';
   res.locals.accent = res.locals.accent || 'blue';
+  // Invitados (landing, login) ven la app en movimiento: es la primera impresión.
+  res.locals.motion = res.locals.motion || 'on';
   next();
 };

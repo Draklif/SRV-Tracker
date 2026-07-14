@@ -9,13 +9,14 @@ function getById(id) {
 }
 
 /** Actualiza los datos de perfil (datos ya validados por profileSchema). */
-function updateProfile(id, { displayName, bio, timezone, theme, accent }) {
+function updateProfile(id, { displayName, bio, timezone, theme, accent, motion }) {
   return userRepository.updateProfile(id, {
     displayName,
     bio: (bio && bio.trim()) || null,
     timezone,
     theme,
     accent,
+    motion,
   });
 }
 

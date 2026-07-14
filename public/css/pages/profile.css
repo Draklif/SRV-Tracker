@@ -484,13 +484,18 @@
   border-top: 1px solid var(--border);
   margin: var(--space-4) 0;
 }
-.push-check {
+/* Casilla de una preferencia: la etiqueta al lado, y toda la fila se puede
+   pulsar. La comparten el aviso de racha (notificaciones) y el interruptor de
+   animaciones (preferencias), que son la misma cosa: un sí/no. */
+.push-check,
+.pref-check {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   cursor: pointer;
 }
-.push-check input {
+.push-check input,
+.pref-check input {
   width: auto;
 }
 

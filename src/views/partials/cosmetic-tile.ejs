@@ -50,7 +50,11 @@
   aria-pressed="<%= equipped ? 'true' : 'false' %>"
   title="<%= hint %>">
 
-  <span class="col-item-art">
+  <%# `is-art-pending` = skeleton hasta que el arte esté pintada. El arte es CSS
+      (marcos, fondos, títulos), no imágenes: no viaja por la red, pero en un móvil
+      lento tarda en pintarse, y hasta entonces el hueco se ve vacío. Lo destapa
+      motion.js cuando la página tiene ya sus estilos y sus fuentes. %>
+  <span class="col-item-art is-art-pending">
     <% if (slot === 'avatar_frame') { %>
     <span class="avatar-wrap avatar-wrap-sm <%= cosmeticFrameClasses(item) %>">
       <span class="avatar avatar-sm avatar-initials col-item-face"></span>

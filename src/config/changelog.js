@@ -18,6 +18,43 @@
  */
 const CHANGELOG = Object.freeze([
   {
+    version: '0.5.2',
+    date: '2026-07-14',
+    title: 'La app se mueve',
+    items: [
+      {
+        type: 'new',
+        text:
+          'Las cosas ahora aparecen al llegar a ellas: cada ficha de la Tienda, cada tarjeta del ' +
+          'feed y cada persona de tus listas entra por su cuenta según vas bajando, una detrás de ' +
+          'otra, en vez de estar todas ahí de golpe.',
+      },
+      {
+        type: 'new',
+        text:
+          'Cambiar de pantalla ya no es un salto en seco: la nueva entra y la vieja se va, con la ' +
+          'navegación quieta en su sitio. Y si la conexión va lenta, una barra arriba te avisa de ' +
+          'que la página está en camino, en lugar de dejarte mirando la pantalla anterior sin saber ' +
+          'si te ha hecho caso.',
+      },
+      {
+        type: 'new',
+        text:
+          'Mientras algo carga —tu avatar, la búsqueda de gente, las fichas de la Tienda— ves su ' +
+          'hueco esperando en gris, con el tamaño que va a tener. Nada baila ni te cambia el sitio ' +
+          'de debajo del dedo cuando termina de llegar.',
+      },
+      {
+        type: 'change',
+        text:
+          'Todo esto se puede apagar. En tu perfil, junto al tema y al color, hay un interruptor ' +
+          '(Animaciones de la interfaz) que deja la app quieta: útil si el móvil va justo o si ' +
+          'sencillamente prefieres que no se mueva nada. Los efectos de tus cosméticos siguen ' +
+          'igual: eso lo compraste tú.',
+      },
+    ],
+  },
+  {
     version: '0.5.1',
     date: '2026-07-14',
     title: 'Ordenando la casa',

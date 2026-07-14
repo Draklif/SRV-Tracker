@@ -77,6 +77,9 @@
         const node = tmp.firstElementChild;
         node.classList.add('feed-item-new');
         feed.prepend(node);
+        // El avatar del amigo llega con su skeleton puesto (lo marca el partial):
+        // hay que engancharlo para que se destape al cargar la foto.
+        if (window.motion) window.motion.watchAvatars(node);
         if (empty) empty.remove();
       }
     } finally {

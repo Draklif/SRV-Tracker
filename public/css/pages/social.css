@@ -54,23 +54,11 @@
   font-size: var(--fs-xl);
 }
 
-/* Animación scroll-driven: las tarjetas del feed "suben" al entrar en el
-   viewport durante el scroll (progresivo: solo navegadores compatibles). */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .feed > .feed-item {
-      animation: scroll-rise both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 55%;
-    }
-  }
-}
-@keyframes scroll-rise {
-  from {
-    opacity: 0.2;
-    transform: translateY(22px) scale(0.985);
-  }
-}
+/* Las tarjetas del feed entran al asomar por la pantalla, como el resto de los
+   componentes de la app: lo hace el revelado de motion.css/motion.js (`.rv`).
+   Aquí VIVÍA una animación scroll-driven propia (animation-timeline: view()),
+   que se quitó al unificarlo: dos sistemas animando el mismo elemento se pisan,
+   y aquel solo funcionaba en los navegadores que soportan `view()`. */
 
 @keyframes live-pulse {
   0%,

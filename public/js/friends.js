@@ -57,20 +57,53 @@
   // para una consulta tan corta).
   const MIN_QUERY = 3;
 
+  // Cuánto se le da a la búsqueda antes de admitir que va lenta y enseñar el
+  // skeleton. Con red buena la respuesta llega antes y la lista NUNCA parpadea:
+  // cambiar los resultados por bloques grises en cada tecla, para devolverlos
+  // 80ms después, marearía más que esperar.
+  const SKELETON_AFTER = 180;
+
   if (isHub && searchInput) {
     const form = searchInput.closest('.search-form');
     let timer = null;
     let seq = 0; // descarta respuestas que llegan tarde y pisarían a una más nueva
 
+    // La última lista buena. Es a donde se vuelve si una búsqueda falla DESPUÉS
+    // de haber pintado el skeleton: sin esto, un error de red dejaría la pestaña
+    // en bloques grises para siempre.
+    let lastGoodHtml = discoverBody.innerHTML;
+
+    /** Pinta la lista y vuelve a enganchar los avatares que acaban de aparecer. */
+    function paintDiscover(html) {
+      discoverBody.innerHTML = html;
+      lastGoodHtml = html;
+      if (window.motion) {
+        window.motion.watchAvatars(discoverBody);
+        window.motion.reveal(discoverBody); // las filas nuevas entran una detrás de otra
+      }
+    }
+
     async function runSearch() {
       const q = searchInput.value.trim();
       if (q.length > 0 && q.length < MIN_QUERY) return;
       const mine = ++seq;
+
+      // `mine === seq` también aquí dentro: si mientras esperábamos se ha lanzado
+      // otra búsqueda, esta ya no manda y no debe pintar nada.
+      const slow = setTimeout(() => {
+        if (mine === seq && window.motion) {
+          discoverBody.innerHTML = window.motion.skeletonUserRows(5);
+        }
+      }, SKELETON_AFTER);
+
       try {
         const res = await window.api.get(`/api/friends/directory?q=${encodeURIComponent(q)}`);
-        if (mine === seq && res.discoverHtml != null) discoverBody.innerHTML = res.discoverHtml;
+        if (mine === seq && res.discoverHtml != null) paintDiscover(res.discoverHtml);
       } catch (err) {
+        if (mine === seq) paintDiscover(lastGoodHtml);
         if (window.toast) window.toast.show(err.message, { type: 'info' });
+      } finally {
+        clearTimeout(slow);
       }
     }
 
@@ -124,6 +157,13 @@
         discoverBody.innerHTML = res.discoverHtml;
         setFriendsCount(res.friendsCount);
         window.scrollTo(0, y);
+        // Los avatares recién pintados vienen con su skeleton puesto (lo marca el
+        // partial). Hay que engancharlos, o se quedarían en gris para siempre.
+        // Y las filas nuevas, revelarlas: acaban de nacer y están escondidas.
+        if (window.motion) {
+          window.motion.watchAvatars(hub);
+          window.motion.reveal(hub);
+        }
       } else if (res.actionHtml) {
         // Perfil: solo se actualiza el botón en el sitio.
         const holder = row.querySelector('[data-row-action]');

@@ -56,8 +56,11 @@
 }
 
 /* Estado "levantado" durante el drag por long-press (móvil).
-   `animation: none` es CLAVE: al moverla en el DOM se reiniciaría la animación
-   de entrada (rise-in, con delay en opacity 0) y la tarjeta "desaparecería".
+   `animation: none` es el cinturón de seguridad: al mover la tarjeta en el DOM,
+   una animación de entrada volvería a arrancar desde `opacity: 0` y la tarjeta
+   "desaparecería" bajo el dedo. Hoy motion.js ya retira la clase de entrada
+   (`rv-in`) en cuanto termina, así que no debería quedar ninguna que reiniciar;
+   esto lo garantiza igualmente, y sale gratis.
    El transform lo controla el JS para que siga el dedo. */
 .habit-card.is-dragging {
   transition: none;

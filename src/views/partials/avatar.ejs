@@ -13,7 +13,11 @@
 %>
 <span class="avatar-wrap avatar-wrap-<%= sz %> <%= cosmeticFrameClasses(cos.avatar_frame) %>">
   <% if (au.avatar_path) { %>
-  <img class="avatar avatar-<%= sz %>" src="<%= au.avatar_path %>" alt="Avatar de <%= label %>" />
+  <%# `is-loading` sale ya puesta del servidor: el skeleton tiene que estar en el
+      primer pintado, antes de que corra ningún script. La quita motion.js cuando
+      la imagen ha cargado (o si venía de la caché, al instante). %>
+  <img class="avatar avatar-<%= sz %> is-loading" src="<%= au.avatar_path %>"
+    alt="Avatar de <%= label %>" decoding="async" />
   <% } else { %>
   <span class="avatar avatar-<%= sz %> avatar-initials" style="background: <%= bg %>"><%= initial %></span>
   <% } %>
