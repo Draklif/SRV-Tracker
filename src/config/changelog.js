@@ -26,26 +26,31 @@ const CHANGELOG = Object.freeze([
         type: 'new',
         text:
           'Monedas. Cada hábito que registras, cada meta que cumples, cada día redondo y cada ' +
-          'logro te dan monedas, además del XP de siempre. Las ves arriba, junto a tu avatar.',
+          'logro te dan monedas, además del XP de siempre. Las ves entrando a la tienda.. Y hablando de tienda...',
       },
       {
         type: 'new',
         text:
-          'Tienda. Ya puedes cambiar tus monedas por marcos, decoraciones, fondos, bordes y ' +
+          'Tienda! Ya puedes cambiar tus monedas por marcos, decoraciones, fondos, bordes y ' +
           'títulos. Todo es decoración: nada de lo que compres te da ventaja ni XP, así que ' +
           'quien pase de la tienda no se pierde nada.',
+      },
+      {
+        type: 'new',
+        text:
+          'Ahora cuentas con un nuevo menú para ver tu colección desde tu perfil. Pulsa sobre el diamante y ' +
+          'podrás acceder a tus objetos comprados y adquiridos en cualquier momento. ',
       },
       {
         type: 'important',
         text:
           'Te hemos pagado lo atrasado. Las monedas de todo lo que ya habías hecho antes de ' +
-          'hoy están en tu saldo desde el primer día: entra y verás que ya puedes comprarte algo.',
+          'hoy están en tu saldo desde el primer día: entra y verás que posiblemente ya puedes comprarte algo.',
       },
       {
         type: 'change',
         text:
-          'La barra de navegación tiene una pestaña nueva, Tienda. Tu Colección sigue donde ' +
-          'estaba, colgando de tu perfil.',
+          'La barra de navegación y el inicio tiene una pestaña nueva, Tienda.',
       },
     ],
   },
