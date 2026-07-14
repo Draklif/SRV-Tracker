@@ -18,6 +18,47 @@
  */
 const CHANGELOG = Object.freeze([
   {
+    version: '0.5.1',
+    date: '2026-07-14',
+    title: 'Ordenando la casa',
+    items: [
+      {
+        type: 'change',
+        text:
+          'Tu perfil está mejor repartido: las tarjetas se apilan de verdad en cada columna, ' +
+          'sin los huecos vacíos que dejaba antes, y Novedades está donde se ve, junto a ' +
+          'Notificaciones.',
+      },
+      {
+        type: 'change',
+        text:
+          'Buscar gente es más directo: la lista se va filtrando según escribes (a partir de ' +
+          'tres letras) y ya no hace falta darle a ningún botón. Si borras lo escrito, vuelve ' +
+          'el directorio completo.',
+      },
+      {
+        type: 'change',
+        text:
+          'Los botones de amistad son iguales en las listas y en el perfil de cada persona: uno ' +
+          'solo por estado, que te dice cómo estás y, al apuntarlo, qué va a hacer ' +
+          '(Agregado ✓ → Eliminar ✕). En pantallas estrechas se quedan en el icono para no ' +
+          'comerse la fila.',
+      },
+      {
+        type: 'fix',
+        text:
+          'En la vista de móvil, la tarjeta de un hábito se quedaba desplazada a un lado después de ' +
+          'tocarla, a veces pegada al borde. Ya no: ese efecto era solo para el escritorio.',
+      },
+      {
+        type: 'fix',
+        text:
+          'El detalle de un hábito ya no se sale de la pantalla. Los nombres largos y las notas ' +
+          'largas se parten en varias líneas en vez de estirar la página.',
+      },
+    ],
+  },
+  {
     version: '0.5.0',
     date: '2026-07-14',
     title: 'La tienda abre',
@@ -25,7 +66,7 @@ const CHANGELOG = Object.freeze([
       {
         type: 'new',
         text:
-          'Monedas. Cada hábito que registras, cada meta que cumples, cada día redondo y cada ' +
+          'Monedas! Cada hábito que registras, cada meta que cumples, cada día redondo y cada ' +
           'logro te dan monedas, además del XP de siempre. Las ves entrando a la tienda.. Y hablando de tienda...',
       },
       {
@@ -38,7 +79,7 @@ const CHANGELOG = Object.freeze([
       {
         type: 'new',
         text:
-          'Ahora cuentas con un nuevo menú para ver tu colección desde tu perfil. Pulsa sobre el diamante y ' +
+          'Colección! Ahora cuentas con un nuevo menú para ver tu colección desde tu perfil. Pulsa sobre el diamante y ' +
           'podrás acceder a tus objetos comprados y adquiridos en cualquier momento. ',
       },
       {
