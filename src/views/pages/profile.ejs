@@ -69,7 +69,11 @@
     <% } %>
   </section>
 
+  <%# Cada columna es un envoltorio flex propio: así las tarjetas de una columna
+      se apilan pegadas entre sí en vez de alinearse con las filas de las otras
+      (que es lo que dejaba huecos muertos). Ver .pg-col en profile.css. %>
   <div class="profile-grid">
+    <div class="pg-col pg-col-main">
     <!-- Datos del perfil -->
     <section class="card profile-main-section">
       <h2>Tu perfil</h2>
@@ -144,7 +148,9 @@
         <button class="btn btn-primary" type="submit">Guardar cambios</button>
       </form>
     </section>
+    </div>
 
+    <div class="pg-col pg-col-side">
     <!-- Notificaciones push (recordatorios de hábitos) -->
     <section class="card" id="push-settings">
       <h2>Notificaciones</h2>
@@ -177,6 +183,30 @@
       </form>
     </section>
 
+    <!-- Novedades: el único aviso de cambios en la app. Sin popups. -->
+    <% if (latestRelease) { %>
+    <section class="card news-section <%= hasUnseenChangelog ? 'has-unseen' : '' %>">
+      <h2>
+        Novedades
+        <% if (hasUnseenChangelog) { %><span class="news-dot" aria-label="Sin leer"></span><% } %>
+      </h2>
+      <p class="news-latest">
+        <span class="chip"><%= latestRelease.version %></span>
+        <span class="news-title"><%= latestRelease.title %></span>
+      </p>
+      <p class="text-muted news-intro">
+        <%= hasUnseenChangelog
+          ? 'Hay cambios que aún no has leído.'
+          : 'Estás al día. Aquí se cuenta lo que va cambiando.' %>
+      </p>
+      <a href="/novedades" class="btn <%= hasUnseenChangelog ? 'btn-primary' : 'btn-ghost' %>">
+        <%= hasUnseenChangelog ? 'Ver qué hay de nuevo' : 'Ver historial' %>
+      </a>
+    </section>
+    <% } %>
+    </div>
+
+    <div class="pg-col pg-col-extra">
     <!-- Contraseña -->
     <section class="card password-section">
       <h2>Cambiar contraseña</h2>
@@ -202,28 +232,6 @@
         <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
       </form>
     </section>
-
-    <!-- Novedades: el único aviso de cambios en la app. Sin popups. -->
-    <% if (latestRelease) { %>
-    <section class="card news-section <%= hasUnseenChangelog ? 'has-unseen' : '' %>">
-      <h2>
-        Novedades
-        <% if (hasUnseenChangelog) { %><span class="news-dot" aria-label="Sin leer"></span><% } %>
-      </h2>
-      <p class="news-latest">
-        <span class="chip"><%= latestRelease.version %></span>
-        <span class="news-title"><%= latestRelease.title %></span>
-      </p>
-      <p class="text-muted news-intro">
-        <%= hasUnseenChangelog
-          ? 'Hay cambios que aún no has leído.'
-          : 'Estás al día. Aquí se cuenta lo que va cambiando.' %>
-      </p>
-      <a href="/novedades" class="btn <%= hasUnseenChangelog ? 'btn-primary' : 'btn-ghost' %>">
-        <%= hasUnseenChangelog ? 'Ver qué hay de nuevo' : 'Ver historial' %>
-      </a>
-    </section>
-    <% } %>
 
     <!-- Invitaciones: cada persona puede invitar a alguien más -->
     <section class="card invite-section">
@@ -255,6 +263,7 @@
         </button>
       </form>
     </section>
+    </div>
   </div>
 </main>
 

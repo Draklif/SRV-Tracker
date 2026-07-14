@@ -340,51 +340,75 @@
   font-weight: 900;
 }
 
-/* Una sola columna (móvil): orden natural del documento. */
+/* Las tarjetas viven dentro de tres COLUMNAS (.pg-col), cada una un flex propio.
+   La clave: cada columna apila sus tarjetas pegadas entre sí, con su gap y nada
+   más. Si en vez de eso todas las tarjetas fueran celdas de un mismo grid, las
+   de una columna se alinearían con las FILAS de las otras y, en cuanto una es
+   más alta que su vecina, la de al lado queda flotando con un hueco muerto
+   debajo. Las columnas se colocan en el grid; lo que va dentro es cosa suya. */
 .profile-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
 }
+.pg-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
 
-/* Dos columnas: novedades e invitación cuelgan de notificaciones; contraseña
-   sigue a "Tu perfil" en su columna.
-   "Tu perfil" ABARCA dos filas a propósito: es la card más alta y, si ocupara
-   una sola fila, estiraría esa fila y novedades quedaría flotando muy por debajo
-   de notificaciones en vez de pegada a ella. */
+/* Una sola columna (móvil): los envoltorios se disuelven y las tarjetas fluyen
+   sueltas, en el orden de siempre (que `order` conserva: el DOM ahora agrupa por
+   columna, no por ese orden). */
+@media (max-width: 679px) {
+  .pg-col {
+    display: contents;
+  }
+  .profile-main-section {
+    order: 1;
+  }
+  #push-settings {
+    order: 2;
+  }
+  .password-section {
+    order: 3;
+  }
+  .news-section {
+    order: 4;
+  }
+  .invite-section {
+    order: 5;
+  }
+}
+
+/* Dos columnas: a la izquierda tu perfil y, debajo, contraseña e invitación;
+   a la derecha notificaciones y novedades, que ABARCAN las dos filas para poder
+   apilarse pegadas sin depender de la altura de la izquierda. */
 @media (min-width: 680px) {
   .profile-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
-      'main notif'
-      'main news'
-      'pass invite';
+      'main side'
+      'extra side';
   }
-  .profile-main-section {
+  .pg-col-main {
     grid-area: main;
   }
-  #push-settings {
-    grid-area: notif;
+  .pg-col-side {
+    grid-area: side;
   }
-  .password-section {
-    grid-area: pass;
-  }
-  .news-section {
-    grid-area: news;
-  }
-  .invite-section {
-    grid-area: invite;
+  .pg-col-extra {
+    grid-area: extra;
   }
 }
 
-/* Tres columnas: novedades bajo notificaciones, invitación bajo contraseña. */
+/* Tres columnas: perfil | notificaciones + novedades | contraseña + invitación. */
 @media (min-width: 1000px) {
   .profile-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-areas:
-      'main notif pass'
-      'main news  invite';
+    grid-template-areas: 'main side extra';
   }
 }
 

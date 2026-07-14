@@ -125,6 +125,7 @@
           bare: tile.dataset.bare === '1',
           gap: tile.dataset.gap === '1',
           inner: tile.dataset.inner === '1',
+          ink: tile.dataset.ink || '',
         }
       : null;
 
