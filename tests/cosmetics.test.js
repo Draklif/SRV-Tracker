@@ -38,8 +38,14 @@ test('el índice por clave cubre todo el catálogo', () => {
   assert.strictEqual(Object.keys(ITEMS_BY_KEY).length, ITEMS.length);
 });
 
-test('todo objeto tiene precio: la tienda lo cobra', () => {
+test('todo objeto vendible tiene precio: la tienda lo cobra', () => {
+  // Los objetos ocultos (exclusivos del pase) NO se venden: llevan price 0 a
+  // propósito y la tienda los filtra. El precio solo es obligatorio para el resto.
   for (const item of ITEMS) {
+    if (item.hidden) {
+      assert.ok(!(item.price > 0), `${item.key}: es oculto, no debería tener precio de venta`);
+      continue;
+    }
     assert.ok(item.price > 0, `${item.key}: sin precio, la tienda no puede venderlo`);
   }
 });

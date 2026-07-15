@@ -1,0 +1,253 @@
+/* lootbox.css — Vista previa de una caja y su apertura estilo Counter-Strike.
+   El arte de los cosméticos del pool es el mismo de components/cosmetics.css; esto
+   es solo el escaparate (modal) y el carrusel que frena en lo que salió. */
+
+.lb-reveal[hidden] {
+  display: none;
+}
+
+/* ---- Vista previa (dentro del modal compartido, components/modal.css) ----
+   Más ancha para que las fichas respiren y ni los títulos ni los marcos se
+   corten. */
+.lb-preview .modal-panel {
+  max-width: 720px;
+}
+.lb-modal-desc {
+  font-size: var(--fs-sm);
+  margin-bottom: var(--space-4);
+}
+
+/* Un grupo por rareza, con su probabilidad en la cabecera. */
+.lb-group + .lb-group {
+  margin-top: var(--space-5);
+}
+.lb-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: 6px;
+  margin-bottom: var(--space-3);
+  border-bottom: 2px solid color-mix(in srgb, var(--rarity-color) 55%, var(--border));
+}
+.lb-group-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--rarity-color);
+}
+.lb-group-pct {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  color: var(--rarity-color);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fichas del pool anchas: los títulos largos ("Guardián Eterno", "Mito
+   viviente") caben enteros sin recortarse, igual que los marcos. */
+.lb-pool {
+  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+}
+.lb-pool-item {
+  cursor: default;
+  padding: var(--space-4) var(--space-2);
+}
+.lb-pool .col-item-art {
+  min-height: 66px;
+}
+.lb-pool .cos-title {
+  font-size: 0.72rem;
+  padding-inline: 8px;
+  letter-spacing: 0;
+}
+/* El carrusel de apertura: fichas igual de anchas para que ningún título se
+   corte al frenar. El arte recorta cualquier sobrante como última red. */
+.lb-reel-item .col-item-art {
+  max-width: 100%;
+  overflow: hidden;
+}
+.lb-reel .cos-title {
+  font-size: 0.66rem;
+  padding-inline: 8px;
+  letter-spacing: 0;
+}
+
+/* ---- Apertura estilo Counter-Strike ---- */
+.lb-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+.lb-reveal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+      -35deg,
+      rgba(246, 244, 237, 0.03) 0 2px,
+      transparent 2px 14px
+    ),
+    rgba(9, 13, 24, 0.78);
+  backdrop-filter: blur(3px);
+}
+/* Panel sólido (como el modal): antes el resultado y los botones flotaban sin
+   marco sobre el backdrop, y en tema claro apenas se leían. */
+.lb-reveal-panel {
+  position: relative;
+  width: min(820px, 100%);
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  background: var(--surface);
+  border: var(--card-border);
+  border-top: 6px solid var(--brand);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5);
+}
+
+.lb-reel-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-block: var(--space-4);
+  background: var(--surface-2);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+/* Difuminado en los bordes: el carrusel "entra" y "sale" en niebla. */
+.lb-reel-viewport::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--surface-2),
+    transparent 14%,
+    transparent 86%,
+    var(--surface-2)
+  );
+}
+/* La marca central: la línea donde cae el premio. */
+.lb-reel-viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: var(--yellow);
+  box-shadow: 0 0 12px 1px var(--yellow);
+  z-index: 2;
+}
+
+.lb-reel {
+  display: flex;
+  gap: var(--space-3);
+  /* 50% de relleno a los lados: deja centrar la primera y la última ficha. El
+     cálculo del desplazamiento usa offsetLeft real, así que esto no lo estorba. */
+  padding-inline: 50%;
+  will-change: transform;
+}
+.lb-reel-item {
+  flex: 0 0 168px;
+  width: 168px;
+  cursor: default;
+}
+.lb-reel-item .lb-pool-chance {
+  display: none;
+}
+.lb-reel-item.is-winner.lb-land {
+  box-shadow: 0 0 20px 2px var(--rarity-color);
+  border-color: var(--rarity-color);
+}
+.lb-reel-item.lb-land {
+  animation: lb-pop 0.5s var(--ease-spring);
+}
+@keyframes lb-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.13);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+.lb-result {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+}
+.lb-result-line {
+  font-size: var(--fs-lg);
+  color: var(--text);
+}
+.lb-result-win {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-xl);
+  color: var(--text);
+}
+/* La rareza como chapa con su color de fondo: legible en cualquier tema (el
+   texto colorido sobre fondo claro no se leía). */
+.lb-result-rarity {
+  padding: 1px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--rarity-color, var(--brand));
+  color: var(--ink);
+  font-size: var(--fs-xs);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.lb-result-refund {
+  color: var(--text-muted);
+}
+.lb-result-refund b {
+  color: var(--text);
+}
+.lb-reveal-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* ---- Móvil: los botones de la caja en dos filas ----
+   "Abrir" y "Comprar" comparten la primera (50/50) y "Comprar y abrir" ocupa la
+   segunda entera. El .modal-foot ya es flex con wrap; aquí solo fijamos anchos.
+   Si "Abrir" está oculto, "Comprar" crece y llena la primera fila. */
+@media (max-width: 560px) {
+  .lb-preview .modal-foot {
+    justify-content: stretch;
+  }
+  .lb-preview .modal-foot .btn {
+    flex: 1 1 40%;
+  }
+  .lb-preview .modal-foot [data-lb-buy] {
+    flex-basis: 100%;
+  }
+}
+
+/* Sin movimiento: el carrusel no corre (lo salta el JS) y el premio no rebota. */
+@media (prefers-reduced-motion: reduce) {
+  .lb-reel-item.lb-land {
+    animation: none !important;
+  }
+}

@@ -3,13 +3,17 @@
 const cosmeticRepository = require('../models/cosmeticRepository');
 const shopPurchaseRepository = require('../models/shopPurchaseRepository');
 const userRepository = require('../models/userRepository');
+const lootboxRepository = require('../models/lootboxRepository');
 const cosmeticsService = require('./cosmeticsService');
 const coinService = require('./coinService');
+const discountService = require('./discountService');
+const lootboxService = require('./lootboxService');
 const withTransaction = require('../database/withTransaction');
 const { parseEquipped } = require('../utils/equipped');
 const { todayFor } = require('../utils/date');
 const { NotFoundError, ConflictError, ForbiddenError } = require('../utils/errors');
 const { ITEMS, ITEMS_BY_KEY, SLOTS, SLOT_KEYS, RARITY_KEYS } = require('../config/cosmetics');
+const { BOXES } = require('../config/lootboxes');
 
 /**
  * La tienda. Vende el mismo catálogo que enseña la colección (src/config/cosmetics.js),
@@ -28,25 +32,52 @@ function catalogFor(userId, userRow) {
   const owned = new Set(cosmeticRepository.ownedKeys(userId));
   const equipped = parseEquipped(userRow && userRow.cosmetics);
   const balance = (userRow && userRow.coins) || 0;
+  const day = todayFor(userRow && userRow.timezone);
+
+  // Los objetos ocultos (exclusivos del pase) no se venden: fuera del catálogo.
+  const forSale = ITEMS.filter((item) => !item.hidden);
+  const totalCount = forSale.length;
 
   const slots = SLOT_KEYS.map((slot) => ({
     key: slot,
     label: SLOTS[slot].label,
     desc: SLOTS[slot].desc,
     equippedKey: equipped[slot] || null,
-    items: ITEMS.filter((item) => item.slot === slot)
-      .map((item) => ({ ...item, owned: owned.has(item.key), affordable: balance >= item.price }))
+    items: forSale
+      .filter((item) => item.slot === slot)
+      .map((item) => {
+        const discount = discountService.discountFor(item.key, day);
+        const price = discountService.effectivePrice(item, day);
+        return {
+          ...item,
+          price, // el precio EFECTIVO: lo que se cobra y lo que decide si alcanza
+          priceOriginal: item.price, // el de catálogo, para tacharlo si hay rebaja
+          discount: discount ? discount.percent : 0,
+          owned: owned.has(item.key),
+          affordable: balance >= price,
+        };
+      })
       .sort(
         (a, b) =>
           RARITY_KEYS.indexOf(a.rarity) - RARITY_KEYS.indexOf(b.rarity) || a.price - b.price
       ),
   }));
 
+  // Cajas: precio de catálogo (sin rotación de rebajas), su vista previa (pool +
+  // probabilidades, para pintarla en el servidor) y cuántas sin abrir tienes.
+  const boxCounts = lootboxRepository.countsFor(userId);
+  const boxes = BOXES.map((box) => ({
+    ...lootboxService.preview(box.key), // key, name, desc, price, rarityOdds, items
+    affordable: balance >= box.price,
+    owned: boxCounts[box.key] || 0,
+  }));
+
   return {
     slots,
+    boxes,
     balance,
     ownedCount: owned.size,
-    totalCount: ITEMS.length,
+    totalCount,
   };
 }
 
@@ -62,22 +93,25 @@ function catalogFor(userId, userRow) {
 function buy(user, itemKey) {
   const item = ITEMS_BY_KEY[itemKey];
   if (!item) throw new NotFoundError('Ese objeto no existe.');
-  if (!(item.price > 0)) throw new ForbiddenError('Ese objeto no está a la venta.');
+  // Un objeto oculto no está a la venta aunque el cliente sepa su clave.
+  if (item.hidden || !(item.price > 0)) throw new ForbiddenError('Ese objeto no está a la venta.');
 
   const day = todayFor(user.timezone);
+  // El precio lo pone el servidor con el descuento vigente: el cliente no cobra.
+  const price = discountService.effectivePrice(item, day);
 
   return withTransaction(() => {
     if (cosmeticRepository.owns(user.id, itemKey)) {
       throw new ConflictError('Ya tienes ese objeto.');
     }
-    if (!userRepository.spendCoins(user.id, item.price)) {
+    if (!userRepository.spendCoins(user.id, price)) {
       throw new ConflictError('Todavía no te alcanzan las monedas para eso.');
     }
 
     shopPurchaseRepository.insert({
       user_id: user.id,
       item_key: itemKey,
-      price: item.price,
+      price, // lo que costó EN SU MOMENTO (con la rebaja aplicada)
       day,
     });
     cosmeticsService.grant(user.id, itemKey, 'shop');
@@ -85,7 +119,7 @@ function buy(user, itemKey) {
     return {
       itemKey,
       name: item.name,
-      price: item.price,
+      price,
       balance: coinService.balance(user.id),
     };
   });

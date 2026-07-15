@@ -46,6 +46,17 @@ const statements = {
   pendingForDay: db.prepare(`${PENDING} AND x.day = @day`),
   // Lo que falta por acuñar de SIEMPRE (el backfill), en orden cronológico.
   pendingAll: db.prepare(`${PENDING} ORDER BY x.day, x.id`),
+  // Crédito directo de monedas (pase, reembolso de duplicado): no espeja un
+  // xp_event, así que no pasa por la acuñación. INSERT llano (no OR IGNORE): el
+  // source_id es único por diseño, y si colisionara queremos enterarnos, no
+  // tragarnos un pago en silencio.
+  insertCredit: db.prepare(`
+    INSERT INTO coin_events (user_id, amount, reason, source_type, source_id, day)
+    VALUES (@user_id, @amount, @reason, @source_type, @source_id, @day)
+  `),
+  countByUserReason: db.prepare(
+    'SELECT COUNT(*) AS n FROM coin_events WHERE user_id = ? AND reason = ?'
+  ),
   totalByUser: db.prepare('SELECT COALESCE(SUM(amount), 0) AS n FROM coin_events WHERE user_id = ?'),
   usersWithXp: db.prepare('SELECT DISTINCT user_id FROM xp_events ORDER BY user_id'),
   countSkippable: db.prepare(
@@ -60,6 +71,16 @@ function insertIfNew(event) {
 
 function pendingForDay(userId, day) {
   return statements.pendingForDay.all({ user_id: userId, day });
+}
+
+/** Inserta un crédito directo de monedas (pase/reembolso). */
+function insertCredit(event) {
+  return statements.insertCredit.run(event).changes > 0;
+}
+
+/** Cuántos coin_events de un motivo tiene ya el usuario (para el source_id). */
+function countByUserReason(userId, reason) {
+  return statements.countByUserReason.get(userId, reason).n;
 }
 
 function pendingAll(userId) {
@@ -83,6 +104,8 @@ function countSkippable() {
 
 module.exports = {
   insertIfNew,
+  insertCredit,
+  countByUserReason,
   pendingForDay,
   pendingAll,
   totalByUser,

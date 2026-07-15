@@ -1,4 +1,4 @@
-<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/pages/shop.css'] }) %>
+<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/components/modal.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/components/lootbox.css', '/css/pages/shop.css'] }) %>
 
 <%- include('../partials/app-nav') %>
 
@@ -12,6 +12,46 @@
       <b data-coin-value><%= shop.balance %></b>
     </span>
   </header>
+
+  <%# Acceso al pase de batalla: solo desde aquí (no está en la nav). %>
+  <% if (pass && pass.season) { %>
+  <a class="pass-banner" href="/pase">
+    <span class="pass-banner-main">
+      <span class="pass-banner-kicker">Pase de batalla</span>
+      <b class="pass-banner-season"><%= pass.season.name %></b>
+      <span class="pass-banner-bar"><span style="width: <%= pass.percent %>%"></span></span>
+    </span>
+    <span class="pass-banner-side">
+      <span class="pass-banner-level">Nivel <%= pass.level %></span>
+      <span class="pass-banner-go">Ver pase →</span>
+    </span>
+  </a>
+  <% } %>
+
+  <%# Cajas: se compran y se abren con animación. Pulsa una para ver qué puede salir. %>
+  <section class="card lb-section">
+    <h2>Cajas</h2>
+    <p class="text-muted col-slot-desc">
+      Un cosmético al azar. Si te sale uno que ya tienes, se convierte en monedas.
+      Pulsa una caja para ver qué puede caer.
+    </p>
+    <div class="lb-grid">
+      <% shop.boxes.forEach((box) => { %>
+      <button type="button" class="lb-card" data-box="<%= box.key %>"
+        data-name="<%= box.name %>" data-price="<%= box.price %>"
+        data-owned="<%= box.owned %>" data-affordable="<%= box.affordable ? '1' : '' %>">
+        <span class="lb-card-art" aria-hidden="true">🎁</span>
+        <span class="lb-card-name"><%= box.name %></span>
+        <span class="lb-card-price">
+          <%- include('../partials/icon', { name: 'coin', size: 12 }) %><%= box.price %>
+        </span>
+        <% if (box.owned) { %>
+        <span class="lb-card-owned" data-box-owned>Tienes <%= box.owned %></span>
+        <% } %>
+      </button>
+      <% }) %>
+    </div>
+  </section>
 
   <%# La barra la comparten Tienda y Colección: mismo buscador, mismo desplegable
       y mismas pills. Aquí el interruptor es el del bolsillo. %>
@@ -60,9 +100,79 @@
     </p>
     <div class="shop-confirm-actions">
       <button type="button" class="btn btn-ghost" data-shop-cancel>Ahora no</button>
-      <button type="button" class="btn" data-shop-accept>Comprar</button>
+      <button type="button" class="btn btn-primary" data-shop-accept>Comprar</button>
     </div>
   </div>
 </div>
 
-<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/shop.js'] }) %>
+<%# Plantillas de vista previa de cada caja: pool + probabilidades, pintadas en
+    el servidor con el MISMO arte que la tienda. lootbox.js las clona al modal y
+    al carrusel de apertura, así el arte no se reescribe en JS. %>
+<% shop.boxes.forEach((box) => { %>
+<template class="lb-tpl" data-box="<%= box.key %>" data-desc="<%= box.desc %>">
+  <% box.groups.forEach((g) => { %>
+  <div class="lb-group" style="--rarity-color: <%= g.color %>">
+    <div class="lb-group-head">
+      <span class="lb-group-name"><%= g.label %></span>
+      <span class="lb-group-pct"><%= g.percent %>%</span>
+    </div>
+    <div class="col-grid lb-pool">
+      <% g.items.forEach((it) => { %>
+      <span class="lb-pool-item col-item" data-key="<%= it.key %>" data-rarity="<%= it.rarity %>"
+        data-slot="<%= it.slot %>" style="--rarity-color: <%= it.color %>"
+        title="<%= it.name %> · <%= it.rarityLabel %> · <%= it.chance %>%">
+        <span class="col-item-art">
+          <%- include('../partials/cosmetic-art', { item: it, slot: it.slot, rarity: { label: it.rarityLabel, color: it.color } }) %>
+        </span>
+        <span class="col-item-name"><%= it.name %></span>
+      </span>
+      <% }) %>
+    </div>
+  </div>
+  <% }) %>
+</template>
+<% }) %>
+
+<!-- Vista previa de una caja. Reutiliza el modal de la app (components/modal.css):
+     en móvil sube como hoja inferior. lootbox.js rellena título, pool y botones. -->
+<div class="modal lb-preview" id="lb-preview" hidden aria-hidden="true">
+  <div class="modal-backdrop" data-lb-close></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="lb-preview-title">
+    <header class="modal-head">
+      <h2 id="lb-preview-title" class="modal-title" data-lb-title></h2>
+      <button type="button" class="modal-close" data-lb-close aria-label="Cerrar">✕</button>
+    </header>
+    <p class="text-muted lb-modal-desc" data-lb-desc></p>
+    <div data-lb-body></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" data-lb-open hidden>
+        Abrir (<span data-lb-owncount></span>)
+      </button>
+      <button type="button" class="btn btn-ghost" data-lb-purchase>
+        Comprar
+      </button>
+      <button type="button" class="btn btn-primary" data-lb-buy>
+        Comprar y abrir · <span data-lb-buyprice></span>
+        <%- include('../partials/icon', { name: 'coin', size: 14 }) %>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Apertura estilo Counter-Strike: el carrusel corre y frena en lo que salió.
+     El servidor decide el resultado; esto solo lo escenifica. -->
+<div class="lb-reveal" id="lb-reveal" hidden>
+  <div class="lb-reveal-backdrop"></div>
+  <div class="lb-reveal-panel" role="dialog" aria-modal="true" aria-label="Abriendo caja">
+    <div class="lb-reel-viewport">
+      <div class="lb-reel" data-lb-reel></div>
+    </div>
+    <div class="lb-result" data-lb-result hidden></div>
+    <div class="lb-reveal-actions">
+      <button type="button" class="btn btn-primary" data-lb-again hidden>Abrir otra</button>
+      <button type="button" class="btn btn-ghost" data-lb-reveal-close hidden>Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/shop.js', '/js/lootbox.js'] }) %>

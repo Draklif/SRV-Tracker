@@ -18,6 +18,35 @@
  */
 const CHANGELOG = Object.freeze([
   {
+    version: '0.6.0',
+    date: '2026-07-15',
+    title: 'De compras',
+    items: [
+      {
+        type: 'new',
+        text:
+          'Llega el Pase de batalla. Cada temporada tienes un raíl de niveles con recompensas: ' +
+          'la XP que ya ganas con tus hábitos también sube el pase (y se reinicia en cada ' +
+          'temporada). El carril gratuito es para todos; si desbloqueas el premium con monedas, ' +
+          'abres además cosméticos exclusivos que no se venden en ningún sitio.',
+      },
+      {
+        type: 'new',
+        text:
+          'Nuevas Cajas en la Tienda. Cada una guarda un cosmético al azar y se abre con una ' +
+          'animación que corre y frena en lo que te ha tocado. Pulsa una caja para ver antes qué ' +
+          'puede caer y con qué probabilidad. Si te sale algo que ya tienes, no se desperdicia: se ' +
+          'convierte en monedas.',
+      },
+      {
+        type: 'new',
+        text:
+          'La Tienda ahora tiene rebajas. Cada semana rotan varios objetos con descuento Verás el precio ' +
+          'viejo tachado junto al nuevo.',
+      },
+    ],
+  },
+  {
     version: '0.5.2',
     date: '2026-07-14',
     title: 'La app se mueve',

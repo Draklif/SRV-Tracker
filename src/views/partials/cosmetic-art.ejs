@@ -1,0 +1,25 @@
+<%
+  /**
+   * SOLO el arte en vivo de un cosmético (marco / decoración / título / muestra
+   * de tarjeta), sin la ficha que lo rodea. Se extrajo de cosmetic-tile.ejs para
+   * que la tienda, la colección, el pase y la vista previa de las cajas pinten el
+   * MISMO objeto exactamente igual.
+   *
+   * Parámetros:
+   *   item   objeto del catálogo (con css/glyph/text y banderas de render)
+   *   slot   clave del hueco
+   *   rarity { label, color } de la rareza (para el color del título)
+   */
+%>
+<% if (slot === 'avatar_frame') { %>
+<span class="avatar-wrap avatar-wrap-sm <%= cosmeticFrameClasses(item) %>">
+  <span class="avatar avatar-sm avatar-initials col-item-face"></span>
+  <span class="cos-frame <%= item.css %>" aria-hidden="true"></span>
+</span>
+<% } else if (slot === 'avatar_deco') { %>
+<span class="col-item-glyph"><%= item.glyph %></span>
+<% } else if (slot === 'title') { %>
+<span class="cos-title" style="--rarity-color: <%= rarity.color %>"><span><%= item.text %></span></span>
+<% } else { %>
+<span class="col-swatch cos-card <%= item.replaceBorder ? 'cos-card-bare' : '' %> <%= item.gap ? 'cos-cframe-gap' : '' %> <%= item.css %>" aria-hidden="true"></span>
+<% } %>

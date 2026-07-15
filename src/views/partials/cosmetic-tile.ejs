@@ -54,25 +54,24 @@
       (marcos, fondos, títulos), no imágenes: no viaja por la red, pero en un móvil
       lento tarda en pintarse, y hasta entonces el hueco se ve vacío. Lo destapa
       motion.js cuando la página tiene ya sus estilos y sus fuentes. %>
+  <% if (isShop && !item.owned && item.discount) { %>
+  <span class="col-item-sale">-<%= item.discount %>%</span>
+  <% } %>
+
   <span class="col-item-art is-art-pending">
-    <% if (slot === 'avatar_frame') { %>
-    <span class="avatar-wrap avatar-wrap-sm <%= cosmeticFrameClasses(item) %>">
-      <span class="avatar avatar-sm avatar-initials col-item-face"></span>
-      <span class="cos-frame <%= item.css %>" aria-hidden="true"></span>
-    </span>
-    <% } else if (slot === 'avatar_deco') { %>
-    <span class="col-item-glyph"><%= item.glyph %></span>
-    <% } else if (slot === 'title') { %>
-    <span class="cos-title" style="--rarity-color: <%= rarity.color %>"><span><%= item.text %></span></span>
-    <% } else { %>
-    <span class="col-swatch cos-card <%= item.replaceBorder ? 'cos-card-bare' : '' %> <%= item.gap ? 'cos-cframe-gap' : '' %> <%= item.css %>" aria-hidden="true"></span>
-    <% } %>
+    <%- include('cosmetic-art', { item, slot, rarity }) %>
   </span>
 
   <span class="col-item-name"><%= item.name %></span>
   <% if (isShop) { %>
     <% if (item.owned) { %>
     <span class="col-item-check">✓</span>
+    <% } else if (item.discount) { %>
+    <%# Rebaja: se tacha el precio de catálogo y se muestra el efectivo. %>
+    <span class="col-item-price is-sale" data-discount="<%= item.discount %>">
+      <s class="col-item-price-old"><%= item.priceOriginal %></s>
+      <%- include('icon', { name: 'coin', size: 12 }) %><%= item.price %>
+    </span>
     <% } else { %>
     <span class="col-item-price">
       <%- include('icon', { name: 'coin', size: 12 }) %><%= item.price %>

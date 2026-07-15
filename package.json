@@ -15,6 +15,7 @@
     "grant:cosmetics": "node src/database/seeds/grantAllCosmetics.js",
     "backfill:coins": "node src/database/seeds/backfillCoins.js",
     "dev:shop": "node src/database/seeds/devShop.js",
+    "dev:pass": "node src/database/seeds/devPass.js",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {

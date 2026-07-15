@@ -47,7 +47,14 @@ const SLOT_KEYS = Object.freeze(Object.keys(SLOTS));
 /**
  * Los objetos. `css` es la clase que pinta el objeto (escrita a mano en
  * cosmetics.css); `glyph` es el emoji de las decoraciones; `text` el texto de
- * los títulos. `price` se usará en la tienda (fase 2).
+ * los títulos. `price` se usa en la tienda (fase 2).
+ *
+ * `hidden: true` saca el objeto de la TIENDA y de los descuentos: no se puede
+ * comprar. Se reserva para lo exclusivo del pase de batalla (fase 3), que solo
+ * se consigue subiendo niveles de temporada. Un objeto oculto NO debe aparecer
+ * nunca en el `pool` de una caja (ver src/config/lootboxes.js): la caja solo
+ * reparte cosas comprables. La colección sí los muestra (bloqueados si no los
+ * tienes), para que se vea que existen y de dónde salen.
  */
 const ITEMS = Object.freeze([
   // ---- Marcos de avatar ----
@@ -59,12 +66,16 @@ const ITEMS = Object.freeze([
   { key: 'frame-brasa', slot: 'avatar_frame', name: 'Brasa', rarity: 'rare', price: 500, css: 'cos-frame-brasa' },
   { key: 'frame-neon', slot: 'avatar_frame', name: 'Neón', rarity: 'epic', price: 900, css: 'cos-frame-neon' },
   { key: 'frame-aurora', slot: 'avatar_frame', name: 'Aurora', rarity: 'legendary', price: 2000, css: 'cos-frame-aurora' },
+  // Exclusivo del pase (oculto): no está a la venta, solo se gana por temporada.
+  { key: 'frame-vortice', slot: 'avatar_frame', name: 'Vórtice', rarity: 'epic', price: 0, css: 'cos-frame-vortice', hidden: true },
 
   // ---- Decoraciones de avatar ----
   { key: 'deco-hoja', slot: 'avatar_deco', name: 'Brote', rarity: 'common', price: 150, css: 'cos-deco-hoja', glyph: '🌱' },
   { key: 'deco-chispa', slot: 'avatar_deco', name: 'Chispa', rarity: 'uncommon', price: 300, css: 'cos-deco-chispa', glyph: '✨' },
   { key: 'deco-llama', slot: 'avatar_deco', name: 'Llama', rarity: 'rare', price: 550, css: 'cos-deco-llama', glyph: '🔥' },
   { key: 'deco-corona', slot: 'avatar_deco', name: 'Corona', rarity: 'legendary', price: 1800, css: 'cos-deco-corona', glyph: '👑' },
+  // Exclusivo del pase (oculto).
+  { key: 'deco-cometa', slot: 'avatar_deco', name: 'Cometa', rarity: 'epic', price: 0, css: 'cos-deco-cometa', glyph: '☄️', hidden: true },
 
   // ---- Fondos de tarjeta ----
   // `ink`: qué tono tiene el fondo, para que la tarjeta use letras legibles
@@ -94,6 +105,8 @@ const ITEMS = Object.freeze([
   { key: 'title-alba', slot: 'title', name: 'Leyenda del Alba', rarity: 'epic', price: 1000, text: 'Leyenda' },
   { key: 'title-mito', slot: 'title', name: 'Mito viviente', rarity: 'legendary', price: 2500, text: 'Mito viviente' },
   { key: 'title-guardian', slot: 'title', name: 'Guardián del Amanecer', rarity: 'legendary', price: 3000, text: 'Guardián Eterno' },
+  // Exclusivo del pase (oculto).
+  { key: 'title-pionero', slot: 'title', name: 'Pionero', rarity: 'rare', price: 0, text: 'Pionero', hidden: true },
 ]);
 
 /** Índice por clave, para resolver en O(1) lo que hay equipado. */

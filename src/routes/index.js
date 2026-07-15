@@ -11,10 +11,13 @@ const friendApiRoutes = require('./api/friendApiRoutes');
 const pushApiRoutes = require('./api/pushApiRoutes');
 const cosmeticsApiRoutes = require('./api/cosmeticsApiRoutes');
 const shopApiRoutes = require('./api/shopApiRoutes');
+const lootboxApiRoutes = require('./api/lootboxApiRoutes');
+const battlePassApiRoutes = require('./api/battlePassApiRoutes');
 const socialController = require('../controllers/socialController');
 const changelogController = require('../controllers/changelogController');
 const cosmeticsController = require('../controllers/cosmeticsController');
 const shopController = require('../controllers/shopController');
+const battlePassController = require('../controllers/battlePassController');
 const requireAuth = require('../middlewares/requireAuth');
 
 /**
@@ -45,6 +48,7 @@ router.get('/social', requireAuth, socialController.page);
 router.get('/novedades', requireAuth, changelogController.page);
 router.get('/coleccion', requireAuth, cosmeticsController.page);
 router.get('/tienda', requireAuth, shopController.page);
+router.get('/pase', requireAuth, battlePassController.page);
 router.get('/u/:username', requireAuth, require('../controllers/userController').showFriend);
 
 // API JSON.
@@ -53,6 +57,8 @@ router.use('/api/friends', friendApiRoutes);
 router.use('/api/push', pushApiRoutes);
 router.use('/api/cosmetics', cosmeticsApiRoutes);
 router.use('/api/shop', shopApiRoutes);
+router.use('/api/lootbox', lootboxApiRoutes);
+router.use('/api/pase', battlePassApiRoutes);
 router.use('/api', socialApiRoutes);
 
 module.exports = router;

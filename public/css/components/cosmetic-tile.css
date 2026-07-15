@@ -212,6 +212,34 @@
   flex-shrink: 0;
 }
 
+/* ---- Rebaja ----
+   Chapa roja en la esquina con el porcentaje, y en el precio el de catálogo
+   tachado junto al efectivo. El precio efectivo ya viaja en data-price, así que
+   la confirmación de compra cobra el correcto sin saber nada de la rebaja. */
+.col-item-sale {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  z-index: 1;
+  padding: 0 7px;
+  background: #ff6b6b;
+  color: #fff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+}
+.col-item-price.is-sale {
+  gap: 6px;
+}
+.col-item-price-old {
+  opacity: 0.65;
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Sin movimiento no hay parpadeos en el hover: el borde de color ya distingue
    la rareza por sí solo. */
 @media (prefers-reduced-motion: reduce) {

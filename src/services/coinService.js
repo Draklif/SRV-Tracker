@@ -1,6 +1,7 @@
 'use strict';
 
 const coinEventRepository = require('../models/coinEventRepository');
+const coinSpendRepository = require('../models/coinSpendRepository');
 const shopPurchaseRepository = require('../models/shopPurchaseRepository');
 const userRepository = require('../models/userRepository');
 const withTransaction = require('../database/withTransaction');
@@ -53,6 +54,45 @@ function mintAll(userId) {
   return withTransaction(() => mintRows(userId, coinEventRepository.pendingAll(userId)));
 }
 
+/**
+ * Acredita monedas que NO nacen de un premio de XP (recompensa del pase,
+ * reembolso de un duplicado de caja). Escribe en el ledger (para que el saldo
+ * siga cuadrando con la invariante SUM(coin_events) - SUM(shop_purchases)) y
+ * sube el contador denormalizado. Idempotencia y atomicidad las pone quien
+ * llama: se invoca siempre dentro de la transacción del pase/caja, y el
+ * source_id monótono evita chocar con el índice único del ledger.
+ *
+ * Devuelve las monedas acreditadas (0 si amount <= 0).
+ */
+function credit(userId, amount, reason, day) {
+  if (!(amount > 0)) return 0;
+  const sourceId = coinEventRepository.countByUserReason(userId, reason) + 1;
+  coinEventRepository.insertCredit({
+    user_id: userId,
+    amount,
+    reason,
+    source_type: reason,
+    source_id: sourceId,
+    day,
+  });
+  userRepository.addCoins(userId, amount);
+  return amount;
+}
+
+/**
+ * Gasta monedas que NO son la compra de un cosmético (una caja, el premium del
+ * pase). Es el cobro con guarda (spendCoins: `... WHERE coins >= ?`, atómico) MÁS
+ * el apunte en el ledger de gastos, para que el saldo siga cuadrando con la
+ * invariante. Devuelve true si había saldo (y se cobró). Debe llamarse dentro de
+ * la transacción del que gasta.
+ */
+function spend(userId, amount, reason, ref, day) {
+  if (!(amount > 0)) return true; // gasto nulo: nada que cobrar ni registrar
+  if (!userRepository.spendCoins(userId, amount)) return false;
+  coinSpendRepository.insert({ user_id: userId, amount, reason, ref, day });
+  return true;
+}
+
 /** Saldo actual (el contador denormalizado de users.coins). */
 function balance(userId) {
   const user = userRepository.findById(userId);
@@ -62,9 +102,14 @@ function balance(userId) {
 /**
  * El saldo reconstruido desde la verdad: ganado menos gastado. Debe coincidir
  * siempre con balance(); si no, el contador se ha desincronizado del ledger.
+ * Se gasta por dos vías: la tienda (shop_purchases) y todo lo demás (coin_spends).
  */
 function auditBalance(userId) {
-  return coinEventRepository.totalByUser(userId) - shopPurchaseRepository.totalSpent(userId);
+  return (
+    coinEventRepository.totalByUser(userId) -
+    shopPurchaseRepository.totalSpent(userId) -
+    coinSpendRepository.totalByUser(userId)
+  );
 }
 
-module.exports = { mintForDay, mintAll, balance, auditBalance };
+module.exports = { mintForDay, mintAll, credit, spend, balance, auditBalance };

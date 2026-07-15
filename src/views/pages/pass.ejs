@@ -1,0 +1,119 @@
+<%- include('../partials/head', { title, styles: ['/css/components/cosmetic-tile.css', '/css/pages/pass.css'] }) %>
+
+<%- include('../partials/app-nav') %>
+
+<main class="container pass-page">
+  <%- include('../partials/flash') %>
+
+  <a class="back-link" href="/tienda">← Volver a la tienda</a>
+
+  <% if (!pass.season) { %>
+  <section class="card pass-empty">
+    <h1>Pase de batalla</h1>
+    <p class="text-muted">Ahora mismo no hay ninguna temporada activa. Vuelve pronto.</p>
+  </section>
+  <% } else { %>
+
+  <header class="pass-head">
+    <div class="pass-title">
+      <span class="ph-icon" aria-hidden="true">🎟️</span>
+      <div>
+        <h1><%= pass.season.name %></h1>
+        <span class="pass-tag">Pase de batalla</span>
+        <span class="pass-dates text-muted">Hasta el <%= pass.season.endDay %></span>
+      </div>
+    </div>
+    <span class="shop-balance">
+      <%- include('../partials/icon', { name: 'coin', size: 18 }) %>
+      <b data-coin-value><%= pass.balance %></b>
+    </span>
+  </header>
+
+  <%# Progreso: la XP que decide el nivel es la ganada DENTRO de esta temporada. %>
+  <section class="card pass-progress">
+    <div class="pass-progress-head">
+      <span class="pass-level">Nivel <b><%= pass.level %></b> / <%= pass.maxLevel %></span>
+      <span class="text-muted pass-xp">
+        <% if (pass.atMax) { %>¡Pase al máximo!<% } else { %><%= pass.toNext %> XP para el siguiente nivel<% } %>
+      </span>
+    </div>
+    <div class="pass-bar"><span style="width: <%= pass.percent %>%"></span></div>
+
+    <div class="pass-premium">
+      <% if (pass.premium) { %>
+      <span class="pass-premium-on">✦ Premium desbloqueado</span>
+      <% } else { %>
+      <button type="button" class="btn btn-primary" data-premium-unlock data-price="<%= pass.season.premiumPrice %>">
+        Desbloquear · <%= pass.season.premiumPrice %>
+        <%- include('../partials/icon', { name: 'coin', size: 14 }) %>
+      </button>
+      <% } %>
+    </div>
+  </section>
+
+  <%# El raíl de niveles. En escritorio se ven los dos carriles (gratis y premium)
+      lado a lado; en móvil se muestra uno a la vez y el interruptor los desliza. %>
+  <section class="pass-track" data-track-view="free">
+    <div class="pass-track-switch" role="tablist" aria-label="Carril del pase">
+      <button type="button" class="pts-btn is-active" data-track-toggle="free" aria-selected="true">Gratis</button>
+      <button type="button" class="pts-btn" data-track-toggle="premium" aria-selected="false">Premium ✦</button>
+    </div>
+
+    <div class="pass-track-labels">
+      <span></span>
+      <span class="pass-track-label">Gratis</span>
+      <span class="pass-track-label pass-track-label-premium">Premium ✦</span>
+    </div>
+
+    <ol class="pass-tiers">
+      <% pass.tiers.forEach((tier) => { %>
+      <li class="pass-tier <%= tier.reached ? 'is-reached' : '' %>">
+        <span class="pass-tier-level"><%= tier.level %></span>
+        <div class="pass-cells">
+        <% ['free', 'premium'].forEach((track) => {
+             const reward = tier[track]; %>
+        <div class="pass-cell pass-cell-<%= track %>">
+          <% if (!reward) { %>
+          <span class="pass-cell-empty">—</span>
+          <% } else { %>
+            <div class="pass-reward <%= reward.claimed ? 'is-claimed' : '' %> <%= reward.locked ? 'is-locked' : '' %>">
+              <div class="pass-reward-art">
+                <% if (reward.type === 'coins') { %>
+                <span class="pass-reward-coins">
+                  <%- include('../partials/icon', { name: 'coin', size: 22 }) %>
+                  <b><%= reward.amount %></b>
+                </span>
+                <% } else if (reward.type === 'lootbox') { %>
+                <span class="pass-reward-box" aria-hidden="true">🎁</span>
+                <% } else if (reward.type === 'cosmetic') { %>
+                <span class="col-item-art" style="--rarity-color: <%= reward.color %>">
+                  <%- include('../partials/cosmetic-art', { item: reward.item, slot: reward.item.slot, rarity: { label: reward.item.rarity, color: reward.color } }) %>
+                </span>
+                <% } %>
+              </div>
+              <span class="pass-reward-name"><%= reward.label %></span>
+
+              <% if (reward.claimed) { %>
+              <span class="pass-reward-state is-done">✓ Reclamado</span>
+              <% } else if (reward.claimable) { %>
+              <button type="button" class="btn btn-primary btn-sm pass-claim" data-claim data-level="<%= tier.level %>" data-track="<%= track %>">
+                Reclamar
+              </button>
+              <% } else if (reward.locked) { %>
+              <span class="pass-reward-state is-locked">🔒 Premium</span>
+              <% } else { %>
+              <span class="pass-reward-state is-away">Nivel <%= tier.level %></span>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+        <% }) %>
+        </div>
+      </li>
+      <% }) %>
+    </ol>
+  </section>
+  <% } %>
+</main>
+
+<%- include('../partials/foot', { scripts: ['/js/pass.js'] }) %>

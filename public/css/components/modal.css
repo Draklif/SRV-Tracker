@@ -1,0 +1,135 @@
+/* modal.css — El modal de la app (antes solo en el formulario de hábitos).
+   Extraído aquí para que lo compartan el formulario de hábitos y la vista previa
+   de las cajas: mismo cromo, mismo comportamiento y, en móvil, la misma hoja
+   inferior. Se carga en las páginas que lo usan (habits, tienda). */
+
+.modal[hidden] {
+  display: none;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+/* Backdrop: tinta con rayas diagonales, muy Persona. */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+      -35deg,
+      rgba(246, 244, 237, 0.03) 0 2px,
+      transparent 2px 14px
+    ),
+    rgba(9, 13, 24, 0.78);
+  backdrop-filter: blur(3px);
+  animation: fade-in 160ms var(--ease);
+}
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: var(--card-border);
+  border-top: 6px solid var(--brand);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5);
+  animation: panel-in 240ms var(--ease-snap);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.modal-title {
+  font-size: var(--fs-xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+.modal-close {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transform: rotate(-4deg);
+  transition: all var(--transition);
+}
+.modal-close:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: rotate(0deg);
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+.modal-foot .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: skewX(var(--skew));
+  box-shadow: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotate(0.6deg) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+/* En móvil el modal es una hoja inferior que sube. */
+@media (max-width: 560px) {
+  .modal {
+    padding: 0;
+    align-items: end;
+  }
+  .modal-panel {
+    max-width: none;
+    max-height: 94vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    animation: sheet-up 260ms var(--ease-snap);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

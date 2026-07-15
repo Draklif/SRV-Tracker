@@ -1,0 +1,349 @@
+/* pass.css — Página del pase de batalla. El arte de las recompensas cosméticas
+   es el de components/cosmetics.css (vía el partial cosmetic-art); esto es el
+   raíl de niveles y su cromo. */
+
+.pass-page {
+  padding-block: var(--space-6) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Cabecera al estilo del detalle/historial de un hábito: enlace de volver
+   discreto arriba, y un título con su icono en recuadro inclinado. */
+.back-link {
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.back-link:hover {
+  color: var(--brand);
+}
+
+.pass-head {
+  --pass-color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+.pass-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.pass-title > div {
+  min-width: 0;
+}
+.ph-icon {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  background: color-mix(in srgb, var(--pass-color) 24%, transparent);
+  border: 2.5px solid var(--pass-color);
+  border-radius: var(--radius-sm);
+  transform: rotate(-4deg);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--pass-color) 40%, transparent);
+}
+.pass-title h1 {
+  font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+  overflow-wrap: anywhere;
+}
+.pass-tag {
+  display: inline-block;
+  padding: 0.05em 0.6em;
+  background: var(--pass-color);
+  color: #fff;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  border-radius: var(--radius-sm);
+  transform: skewX(var(--skew));
+  margin-right: var(--space-2);
+}
+.pass-dates {
+  font-size: var(--fs-sm);
+}
+
+/* Reutiliza el pill de saldo de la tienda. */
+.pass-head .shop-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--yellow);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+.pass-head .shop-balance b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Progreso ---- */
+.pass-progress {
+  display: grid;
+  gap: var(--space-3);
+}
+.pass-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.pass-level b {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+.pass-xp {
+  font-size: var(--fs-sm);
+}
+.pass-bar {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  overflow: hidden;
+}
+.pass-bar > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--cyan));
+  transition: width 400ms var(--ease);
+}
+.pass-premium {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.pass-premium-on {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, #d9a441 22%, transparent);
+  color: #d9a441;
+  border: 2px solid #d9a441;
+  font-weight: var(--fw-bold);
+}
+
+/* ---- Raíl de niveles ---- */
+.pass-track {
+  display: grid;
+  gap: var(--space-2);
+}
+/* El número de nivel a la izquierda (columna fija) y los dos carriles ocupando
+   el resto. Las etiquetas comparten la misma rejilla para alinearse con ellos. */
+.pass-track-labels,
+.pass-tier {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+/* Los dos carriles (gratis | premium) dentro de la columna flexible. */
+.pass-track-labels {
+  grid-template-columns: 40px 1fr 1fr;
+}
+.pass-cells {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.pass-track-label {
+  text-align: center;
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.pass-track-label-premium {
+  color: #d9a441;
+}
+
+/* Reset del <ol>: sin el padding por defecto del navegador, los números pegan a
+   la izquierda y el raíl usa todo el ancho. */
+.pass-tiers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* El interruptor gratis/premium: solo en móvil (en escritorio se ven los dos). */
+.pass-track-switch {
+  display: none;
+}
+.pass-tier-level {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.pass-tier.is-reached .pass-tier-level {
+  background: var(--brand);
+  color: var(--on-brand);
+  border-color: var(--ink);
+}
+
+.pass-cell {
+  display: flex;
+}
+.pass-cell-empty {
+  margin: auto;
+  color: var(--text-faint, var(--text-muted));
+}
+.pass-reward {
+  flex: 1;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  padding: var(--space-3) var(--space-2);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.pass-cell-premium .pass-reward {
+  border-color: color-mix(in srgb, #d9a441 40%, var(--border));
+}
+.pass-reward.is-locked {
+  opacity: 0.5;
+}
+.pass-reward.is-claimed {
+  opacity: 0.7;
+}
+.pass-reward-art {
+  min-height: 46px;
+  display: grid;
+  place-items: center;
+}
+.pass-reward-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+.pass-reward-box {
+  font-size: 2rem;
+  line-height: 1;
+}
+.pass-reward-name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+.pass-reward-state {
+  font-size: var(--fs-xs);
+}
+.pass-reward-state.is-done {
+  color: var(--brand);
+  font-weight: var(--fw-bold);
+}
+.pass-reward-state.is-locked,
+.pass-reward-state.is-away {
+  color: var(--text-muted);
+}
+.pass-claim {
+  padding: 3px 14px;
+  font-size: var(--fs-sm);
+}
+
+.pass-empty {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* ---- Móvil: un carril a la vez, con interruptor que los desliza ---- */
+@media (max-width: 560px) {
+  /* El interruptor sustituye a las cabeceras de carril. */
+  .pass-track-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-pill);
+  }
+  .pass-track-labels {
+    display: none;
+  }
+  .pts-btn {
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    transition: background-color var(--transition), color var(--transition);
+  }
+  .pts-btn.is-active {
+    background: var(--brand);
+    color: #fff;
+  }
+  .pts-btn[data-track-toggle='premium'].is-active {
+    background: #d9a441;
+  }
+
+  .pass-tier {
+    grid-template-columns: 32px 1fr;
+    gap: var(--space-2);
+  }
+  /* Las celdas se apilan en una ventana: solo una cabe, la otra espera fuera. */
+  .pass-cells {
+    display: flex;
+    overflow: hidden;
+  }
+  .pass-cell {
+    flex: 0 0 100%;
+    transition: transform 320ms var(--ease);
+  }
+  /* Al pasar a premium, ambas celdas se deslizan un ancho a la izquierda: la
+     gratuita sale por la izquierda y la premium entra desde la derecha. */
+  .pass-track[data-track-view='premium'] .pass-cell {
+    transform: translateX(-100%);
+  }
+  .pass-reward {
+    padding: var(--space-2) 6px;
+  }
+
+  /* El botón de desbloquear el premium ocupa todo el ancho. */
+  .pass-premium {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pass-premium .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pass-cell {
+    transition: none;
+  }
+}

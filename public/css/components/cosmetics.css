@@ -121,7 +121,8 @@
 .cos-frame-cobre,
 .cos-frame-brasa,
 .cos-frame-neon,
-.cos-frame-aurora {
+.cos-frame-aurora,
+.cos-frame-vortice {
   padding: 3px;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -175,6 +176,22 @@
   animation: cos-spin 6s linear infinite, cos-glow 3s var(--ease) infinite;
 }
 
+/* Vórtice (muy raro, exclusivo del pase): remolino oscuro con filo violeta que
+   gira lento. Reutiliza cos-spin. */
+.cos-frame-vortice {
+  padding: 4px;
+  background: conic-gradient(
+    from var(--cos-angle),
+    #1b1030,
+    #8f7bf2 25%,
+    #1b1030 50%,
+    #39c6d6 75%,
+    #1b1030
+  );
+  filter: saturate(1.15);
+  animation: cos-spin 5s linear infinite;
+}
+
 @keyframes cos-spin {
   to {
     --cos-angle: 360deg;
@@ -225,6 +242,12 @@
 .cos-deco-corona {
   rotate: 12deg;
   animation: cos-float 2.6s var(--ease) infinite;
+}
+/* Cometa (exclusivo del pase): flota con una estela suave. Reutiliza cos-float. */
+.cos-deco-cometa {
+  rotate: -18deg;
+  filter: drop-shadow(1px 1px 0 rgba(9, 13, 24, 0.55)) drop-shadow(-3px 2px 4px rgba(79, 140, 255, 0.6));
+  animation: cos-float 2.2s var(--ease) infinite;
 }
 
 @keyframes cos-sway {
