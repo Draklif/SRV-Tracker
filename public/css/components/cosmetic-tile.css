@@ -191,6 +191,23 @@
   font-weight: var(--fw-bold);
 }
 
+/* El pie de la ficha en la tienda: nombre + chapa de precio en un bloque de alto
+   FIJO. Dos cosas a la vez:
+   1. Reserva el alto de la chapa SIEMPRE, también cuando el objeto ya es tuyo y
+      la chapa desaparece: sin esto, comprar encoge la ficha y las tarjetas dejan
+      de medir igual entre sí.
+   2. Centra su contenido, así que sin chapa el nombre se acomoda verticalmente en
+      el centro en vez de quedarse pegado arriba. El alto = nombre + hueco + chapa. */
+.col-item-lower {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-height: 3.25rem;
+}
+
 /* El precio, en la tienda: una chapa dorada al pie de la ficha. */
 .col-item-price {
   display: inline-flex;

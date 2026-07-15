@@ -18,13 +18,22 @@
  * Duplicados: si sale algo que ya tienes, no se concede el objeto sino su
  * REEMBOLSO en monedas según DUP_REFUND (por rareza). Así abrir una caja nunca
  * "se desperdicia".
+ *
+ * Arte (`art`): cada caja elige uno de los 5 diseños SVG del pool (ver
+ * ART_KEYS y partials/box-art.ejs). Es puramente cosmético; si se omite, la
+ * vista cae en el diseño por defecto.
  */
+
+// Pool de diseños de arte disponibles para las cajas (deben existir en
+// partials/box-art.ejs). Referencia para saber entre qué elegir en `art`.
+const ART_KEYS = Object.freeze(['carton', 'madera', 'hierro', 'dorada', 'prisma']);
 
 const BOXES = Object.freeze([
   {
     key: 'caja-comun',
     name: 'Caja común',
     price: 250,
+    art: 'carton',
     desc: 'Un surtido de lo más habitual, con un guiño a algo mejor.',
     pool: Object.freeze([
       'frame-tinta', 'frame-cobre', 'frame-brasa',
@@ -38,6 +47,7 @@ const BOXES = Object.freeze([
     key: 'caja-rara',
     name: 'Caja rara',
     price: 600,
+    art: 'hierro',
     desc: 'Mejores probabilidades para lo raro y lo muy raro.',
     pool: Object.freeze([
       'frame-cobre', 'frame-brasa', 'frame-neon',
@@ -51,6 +61,7 @@ const BOXES = Object.freeze([
     key: 'caja-legendaria',
     name: 'Caja legendaria',
     price: 1400,
+    art: 'dorada',
     desc: 'La única que puede soltar una pieza legendaria.',
     pool: Object.freeze([
       'frame-brasa', 'frame-neon', 'frame-aurora',
@@ -79,4 +90,4 @@ const DUP_REFUND = Object.freeze({
   legendary: 700,
 });
 
-module.exports = { BOXES, BOXES_BY_KEY, DUP_REFUND };
+module.exports = { BOXES, BOXES_BY_KEY, DUP_REFUND, ART_KEYS };

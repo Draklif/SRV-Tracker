@@ -66,7 +66,7 @@ function preview(boxKey) {
     };
   });
 
-  return { key: box.key, name: box.name, desc: box.desc, price: box.price, groups };
+  return { key: box.key, name: box.name, desc: box.desc, price: box.price, art: box.art, groups };
 }
 
 /** Una tirada: elige rareza por peso entre las presentes, luego objeto uniforme. */

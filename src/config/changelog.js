@@ -18,6 +18,30 @@
  */
 const CHANGELOG = Object.freeze([
   {
+    version: '0.6.1',
+    date: '2026-07-15',
+    title: 'Retoques de la Tienda y el Pase',
+    items: [
+      {
+        type: 'change',
+        text:
+          'Cada Caja de la Tienda tiene ahora su propio dibujo, distinto según la caja, en lugar ' +
+          'del mismo regalo para todas.',
+      },
+      {
+        type: 'change',
+        text:
+          'En la Tienda, las fichas de los objetos mantienen el mismo tamaño antes y después de ' +
+          'comprarlos, así que la rejilla ya no baila al comprar algo.',
+      },
+      {
+        type: 'change',
+        text:
+          'En el Pase de batalla, el "Nivel X / Y" se lee con una sola tipografía, más limpio.',
+      },
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026-07-15',
     title: 'De compras',

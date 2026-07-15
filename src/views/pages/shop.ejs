@@ -40,7 +40,7 @@
       <button type="button" class="lb-card" data-box="<%= box.key %>"
         data-name="<%= box.name %>" data-price="<%= box.price %>"
         data-owned="<%= box.owned %>" data-affordable="<%= box.affordable ? '1' : '' %>">
-        <span class="lb-card-art" aria-hidden="true">🎁</span>
+        <span class="lb-card-art" aria-hidden="true"><%- include('../partials/box-art', { art: box.art, size: 52 }) %></span>
         <span class="lb-card-name"><%= box.name %></span>
         <span class="lb-card-price">
           <%- include('../partials/icon', { name: 'coin', size: 12 }) %><%= box.price %>

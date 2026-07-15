@@ -104,9 +104,14 @@
   gap: var(--space-3);
   flex-wrap: wrap;
 }
-.pass-level b {
+/* "Nivel 2 / 8" en una sola tipografía (la display, como el resto de números del
+   pase: el pill del saldo, el número de cada tier). Antes solo el número iba en
+   display y el "Nivel …/…" en la de cuerpo, y se leían como dos fuentes. La XP a
+   la derecha se queda en la de cuerpo a propósito: es texto de apoyo. */
+.pass-level {
   font-family: var(--font-display);
   font-style: italic;
+  font-size: var(--fs-lg);
 }
 .pass-xp {
   font-size: var(--fs-sm);
@@ -248,8 +253,9 @@
   font-size: var(--fs-lg);
 }
 .pass-reward-box {
-  font-size: 2rem;
-  line-height: 1;
+  display: grid;
+  place-items: center;
+  color: var(--text);
 }
 .pass-reward-name {
   font-size: var(--fs-sm);

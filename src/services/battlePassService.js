@@ -49,7 +49,7 @@ function describeReward(reward) {
   }
   if (reward.type === 'lootbox') {
     const box = BOXES_BY_KEY[reward.box];
-    return { type: 'lootbox', box: reward.box, label: box ? box.name : 'Caja' };
+    return { type: 'lootbox', box: reward.box, art: box ? box.art : undefined, label: box ? box.name : 'Caja' };
   }
   return null;
 }

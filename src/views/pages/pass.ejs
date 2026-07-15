@@ -84,7 +84,7 @@
                   <b><%= reward.amount %></b>
                 </span>
                 <% } else if (reward.type === 'lootbox') { %>
-                <span class="pass-reward-box" aria-hidden="true">🎁</span>
+                <span class="pass-reward-box" aria-hidden="true"><%- include('../partials/box-art', { art: reward.art, size: 40 }) %></span>
                 <% } else if (reward.type === 'cosmetic') { %>
                 <span class="col-item-art" style="--rarity-color: <%= reward.color %>">
                   <%- include('../partials/cosmetic-art', { item: reward.item, slot: reward.item.slot, rarity: { label: reward.item.rarity, color: reward.color } }) %>
