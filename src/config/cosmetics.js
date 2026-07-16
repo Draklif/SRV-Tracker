@@ -62,7 +62,9 @@ const ITEMS = Object.freeze([
   // `innerBorder`: el retrato conserva su borde propio bajo el marco (si no, se
   // oculta y el único borde es el del marco). Ambos por defecto en false.
   { key: 'frame-tinta', slot: 'avatar_frame', name: 'Tinta', rarity: 'common', price: 120, css: 'cos-frame-tinta', gap: true, innerBorder: true },
+  { key: 'frame-bruma', slot: 'avatar_frame', name: 'Bruma', rarity: 'common', price: 130, css: 'cos-frame-bruma', gap: true, innerBorder: true },
   { key: 'frame-cobre', slot: 'avatar_frame', name: 'Cobre', rarity: 'uncommon', price: 260, css: 'cos-frame-cobre' },
+  { key: 'frame-jade', slot: 'avatar_frame', name: 'Jade', rarity: 'uncommon', price: 270, css: 'cos-frame-jade' },
   { key: 'frame-brasa', slot: 'avatar_frame', name: 'Brasa', rarity: 'rare', price: 500, css: 'cos-frame-brasa' },
   { key: 'frame-neon', slot: 'avatar_frame', name: 'Neón', rarity: 'epic', price: 900, css: 'cos-frame-neon' },
   { key: 'frame-aurora', slot: 'avatar_frame', name: 'Aurora', rarity: 'legendary', price: 2000, css: 'cos-frame-aurora' },
@@ -71,8 +73,10 @@ const ITEMS = Object.freeze([
 
   // ---- Decoraciones de avatar ----
   { key: 'deco-hoja', slot: 'avatar_deco', name: 'Brote', rarity: 'common', price: 150, css: 'cos-deco-hoja', glyph: '🌱' },
+  { key: 'deco-gota', slot: 'avatar_deco', name: 'Gota', rarity: 'common', price: 150, css: 'cos-deco-gota', glyph: '💧' },
   { key: 'deco-chispa', slot: 'avatar_deco', name: 'Chispa', rarity: 'uncommon', price: 300, css: 'cos-deco-chispa', glyph: '✨' },
   { key: 'deco-llama', slot: 'avatar_deco', name: 'Llama', rarity: 'rare', price: 550, css: 'cos-deco-llama', glyph: '🔥' },
+  { key: 'deco-rayo', slot: 'avatar_deco', name: 'Rayo', rarity: 'rare', price: 560, css: 'cos-deco-rayo', glyph: '⚡' },
   { key: 'deco-corona', slot: 'avatar_deco', name: 'Corona', rarity: 'legendary', price: 1800, css: 'cos-deco-corona', glyph: '👑' },
   // Exclusivo del pase (oculto).
   { key: 'deco-cometa', slot: 'avatar_deco', name: 'Cometa', rarity: 'epic', price: 0, css: 'cos-deco-cometa', glyph: '☄️', hidden: true },
@@ -86,7 +90,9 @@ const ITEMS = Object.freeze([
   { key: 'bg-cuadricula', slot: 'card_bg', name: 'Cuadrícula', rarity: 'common', price: 120, css: 'cos-bg-cuadricula' },
   { key: 'bg-papel', slot: 'card_bg', name: 'Papel viejo', rarity: 'common', price: 120, css: 'cos-bg-papel' },
   { key: 'bg-crepusculo', slot: 'card_bg', name: 'Crepúsculo', rarity: 'uncommon', price: 320, css: 'cos-bg-crepusculo', ink: 'dark' },
+  { key: 'bg-olas', slot: 'card_bg', name: 'Olas', rarity: 'uncommon', price: 330, css: 'cos-bg-olas' },
   { key: 'bg-vetas', slot: 'card_bg', name: 'Vetas', rarity: 'rare', price: 600, css: 'cos-bg-vetas' },
+  { key: 'bg-circuito', slot: 'card_bg', name: 'Circuito', rarity: 'rare', price: 620, css: 'cos-bg-circuito' },
   { key: 'bg-nocturno', slot: 'card_bg', name: 'Nocturno', rarity: 'epic', price: 1000, css: 'cos-bg-nocturno', ink: 'dark' },
 
   // ---- Marcos de tarjeta ----
@@ -94,17 +100,21 @@ const ITEMS = Object.freeze([
   // propio, como dorado y prisma, lo sustituyen; costura convive con él).
   // `gap`: mete el marco hacia dentro, separado del borde de la tarjeta (costura);
   // sin gap, el marco va pegado al borde, de donde sale la sombra.
+  { key: 'cframe-linea', slot: 'card_frame', name: 'Línea', rarity: 'common', price: 180, css: 'cos-cframe-linea', gap: true },
   { key: 'cframe-costura', slot: 'card_frame', name: 'Costura', rarity: 'uncommon', price: 280, css: 'cos-cframe-costura', gap: true },
+  { key: 'cframe-runas', slot: 'card_frame', name: 'Runas', rarity: 'rare', price: 640, css: 'cos-cframe-runas', replaceBorder: true },
   { key: 'cframe-dorado', slot: 'card_frame', name: 'Filo dorado', rarity: 'epic', price: 1100, css: 'cos-cframe-dorado', replaceBorder: true },
   { key: 'cframe-prisma', slot: 'card_frame', name: 'Prisma', rarity: 'legendary', price: 2200, css: 'cos-cframe-prisma', replaceBorder: true },
 
   // ---- Títulos ----
   { key: 'title-constante', slot: 'title', name: 'Constante', rarity: 'common', price: 150, text: 'Constante' },
+  { key: 'title-tenaz', slot: 'title', name: 'Tenaz', rarity: 'common', price: 150, text: 'Tenaz' },
   { key: 'title-madrugador', slot: 'title', name: 'Madrugador', rarity: 'uncommon', price: 300, text: 'Madrugador' },
+  { key: 'title-vigia', slot: 'title', name: 'Vigía', rarity: 'uncommon', price: 300, text: 'Vigía' },
   { key: 'title-imparable', slot: 'title', name: 'Imparable', rarity: 'rare', price: 600, text: 'Imparable' },
-  { key: 'title-alba', slot: 'title', name: 'Leyenda del Alba', rarity: 'epic', price: 1000, text: 'Leyenda' },
-  { key: 'title-mito', slot: 'title', name: 'Mito viviente', rarity: 'legendary', price: 2500, text: 'Mito viviente' },
-  { key: 'title-guardian', slot: 'title', name: 'Guardián del Amanecer', rarity: 'legendary', price: 3000, text: 'Guardián Eterno' },
+  { key: 'title-alba', slot: 'title', name: 'Leyenda', rarity: 'epic', price: 1000, text: 'Leyenda' },
+  { key: 'title-mito', slot: 'title', name: 'Mito', rarity: 'legendary', price: 2500, text: 'Mito' },
+  { key: 'title-guardian', slot: 'title', name: 'Guardián', rarity: 'legendary', price: 3000, text: 'Guardián' },
   // Exclusivo del pase (oculto).
   { key: 'title-pionero', slot: 'title', name: 'Pionero', rarity: 'rare', price: 0, text: 'Pionero', hidden: true },
 ]);

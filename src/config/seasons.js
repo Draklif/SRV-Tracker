@@ -22,14 +22,22 @@
  *
  * Añadir una temporada = una entrada aquí. Las ventanas NO deben solaparse:
  * activeSeason() devuelve la primera que contenga el día.
+ *
+ * ⚠️ REGLA CRÍTICA: `startDay` NUNCA debe ser anterior a la fecha en la que la
+ * temporada estuvo REALMENTE disponible. Como el progreso = SUM(xp_events) dentro
+ * de la ventana, un startDay que preceda al lanzamiento cuenta XP de hábitos ya
+ * acumulada y completa el pase de golpe para todo usuario activo. Fue exactamente
+ * lo que pasó con s1 (startDay '2026-07-01' vs. lanzamiento del pase el 14-jul):
+ * la ventana se movió a la fecha de deploy para reiniciar el progreso a ~0. Los
+ * cosméticos, monedas, cajas y battlepass_claims ya otorgados se conservan.
  */
 
 const SEASONS = Object.freeze([
   {
     id: 's1',
     name: 'Temporada 1: Primeros pasos',
-    startDay: '2026-07-01',
-    endDay: '2026-08-31',
+    startDay: '2026-07-16',
+    endDay: '2026-09-16',
     premiumPrice: 800,
     xpPerLevel: 200,
     tiers: Object.freeze([

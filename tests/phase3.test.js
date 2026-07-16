@@ -90,6 +90,17 @@ test('los niveles de cada temporada suben de uno en uno desde 1', () => {
   }
 });
 
+// Guarda contra el incidente del pase autocompletado: un startDay anterior al
+// lanzamiento cuenta XP de hábitos previa y completa el pase de golpe. s1 no debe
+// volver a arrancar el '2026-07-01' (antes de que el pase existiera).
+test('ninguna temporada arranca antes de su disponibilidad real', () => {
+  for (const season of SEASONS) {
+    assert.ok(season.startDay <= season.endDay, `${season.id}: ventana invertida`);
+  }
+  const s1 = SEASONS.find((s) => s.id === 's1');
+  assert.ok(s1.startDay >= '2026-07-16', `s1.startDay (${s1.startDay}) no debe preceder al lanzamiento del pase`);
+});
+
 // ---- isoWeek --------------------------------------------------------------
 test('weekKey agrupa lunes..domingo y cambia al siguiente lunes', () => {
   const mon = weekKey('2026-07-13');
