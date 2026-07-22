@@ -85,3 +85,47 @@ test('weekly: no cumplir la cuota de la semana anterior rompe la racha', () => {
   const r = computeStreak(dates, '2026-07-08', THREE_WEEK);
   assert.equal(r.current, 0);
 });
+
+// ---- Caída del servidor: días excusados (16-21 jul), server vuelve el 22 -----
+const OUTAGE = new Set([
+  '2026-07-16', '2026-07-17', '2026-07-18', '2026-07-19', '2026-07-20', '2026-07-21',
+]);
+const AFTER = '2026-07-22';
+
+test('caída (daily): el hueco excusado no rompe; une sin sumar los 6 días', () => {
+  // Completó 13,14,15; caída 16-21; registra hoy 22. Racha = 3 previos + hoy = 4.
+  const dates = ['2026-07-13', '2026-07-14', '2026-07-15', '2026-07-22'];
+  const r = computeStreak(dates, AFTER, { type: 'daily' }, OUTAGE);
+  assert.equal(r.current, 4); // no +6 por los días caídos
+});
+
+test('caída (daily): racha viva aunque aún no marque hoy tras volver', () => {
+  // Completó hasta 15, caída 16-21; hoy 22 todavía sin marcar → sigue viva (gracia).
+  const dates = ['2026-07-14', '2026-07-15'];
+  const r = computeStreak(dates, AFTER, { type: 'daily' }, OUTAGE);
+  assert.equal(r.current, 2);
+});
+
+test('caída (daily): un hueco REAL antes de la caída sí rompe', () => {
+  // Falló el 12 y 13 (hueco real), completó 14,15; luego caída. Solo cuenta 14,15 y hoy.
+  const dates = ['2026-07-10', '2026-07-14', '2026-07-15', '2026-07-22'];
+  const r = computeStreak(dates, AFTER, { type: 'daily' }, OUTAGE);
+  assert.equal(r.current, 3); // 14,15,22 — el 10 queda aislado por el hueco 11-13
+});
+
+test('caída (weekdays): día programado dentro de la caída no rompe', () => {
+  // Lun/jue [1,4]. Jueves 16 y lunes 20 cayeron en la caída; retoma jueves 23.
+  const dates = ['2026-07-09', '2026-07-13', '2026-07-23'];
+  const r = computeStreak(dates, '2026-07-23', { type: 'weekdays', days: [1, 4] }, OUTAGE);
+  assert.equal(r.current, 3); // 09-jue, 13-lun, 23-jue; puentea jue16 y lun20
+});
+
+test('caída (weekly): semana tocada por la caída no rompe la racha', () => {
+  // Cuota 3. Semana 06-29 y 07-06 cumplen; semana 07-13 y 07-20 caen en la caída.
+  const dates = [
+    '2026-06-29', '2026-06-30', '2026-07-01',
+    '2026-07-06', '2026-07-07', '2026-07-08',
+  ];
+  const r = computeStreak(dates, AFTER, { type: 'weekly', timesPerWeek: 3 }, OUTAGE);
+  assert.equal(r.current, 2); // las 2 semanas cumplidas; las caídas puentean sin sumar
+});

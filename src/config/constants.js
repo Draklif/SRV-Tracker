@@ -171,6 +171,20 @@ const LEVEL_CURVE = Object.freeze({
   base: 50, // xpForLevel(n) = base * n^2
 });
 
+/**
+ * Fechas de CAÍDA DEL SERVIDOR (indisponibilidad de producción). En el cálculo
+ * de rachas se tratan como días EXCUSADOS: no rompen la cadena ni suman a su
+ * longitud, igual que un día no programado en un hábito `weekdays`. No inventan
+ * completaciones, así que NO afectan a stats, monedas ni logros — solo evitan
+ * que un hueco ajeno al usuario le reinicie la racha. Fechas locales 'YYYY-MM-DD'.
+ *
+ * Caída de julio 2026: 16 → 21 inclusive (el servidor volvió el 22).
+ */
+const OUTAGE_DATES = Object.freeze([
+  '2026-07-16', '2026-07-17', '2026-07-18',
+  '2026-07-19', '2026-07-20', '2026-07-21',
+]);
+
 /** Vida de un código de invitación generado por un usuario (minutos). */
 const INVITE_TTL_MINUTES = 60;
 
@@ -211,6 +225,7 @@ module.exports = {
   XP_RULES,
   COIN_RULES,
   LEVEL_CURVE,
+  OUTAGE_DATES,
   INVITE_TTL_MINUTES,
   ROLES,
   FRIENDSHIP_STATUS,
