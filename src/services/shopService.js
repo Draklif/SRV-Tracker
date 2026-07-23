@@ -8,12 +8,12 @@ const cosmeticsService = require('./cosmeticsService');
 const coinService = require('./coinService');
 const discountService = require('./discountService');
 const lootboxService = require('./lootboxService');
+const catalogService = require('./catalogService');
 const withTransaction = require('../database/withTransaction');
 const { parseEquipped } = require('../utils/equipped');
 const { todayFor } = require('../utils/date');
 const { NotFoundError, ConflictError, ForbiddenError } = require('../utils/errors');
-const { ITEMS, ITEMS_BY_KEY, SLOTS, SLOT_KEYS, RARITY_KEYS } = require('../config/cosmetics');
-const { BOXES } = require('../config/lootboxes');
+const { SLOTS, SLOT_KEYS, RARITY_KEYS } = require('../config/cosmetics');
 
 /**
  * La tienda. Vende el mismo catálogo que enseña la colección (src/config/cosmetics.js),
@@ -35,7 +35,7 @@ function catalogFor(userId, userRow) {
   const day = todayFor(userRow && userRow.timezone);
 
   // Los objetos ocultos (exclusivos del pase) no se venden: fuera del catálogo.
-  const forSale = ITEMS.filter((item) => !item.hidden);
+  const forSale = catalogService.items().filter((item) => !item.hidden);
   const totalCount = forSale.length;
 
   const slots = SLOT_KEYS.map((slot) => ({
@@ -65,12 +65,16 @@ function catalogFor(userId, userRow) {
 
   // Cajas: precio de catálogo (sin rotación de rebajas), su vista previa (pool +
   // probabilidades, para pintarla en el servidor) y cuántas sin abrir tienes.
+  // Las cajas de admin deshabilitadas no se muestran.
   const boxCounts = lootboxRepository.countsFor(userId);
-  const boxes = BOXES.map((box) => ({
-    ...lootboxService.preview(box.key), // key, name, desc, price, rarityOdds, items
-    affordable: balance >= box.price,
-    owned: boxCounts[box.key] || 0,
-  }));
+  const boxes = catalogService
+    .boxes()
+    .filter((box) => box.enabled !== false)
+    .map((box) => ({
+      ...lootboxService.preview(box.key), // key, name, desc, price, rarityOdds, items
+      affordable: balance >= box.price,
+      owned: boxCounts[box.key] || 0,
+    }));
 
   return {
     slots,
@@ -91,7 +95,7 @@ function catalogFor(userId, userRow) {
  * en negativo; así no hay rendija.
  */
 function buy(user, itemKey) {
-  const item = ITEMS_BY_KEY[itemKey];
+  const item = catalogService.itemsByKey()[itemKey];
   if (!item) throw new NotFoundError('Ese objeto no existe.');
   // Un objeto oculto no está a la venta aunque el cliente sepa su clave.
   if (item.hidden || !(item.price > 0)) throw new ForbiddenError('Ese objeto no está a la venta.');

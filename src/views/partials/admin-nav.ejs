@@ -1,0 +1,19 @@
+<%
+  // Pestañas del panel de admin. Cambian el contenido de abajo en el cliente
+  // (admin.js), no navegan a otra página. Irán creciendo con más dominios
+  // (tienda, cajas, cosméticos).
+  const adminTabs = [
+    { key: 'panel', label: 'Panel' },
+    { key: 'descuentos', label: 'Descuentos' },
+    { key: 'tienda', label: 'Tienda' },
+    { key: 'cajas', label: 'Cajas' },
+    { key: 'cosmeticos', label: 'Cosméticos' },
+    { key: 'difusion', label: 'Difusión' },
+  ];
+%>
+<nav class="admin-nav" aria-label="Secciones del panel">
+  <% adminTabs.forEach((tab, i) => { %>
+  <button type="button" class="admin-nav-link <%= i === 0 ? 'is-active' : '' %>"
+    data-admin-tab="<%= tab.key %>" <%= i === 0 ? 'aria-current="page"' : '' %>><%= tab.label %></button>
+  <% }) %>
+</nav>

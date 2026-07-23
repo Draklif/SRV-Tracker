@@ -31,6 +31,15 @@
   const openBtn = preview.querySelector('[data-lb-open]');
   const ownCountEl = preview.querySelector('[data-lb-owncount]');
 
+  // Envío a un amigo (puede no existir si no tienes amigos: entonces todo null).
+  const actionsEl = preview.querySelector('[data-lb-actions]');
+  const sendBtn = preview.querySelector('[data-lb-send]');
+  const sendPanel = preview.querySelector('[data-lb-send-panel]');
+  const friendSel = preview.querySelector('[data-lb-friend]');
+  const sendBoxNameEl = preview.querySelector('[data-lb-send-box]');
+  const sendConfirmBtn = preview.querySelector('[data-lb-send-confirm]');
+  const sendCancelBtn = preview.querySelector('[data-lb-send-cancel]');
+
   // Contrato con el carrusel de apertura.
   const reel = reveal.querySelector('[data-lb-reel]');
   const viewport = reveal.querySelector('.lb-reel-viewport');
@@ -76,12 +85,64 @@
       openBtn.hidden = true;
     }
 
+    // Enviar solo tiene sentido con una caja que YA tienes: se regala del
+    // inventario (sin cobro). Por eso el botón aparece únicamente si tienes ≥1.
+    if (sendBtn) sendBtn.hidden = owned <= 0;
+    closeSend(); // por si el modal se reabre estando en modo envío
+
     preview.hidden = false;
     buyBtn.focus();
   }
 
   function closePreview() {
     preview.hidden = true;
+    closeSend();
+  }
+
+  // ---- Enviar a un amigo --------------------------------------------------
+  function openSend() {
+    if (!sendPanel || !current) return;
+    if (sendBoxNameEl) sendBoxNameEl.textContent = current.name;
+    if (bodyEl) bodyEl.hidden = true;
+    if (actionsEl) actionsEl.hidden = true;
+    sendPanel.hidden = false;
+    if (friendSel) friendSel.focus();
+  }
+
+  function closeSend() {
+    if (!sendPanel) return;
+    sendPanel.hidden = true;
+    if (bodyEl) bodyEl.hidden = false;
+    if (actionsEl) actionsEl.hidden = false;
+    if (sendConfirmBtn) {
+      sendConfirmBtn.disabled = false;
+      sendConfirmBtn.textContent = 'Enviar regalo';
+    }
+  }
+
+  if (sendBtn) sendBtn.addEventListener('click', openSend);
+  if (sendCancelBtn) sendCancelBtn.addEventListener('click', closeSend);
+  if (sendConfirmBtn) {
+    sendConfirmBtn.addEventListener('click', async () => {
+      if (!current) return;
+      sendConfirmBtn.disabled = true;
+      sendConfirmBtn.textContent = 'Enviando…';
+      try {
+        const res = await window.api.post('/api/gifts/send', {
+          recipientId: friendSel.value,
+          key: current.key,
+        });
+        // La caja sale de TU inventario: baja el contador de la tarjeta.
+        setCardOwned(current.card, Math.max(0, (Number(current.card.dataset.owned) || 0) - 1));
+        closePreview();
+        window.toast.show(`Regalo enviado: ${res.label} 🎁`, { type: 'success', duration: 3500 });
+      } catch (err) {
+        sendConfirmBtn.disabled = false;
+        sendConfirmBtn.textContent = 'Enviar regalo';
+        window.toast.show(err.message, { type: 'warn' });
+        if (err.status === 409) setTimeout(() => window.location.reload(), 1200);
+      }
+    });
   }
 
   page.addEventListener('click', (ev) => {

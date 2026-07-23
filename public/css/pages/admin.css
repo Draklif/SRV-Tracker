@@ -1,0 +1,154 @@
+/* admin.css — Panel de administración. Reutiliza .card, .btn y .field globales. */
+
+.admin-page {
+  padding-block: var(--space-6) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.admin-intro h1 {
+  font-size: var(--fs-2xl);
+  text-shadow: 3px 3px 0 var(--brand-glow);
+}
+.admin-intro p {
+  margin: var(--space-2) 0 0;
+}
+
+/* ---- Pestañas ---- */
+.admin-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.admin-nav-link {
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.admin-nav-link:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.admin-nav-link.is-active {
+  background: var(--brand);
+  border-color: var(--ink);
+  color: var(--on-brand);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Stats del dashboard ---- */
+.admin-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+.admin-stat {
+  display: grid;
+  gap: 2px;
+}
+.admin-stat-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  color: var(--brand);
+}
+.admin-stat-label {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+/* Cada sección se separa del bloque de pestañas. */
+.admin-section {
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* ---- Formularios ---- */
+.admin-form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  max-width: 560px;
+}
+.admin-form select,
+.admin-form input {
+  width: 100%;
+}
+.admin-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+.admin-form-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+.admin-note {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-sm);
+}
+
+/* ---- Listas ---- */
+.admin-list {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+.admin-list-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.admin-tag {
+  display: inline-block;
+  padding: 1px var(--space-2);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  border-radius: var(--radius-pill);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+}
+.admin-list-actions {
+  display: inline-flex;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+/* Filas de checkboxes (flags de un cosmético). */
+.co-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+.co-checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.admin-form select[multiple] {
+  width: 100%;
+  font-size: var(--fs-sm);
+}

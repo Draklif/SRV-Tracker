@@ -1,4 +1,4 @@
-<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/components/modal.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/components/lootbox.css', '/css/pages/shop.css'] }) %>
+<%- include('../partials/head', { title, styles: ['/css/components/toggle.css', '/css/components/modal.css', '/css/components/cosmetic-tile.css', '/css/components/cosmetic-filters.css', '/css/components/lootbox.css', '/css/pages/gifts.css', '/css/pages/shop.css'] }) %>
 
 <%- include('../partials/app-nav') %>
 
@@ -28,13 +28,41 @@
   </a>
   <% } %>
 
+  <%# Bandeja: cajas (y regalos del sistema) que te han enviado. Reclamar concede
+      el contenido. Se muestra solo si tienes algo. %>
+  <% if (gifts && gifts.length) { %>
+  <section class="card gifts-inbox" data-gift-inbox>
+    <h2>Tus regalos</h2>
+    <ul class="gift-list">
+      <% gifts.forEach((g) => { %>
+      <li class="gift-item <%= g.status === 'pending' ? 'is-pending' : 'is-claimed' %>" data-gift-id="<%= g.id %>">
+        <span class="gift-icon" aria-hidden="true"><%- include('../partials/icon', { name: g.iconName, size: 22 }) %></span>
+        <span class="gift-body">
+          <span class="gift-label"><%= g.label %></span>
+          <span class="gift-from">
+            <% if (g.from) { %>de <%= g.from %><% } else { %>Regalo del sistema<% } %>
+          </span>
+          <% if (g.message) { %><span class="gift-note">“<%= g.message %>”</span><% } %>
+        </span>
+        <span class="gift-action">
+          <% if (g.status === 'pending') { %>
+          <button type="button" class="btn btn-primary btn-sm" data-gift-claim>Reclamar</button>
+          <% } else { %>
+          <span class="gift-claimed-tag">Reclamado ✓</span>
+          <button type="button" class="gift-delete" data-gift-delete title="Quitar de la bandeja" aria-label="Quitar de la bandeja">
+            <%- include('../partials/icon', { name: 'close', size: 16 }) %>
+          </button>
+          <% } %>
+        </span>
+      </li>
+      <% }) %>
+    </ul>
+  </section>
+  <% } %>
+
   <%# Cajas: se compran y se abren con animación. Pulsa una para ver qué puede salir. %>
   <section class="card lb-section">
     <h2>Cajas</h2>
-    <p class="text-muted col-slot-desc">
-      Un cosmético al azar. Si te sale uno que ya tienes, se convierte en monedas.
-      Pulsa una caja para ver qué puede caer.
-    </p>
     <div class="lb-grid">
       <% shop.boxes.forEach((box) => { %>
       <button type="button" class="lb-card" data-box="<%= box.key %>"
@@ -144,10 +172,15 @@
     </header>
     <p class="text-muted lb-modal-desc" data-lb-desc></p>
     <div data-lb-body></div>
-    <div class="modal-foot">
+    <div class="modal-foot" data-lb-actions>
       <button type="button" class="btn btn-ghost" data-lb-open hidden>
         Abrir (<span data-lb-owncount></span>)
       </button>
+      <% if (friends && friends.length) { %>
+      <button type="button" class="btn btn-ghost" data-lb-send hidden>
+        Enviar
+      </button>
+      <% } %>
       <button type="button" class="btn btn-ghost" data-lb-purchase>
         Comprar
       </button>
@@ -156,6 +189,27 @@
         <%- include('../partials/icon', { name: 'coin', size: 14 }) %>
       </button>
     </div>
+
+    <%# Panel de envío: se muestra al pulsar "Enviar a un amigo". Regalar una caja
+        la compra el emisor (paga su precio) y la deja pendiente en la bandeja del
+        amigo. %>
+    <% if (friends && friends.length) { %>
+    <div class="lb-send" data-lb-send-panel hidden>
+      <div class="field">
+        <label for="lb-send-friend">Enviar <b data-lb-send-box></b> a</label>
+        <select id="lb-send-friend" data-lb-friend>
+          <% friends.forEach((f) => { %>
+          <option value="<%= f.id %>"><%= f.name %> (@<%= f.username %>)</option>
+          <% }) %>
+        </select>
+      </div>
+      <p class="text-muted lb-send-note">Se enviará una de tus cajas: sale de tu inventario y le llega como regalo pendiente.</p>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" data-lb-send-cancel>Cancelar</button>
+        <button type="button" class="btn btn-primary" data-lb-send-confirm>Enviar regalo</button>
+      </div>
+    </div>
+    <% } %>
   </div>
 </div>
 
@@ -175,4 +229,4 @@
   </div>
 </div>
 
-<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/shop.js', '/js/lootbox.js'] }) %>
+<%- include('../partials/foot', { scripts: ['/js/cosmetic-filters.js', '/js/shop.js', '/js/lootbox.js', '/js/gifts.js'] }) %>

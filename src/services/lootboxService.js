@@ -4,11 +4,12 @@ const cosmeticRepository = require('../models/cosmeticRepository');
 const lootboxRepository = require('../models/lootboxRepository');
 const cosmeticsService = require('./cosmeticsService');
 const coinService = require('./coinService');
+const catalogService = require('./catalogService');
 const withTransaction = require('../database/withTransaction');
 const { todayFor } = require('../utils/date');
 const { NotFoundError, ConflictError } = require('../utils/errors');
-const { ITEMS_BY_KEY, RARITIES, RARITY_KEYS } = require('../config/cosmetics');
-const { BOXES_BY_KEY, DUP_REFUND } = require('../config/lootboxes');
+const { RARITIES, RARITY_KEYS } = require('../config/cosmetics');
+const { DUP_REFUND } = require('../config/lootboxes');
 
 /**
  * Cajas (lootboxes). El cliente solo manda la clave de la caja; la TIRADA la
@@ -21,7 +22,8 @@ const { BOXES_BY_KEY, DUP_REFUND } = require('../config/lootboxes');
 
 /** Los objetos del pool resueltos contra el catálogo (ignora claves muertas). */
 function poolItems(box) {
-  return box.pool.map((key) => ITEMS_BY_KEY[key]).filter(Boolean);
+  const byKey = catalogService.itemsByKey();
+  return box.pool.map((key) => byKey[key]).filter(Boolean);
 }
 
 /** Agrupa el pool por rareza, en orden canónico. */
@@ -42,7 +44,7 @@ function groupByRarity(items) {
  * de un objeto, esa entre los de su rareza.
  */
 function preview(boxKey) {
-  const box = BOXES_BY_KEY[boxKey];
+  const box = catalogService.boxesByKey()[boxKey];
   if (!box) throw new NotFoundError('Esa caja no existe.');
 
   const grouped = groupByRarity(poolItems(box));
@@ -93,7 +95,7 @@ function roll(box) {
  * En ambos casos, duplicado → reembolso en monedas; si no, se concede el objeto.
  */
 function open(user, boxKey, { fromInventory = false } = {}) {
-  const box = BOXES_BY_KEY[boxKey];
+  const box = catalogService.boxesByKey()[boxKey];
   if (!box) throw new NotFoundError('Esa caja no existe.');
 
   const day = todayFor(user.timezone);
@@ -140,7 +142,7 @@ function open(user, boxKey, { fromInventory = false } = {}) {
  * abrirla luego (con su animación). Transaccional, como la compra que sí abre.
  */
 function buyToInventory(user, boxKey) {
-  const box = BOXES_BY_KEY[boxKey];
+  const box = catalogService.boxesByKey()[boxKey];
   if (!box) throw new NotFoundError('Esa caja no existe.');
 
   const day = todayFor(user.timezone);
@@ -161,7 +163,7 @@ function buyToInventory(user, boxKey) {
 
 /** Añade cajas al inventario (recompensa del pase). Valida que la caja exista. */
 function grantBox(userId, boxKey, n = 1) {
-  if (!BOXES_BY_KEY[boxKey]) throw new NotFoundError('Esa caja no existe.');
+  if (!catalogService.boxesByKey()[boxKey]) throw new NotFoundError('Esa caja no existe.');
   lootboxRepository.add(userId, boxKey, n);
 }
 

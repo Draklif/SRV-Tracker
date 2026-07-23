@@ -26,12 +26,17 @@ function parseEquipped(raw) {
  * no aparecen. Una clave que ya no exista en el catálogo (o que esté en el hueco
  * equivocado) se ignora: así se puede retirar un objeto del repo sin romper a
  * quien lo llevara puesto.
+ *
+ * Sigue siendo PURA: el catálogo se inyecta. Por defecto usa el de config (para
+ * los tests y cualquier llamada suelta); el camino de render pasa el catálogo
+ * FUSIONADO (catalogService.itemsByKey) para que también se pinten los cosméticos
+ * creados por admin. Ver cosmeticsService.resolve.
  */
-function resolveEquipped(row) {
+function resolveEquipped(row, itemsByKey = ITEMS_BY_KEY) {
   const equipped = parseEquipped(row && row.cosmetics);
   const out = {};
   for (const slot of SLOT_KEYS) {
-    const item = ITEMS_BY_KEY[equipped[slot]];
+    const item = itemsByKey[equipped[slot]];
     if (item && item.slot === slot) out[slot] = item;
   }
   return out;

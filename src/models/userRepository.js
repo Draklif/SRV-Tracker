@@ -49,6 +49,11 @@ const statements = {
   setChangelogSeen: db.prepare(
     "UPDATE users SET changelog_seen = @version, updated_at = datetime('now') WHERE id = @id"
   ),
+  setRole: db.prepare(
+    "UPDATE users SET role = @role, updated_at = datetime('now') WHERE id = @id"
+  ),
+  all: db.prepare('SELECT * FROM users ORDER BY username COLLATE NOCASE'),
+  allIds: db.prepare('SELECT id FROM users'),
 };
 
 function create({ username, passwordHash, email, displayName, timezone }) {
@@ -118,6 +123,21 @@ function setChangelogSeen(id, version) {
   statements.setChangelogSeen.run({ id, version });
 }
 
+/** Fija el rol del usuario ('member' | 'admin'). */
+function setRole(id, role) {
+  statements.setRole.run({ id, role });
+}
+
+/** Todos los usuarios (para el panel de admin). Orden alfabético. */
+function listAll() {
+  return statements.all.all();
+}
+
+/** Solo los ids de todos los usuarios (destino de un broadcast). */
+function allIds() {
+  return statements.allIds.all().map((r) => r.id);
+}
+
 module.exports = {
   create,
   findById,
@@ -133,4 +153,7 @@ module.exports = {
   updateNotifyPrefs,
   listNotifiable,
   setChangelogSeen,
+  setRole,
+  listAll,
+  allIds,
 };

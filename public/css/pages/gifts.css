@@ -1,0 +1,103 @@
+/* gifts.css — Bandeja de regalos (vive dentro de la Tienda). Reutiliza .card y
+   .btn globales; aquí solo la lista de regalos recibidos. */
+
+.gifts-inbox .gift-list {
+  list-style: none;
+  /* Mismo hueco h2→contenido que la sección de Cajas (.lb-grid): --space-4. */
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  /* Scroll interno: la bandeja no debe estirar la página aunque haya muchos. */
+  max-height: 320px;
+  overflow-y: auto;
+  /* Aire para la barra de scroll y para que la sombra de las fichas no se corte. */
+  padding-right: var(--space-2);
+}
+
+.gift-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), opacity var(--transition);
+}
+.gift-item.is-pending {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-sm);
+}
+.gift-item.is-claimed {
+  opacity: 0.62;
+}
+
+.gift-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--brand);
+}
+
+.gift-body {
+  display: grid;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.gift-label {
+  font-weight: var(--fw-bold);
+}
+.gift-from {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.gift-note {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+.gift-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+.gift-claimed-tag {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+/* Botón "quitar" de un regalo ya reclamado: icono discreto. */
+.gift-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+}
+.gift-delete:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+/* ---- Panel de envío dentro del modal de la caja ---- */
+.lb-send {
+  display: grid;
+  gap: var(--space-3);
+}
+.lb-send select {
+  width: 100%;
+}
+.lb-send-note {
+  margin: 0;
+  font-size: var(--fs-sm);
+}

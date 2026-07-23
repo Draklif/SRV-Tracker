@@ -3,6 +3,7 @@
 const userService = require('../services/userService');
 const friendshipService = require('../services/friendshipService');
 const changelogService = require('../services/changelogService');
+const giftService = require('../services/giftService');
 const { consumeFlash } = require('../utils/flash');
 
 /**
@@ -16,6 +17,7 @@ module.exports = function loadUser(req, res, next) {
   res.locals.currentPath = req.path;
   res.locals.pendingFriendCount = 0;
   res.locals.hasUnseenChangelog = false;
+  res.locals.pendingGiftCount = 0;
 
   const userId = req.session && req.session.userId;
   if (userId) {
@@ -28,6 +30,7 @@ module.exports = function loadUser(req, res, next) {
       res.locals.motion = user.motion;
       res.locals.pendingFriendCount = friendshipService.incomingCount(user.id);
       res.locals.hasUnseenChangelog = changelogService.hasUnseen(user);
+      res.locals.pendingGiftCount = giftService.pendingCount(user.id);
     } else {
       // Sesión apuntando a un usuario inexistente: la limpiamos.
       req.session.userId = null;

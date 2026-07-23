@@ -106,6 +106,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-3);
+  /* Mismo hueco h2→contenido que la bandeja de regalos (.gift-list): --space-4. */
+  margin-top: var(--space-4);
 }
 .lb-card {
   position: relative;

@@ -8,9 +8,12 @@
     <nav class="app-nav-links" aria-label="Principal">
       <a href="/" class="nav-link">Inicio</a>
       <a href="/habits" class="nav-link">Hábitos</a>
-      <a href="/tienda" class="nav-link">Tienda</a>
+      <a href="/tienda" class="nav-link nav-link-shop">Tienda<span class="nav-badge" data-nav-gift-badge <%= pendingGiftCount ? '' : 'hidden' %>><%= pendingGiftCount %></span></a>
       <a href="/social" class="nav-link nav-link-friends">Amigos<span class="nav-badge" data-nav-friend-badge <%= pendingFriendCount ? '' : 'hidden' %>><%= pendingFriendCount %></span></a>
       <a href="/profile" class="nav-link nav-link-profile">Perfil<span class="nav-badge is-dot" data-nav-changelog-badge <%= hasUnseenChangelog ? '' : 'hidden' %>></span></a>
+      <% if (user && user.role === 'admin') { %>
+        <a href="/admin" class="nav-link nav-link-admin">Admin</a>
+      <% } %>
     </nav>
 
     <div class="app-nav-user">
@@ -24,4 +27,7 @@
     </div>
   </div>
 </header>
+<%# Algunas vistas (el panel de admin, desktop-only) piden ocultar la nav móvil. %>
+<% if (typeof hideBottomNav === 'undefined' || !hideBottomNav) { %>
 <%- include('bottom-nav') %>
+<% } %>

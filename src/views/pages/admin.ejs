@@ -1,0 +1,351 @@
+<%- include('../partials/head', { title, styles: ['/css/pages/admin.css'] }) %>
+
+<%- include('../partials/app-nav', { hideBottomNav: true }) %>
+
+<main class="container admin-page">
+  <%- include('../partials/flash') %>
+
+  <header class="admin-intro">
+    <h1>Panel de administración</h1>
+  </header>
+
+  <%- include('../partials/admin-nav') %>
+
+  <%# ---- Panel ---- %>
+  <section class="admin-section" data-admin-section="panel">
+    <div class="card admin-stats">
+      <div class="admin-stat">
+        <span class="admin-stat-num"><%= stats.userCount %></span>
+        <span class="admin-stat-label">Usuarios</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-num"><%= stats.discountCount %></span>
+        <span class="admin-stat-label">Descuentos</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-num"><%= stats.overrideCount %></span>
+        <span class="admin-stat-label">Ajustes de tienda</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-num"><%= stats.lootboxCount %></span>
+        <span class="admin-stat-label">Cajas propias</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-num"><%= stats.cosmeticCount %></span>
+        <span class="admin-stat-label">Cosméticos propios</span>
+      </div>
+    </div>
+  </section>
+
+  <%# ---- Descuentos ---- %>
+  <section class="admin-section" data-admin-section="descuentos" hidden>
+    <div class="card admin-form-card">
+      <h2>Nuevo descuento</h2>
+      <form class="admin-form" data-admin-form="discount">
+        <div class="field">
+          <label for="disc-item">Objeto</label>
+          <select id="disc-item" name="itemKey" required>
+            <% items.forEach((it) => { %>
+            <option value="<%= it.key %>"><%= it.name %> · <%= it.price %> 🪙 (<%= it.slot %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="admin-form-row">
+          <div class="field">
+            <label for="disc-percent">% de rebaja</label>
+            <input id="disc-percent" name="percent" type="number" min="0" max="90" step="1" value="20" required />
+          </div>
+          <div class="field">
+            <label for="disc-from">Desde (opcional)</label>
+            <input id="disc-from" name="startsOn" type="date" />
+          </div>
+          <div class="field">
+            <label for="disc-to">Hasta (opcional)</label>
+            <input id="disc-to" name="endsOn" type="date" />
+          </div>
+        </div>
+        <div class="admin-form-foot">
+          <button type="submit" class="btn btn-primary">Crear descuento</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Descuentos activos</h2>
+      <p class="text-muted" data-admin-empty="discount" <%= discounts.length ? 'hidden' : '' %>>No hay descuentos manuales.</p>
+      <ul class="admin-list" data-admin-list="discount">
+        <% discounts.forEach((d) => { %>
+        <li class="admin-list-item" data-id="<%= d.id %>">
+          <span class="admin-list-main">
+            <b><%= d.itemName %></b> · <span class="admin-tag">−<%= d.percent %>%</span>
+            <span class="text-muted">
+              <% if (d.starts_on || d.ends_on) { %><%= d.starts_on || '…' %> → <%= d.ends_on || '…' %><% } else { %>permanente<% } %>
+            </span>
+          </span>
+          <button type="button" class="btn btn-ghost btn-sm" data-admin-delete="discount">Quitar</button>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+
+  <%# ---- Tienda (precio / visibilidad) ---- %>
+  <section class="admin-section" data-admin-section="tienda" hidden>
+    <div class="card admin-form-card">
+      <h2>Ajustar un objeto</h2>
+      <p class="text-muted admin-note">Cambia el precio o fuerza mostrar/ocultar un objeto en la tienda. Deja el precio vacío para no tocarlo.</p>
+      <form class="admin-form" data-admin-form="override">
+        <div class="field">
+          <label for="ov-item">Objeto</label>
+          <select id="ov-item" name="itemKey" required>
+            <% catalog.forEach((it) => { %>
+            <option value="<%= it.key %>"><%= it.name %> · <%= it.price %> 🪙 (<%= it.slot %>)<%= it.hidden ? ' — oculto' : '' %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="admin-form-row">
+          <div class="field">
+            <label for="ov-price">Precio nuevo</label>
+            <input id="ov-price" name="price" type="number" min="0" step="1" placeholder="(sin cambiar)" />
+          </div>
+          <div class="field">
+            <label for="ov-hidden">Visibilidad</label>
+            <select id="ov-hidden" name="hidden">
+              <option value="keep">Sin cambiar</option>
+              <option value="show">Mostrar en tienda</option>
+              <option value="hide">Ocultar de tienda</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-foot">
+          <button type="submit" class="btn btn-primary">Guardar ajuste</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Ajustes activos</h2>
+      <p class="text-muted" data-admin-empty="override" <%= overrides.length ? 'hidden' : '' %>>No hay ajustes de tienda.</p>
+      <ul class="admin-list" data-admin-list="override">
+        <% overrides.forEach((o) => { %>
+        <li class="admin-list-item" data-id="<%= o.item_key %>">
+          <span class="admin-list-main">
+            <b><%= o.itemName %></b>
+            <% if (o.price != null) { %><span class="admin-tag"><%= o.price %> 🪙</span><% } %>
+            <% if (o.hidden != null) { %><span class="admin-tag"><%= o.hidden ? 'oculto' : 'visible' %></span><% } %>
+          </span>
+          <button type="button" class="btn btn-ghost btn-sm" data-admin-delete="override">Quitar</button>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+
+  <%# ---- Cajas ---- %>
+  <section class="admin-section" data-admin-section="cajas" hidden>
+    <div class="card admin-form-card">
+      <h2>Nueva caja</h2>
+      <form class="admin-form" data-admin-form="lootbox">
+        <div class="admin-form-row">
+          <div class="field">
+            <label for="lb-name">Nombre</label>
+            <input id="lb-name" name="name" type="text" maxlength="60" required />
+          </div>
+          <div class="field">
+            <label for="lb-price">Precio</label>
+            <input id="lb-price" name="price" type="number" min="0" step="1" value="500" required />
+          </div>
+          <div class="field">
+            <label for="lb-art">Arte</label>
+            <select id="lb-art" name="art">
+              <% artKeys.forEach((a) => { %>
+              <option value="<%= a %>"><%= a %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lb-desc">Descripción (opcional)</label>
+          <input id="lb-desc" name="description" type="text" maxlength="200" />
+        </div>
+        <div class="field">
+          <label for="lb-pool">Pool (objetos que pueden salir · Ctrl/Cmd para varios)</label>
+          <select id="lb-pool" name="pool" multiple size="10" data-lb-pool>
+            <% poolItems.forEach((it) => { %>
+            <option value="<%= it.key %>"><%= it.name %> · <%= it.rarity %> (<%= it.slot %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="admin-form-foot">
+          <button type="submit" class="btn btn-primary">Crear caja</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Cajas propias</h2>
+      <p class="text-muted" data-admin-empty="lootbox" <%= lootboxes.length ? 'hidden' : '' %>>No has creado cajas.</p>
+      <ul class="admin-list" data-admin-list="lootbox">
+        <% lootboxes.forEach((b) => { %>
+        <li class="admin-list-item" data-id="<%= b.key %>" data-enabled="<%= b.enabled ? '1' : '' %>">
+          <span class="admin-list-main">
+            <b><%= b.name %></b> · <span class="admin-tag"><%= b.price %> 🪙</span>
+            <span class="text-muted"><%= b.pool.length %> objetos · arte <%= b.art %></span>
+            <% if (!b.enabled) { %><span class="admin-tag">deshabilitada</span><% } %>
+          </span>
+          <span class="admin-list-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-admin-toggle="lootbox"><%= b.enabled ? 'Deshabilitar' : 'Habilitar' %></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-admin-delete="lootbox">Borrar</button>
+          </span>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+
+  <%# ---- Cosméticos ---- %>
+  <section class="admin-section" data-admin-section="cosmeticos" hidden>
+    <div class="card admin-form-card">
+      <h2>Nuevo cosmético</h2>
+      <p class="text-muted admin-note">Títulos: solo texto. Decoraciones: un emoji. Marcos/fondos: el NOMBRE de una clase CSS ya escrita en el repo (cosmetics.css) — nunca se guarda CSS aquí.</p>
+      <form class="admin-form" data-admin-form="cosmetic">
+        <div class="admin-form-row">
+          <div class="field">
+            <label for="co-slot">Hueco</label>
+            <select id="co-slot" name="slot" data-co-slot>
+              <% slots.forEach((s) => { %>
+              <option value="<%= s.key %>"><%= s.label %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="co-name">Nombre</label>
+            <input id="co-name" name="name" type="text" maxlength="60" required />
+          </div>
+          <div class="field">
+            <label for="co-rarity">Rareza</label>
+            <select id="co-rarity" name="rarity">
+              <% rarities.forEach((r) => { %>
+              <option value="<%= r.key %>"><%= r.label %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="field">
+            <label for="co-price">Precio</label>
+            <input id="co-price" name="price" type="number" min="0" step="1" value="0" />
+          </div>
+          <div class="field co-checks">
+            <label><input type="checkbox" name="hidden" data-co-hidden /> Oculto (fuera de tienda)</label>
+          </div>
+        </div>
+
+        <%# Campos según el hueco (co-slot los muestra/oculta en el cliente). %>
+        <div class="field" data-co-pane="text" hidden>
+          <label for="co-text">Texto del título</label>
+          <input id="co-text" name="text" type="text" maxlength="40" />
+        </div>
+        <div class="field" data-co-pane="glyph" hidden>
+          <label for="co-glyph">Emoji de la decoración</label>
+          <input id="co-glyph" name="glyph" type="text" maxlength="8" placeholder="✨" />
+        </div>
+        <div data-co-pane="css" hidden>
+          <div class="field">
+            <label for="co-css">Nombre de clase CSS (creada en el repo)</label>
+            <input id="co-css" name="css" type="text" maxlength="64" placeholder="cos-frame-mi-marco" />
+          </div>
+          <div class="field co-checks">
+            <label><input type="checkbox" name="gap" data-co-flag="gap" /> gap</label>
+            <label><input type="checkbox" name="innerBorder" data-co-flag="innerBorder" /> innerBorder</label>
+            <label><input type="checkbox" name="replaceBorder" data-co-flag="replaceBorder" /> replaceBorder</label>
+          </div>
+          <div class="field" data-co-pane="ink" hidden>
+            <label for="co-ink">Tinta del fondo (legibilidad)</label>
+            <select id="co-ink" name="ink">
+              <option value="">Automática</option>
+              <option value="dark">Fondo oscuro (tinta clara)</option>
+              <option value="light">Fondo claro (tinta oscura)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-form-foot">
+          <button type="submit" class="btn btn-primary">Crear cosmético</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Cosméticos propios</h2>
+      <p class="text-muted" data-admin-empty="cosmetic" <%= dbCosmetics.length ? 'hidden' : '' %>>No has creado cosméticos.</p>
+      <ul class="admin-list" data-admin-list="cosmetic">
+        <% dbCosmetics.forEach((c) => { %>
+        <li class="admin-list-item" data-id="<%= c.key %>" data-hidden="<%= c.hidden ? '1' : '' %>">
+          <span class="admin-list-main">
+            <b><%= c.name %></b> · <span class="admin-tag"><%= c.rarity %></span>
+            <span class="text-muted"><%= c.slot %><%= c.price ? ' · ' + c.price + ' 🪙' : '' %></span>
+            <% if (c.hidden) { %><span class="admin-tag">oculto</span><% } %>
+          </span>
+          <span class="admin-list-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-admin-toggle="cosmetic"><%= c.hidden ? 'Mostrar' : 'Ocultar' %></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-admin-delete="cosmetic">Borrar</button>
+          </span>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+
+  <%# ---- Difusión ---- %>
+  <section class="admin-section" data-admin-section="difusion" hidden>
+    <div class="card admin-form-card">
+      <h2>Regalar a todos</h2>
+      <form class="admin-form" data-admin-form="broadcast">
+        <div class="field">
+          <label for="bc-type">Qué</label>
+          <select id="bc-type" name="type" data-bc-type>
+            <option value="coins">Monedas</option>
+            <option value="lootbox">Una caja</option>
+            <option value="cosmetic">Un cosmético</option>
+          </select>
+        </div>
+
+        <div class="field" data-bc-pane="coins">
+          <label for="bc-amount">Cuántas monedas</label>
+          <input id="bc-amount" name="amount" type="number" min="1" max="100000" step="1" placeholder="200" />
+        </div>
+
+        <div class="field" data-bc-pane="lootbox" hidden>
+          <label for="bc-box">Caja</label>
+          <select id="bc-box" data-bc-box>
+            <% boxes.forEach((b) => { %>
+            <option value="<%= b.key %>"><%= b.name %> · <%= b.price %> 🪙</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="field" data-bc-pane="cosmetic" hidden>
+          <label for="bc-cosmetic">Cosmético</label>
+          <select id="bc-cosmetic" data-bc-cosmetic>
+            <% cosmetics.forEach((c) => { %>
+            <option value="<%= c.key %>"><%= c.name %> · <%= c.slot %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="bc-message">Nota (opcional)</label>
+          <input id="bc-message" name="message" type="text" maxlength="200" placeholder="Gracias por vuestra paciencia con la caída 🙏" />
+        </div>
+
+        <div class="admin-form-foot">
+          <button type="submit" class="btn btn-primary" data-bc-submit>Repartir a todos</button>
+        </div>
+      </form>
+      <p class="text-muted admin-note">Llega a todos los usuarios y no se puede deshacer en bloque. Cada uno lo verá como pendiente en su bandeja.</p>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/foot', { scripts: ['/js/admin.js'] }) %>

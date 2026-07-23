@@ -1,7 +1,8 @@
 'use strict';
 
 const cosmeticRepository = require('../models/cosmeticRepository');
-const { ITEMS, ITEMS_BY_KEY, SLOTS, SLOT_KEYS, RARITIES, RARITY_KEYS } = require('../config/cosmetics');
+const catalogService = require('./catalogService');
+const { SLOTS, SLOT_KEYS, RARITIES, RARITY_KEYS } = require('../config/cosmetics');
 const { parseEquipped, resolveEquipped } = require('../utils/equipped');
 const { ValidationError, NotFoundError, ForbiddenError } = require('../utils/errors');
 
@@ -40,11 +41,12 @@ function cardClasses(cos) {
     .join(' ');
 }
 
-/** Objetos que posee el usuario, resueltos contra el catálogo. */
+/** Objetos que posee el usuario, resueltos contra el catálogo (config ∪ admin). */
 function ownedItems(userId) {
+  const byKey = catalogService.itemsByKey();
   return cosmeticRepository
     .ownedKeys(userId)
-    .map((key) => ITEMS_BY_KEY[key])
+    .map((key) => byKey[key])
     .filter(Boolean);
 }
 
@@ -68,18 +70,20 @@ function frameWrapClasses(frame) {
 function collectionFor(userId, userRow) {
   const owned = new Set(cosmeticRepository.ownedKeys(userId));
   const equipped = parseEquipped(userRow && userRow.cosmetics);
+  const allItems = catalogService.items();
 
   const slots = SLOT_KEYS.map((slot) => ({
     key: slot,
     label: SLOTS[slot].label,
     desc: SLOTS[slot].desc,
     equippedKey: equipped[slot] || null,
-    items: ITEMS.filter((item) => item.slot === slot)
+    items: allItems
+      .filter((item) => item.slot === slot)
       .map((item) => ({ ...item, owned: owned.has(item.key) }))
       .sort((a, b) => RARITY_KEYS.indexOf(a.rarity) - RARITY_KEYS.indexOf(b.rarity)),
   }));
 
-  return { slots, ownedCount: owned.size, totalCount: ITEMS.length };
+  return { slots, ownedCount: owned.size, totalCount: allItems.length };
 }
 
 /**
@@ -95,7 +99,7 @@ function equip(userId, slot, itemKey) {
   if (!itemKey) {
     delete equipped[slot];
   } else {
-    const item = ITEMS_BY_KEY[itemKey];
+    const item = catalogService.itemsByKey()[itemKey];
     if (!item) throw new NotFoundError('Ese objeto no existe.');
     if (item.slot !== slot) throw new ValidationError({ item: 'Ese objeto no va en ese hueco.' });
     if (!cosmeticRepository.owns(userId, itemKey)) {
@@ -110,13 +114,15 @@ function equip(userId, slot, itemKey) {
 
 /** Concede un objeto (tienda, pase, caja o script de dev). */
 function grant(userId, itemKey, source = 'grant') {
-  if (!ITEMS_BY_KEY[itemKey]) throw new NotFoundError('Ese objeto no existe.');
+  if (!catalogService.itemsByKey()[itemKey]) throw new NotFoundError('Ese objeto no existe.');
   return cosmeticRepository.grant(userId, itemKey, source);
 }
 
 module.exports = {
   parseEquipped,
-  resolve: resolveEquipped,
+  // El render resuelve contra el catálogo FUSIONADO (config ∪ admin), para que
+  // los cosméticos creados por admin también se pinten en los avatares.
+  resolve: (row) => resolveEquipped(row, catalogService.itemsByKey()),
   cardClasses,
   frameWrapClasses,
   ownedItems,

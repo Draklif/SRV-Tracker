@@ -1,7 +1,8 @@
 'use strict';
 
-const { ITEMS, ITEMS_BY_KEY } = require('../config/cosmetics');
-const { WEEKLY, MANUAL } = require('../config/discounts');
+const { ITEMS } = require('../config/cosmetics');
+const { WEEKLY } = require('../config/discounts');
+const catalogService = require('./catalogService');
 const { weekKey } = require('../utils/isoWeek');
 
 /**
@@ -58,10 +59,15 @@ function weeklyPicks(day) {
   return picks;
 }
 
-/** Rebaja manual vigente de un objeto (respeta la ventana from/to), o null. */
+/**
+ * Rebaja manual vigente de un objeto (respeta la ventana from/to), o null.
+ * Las rebajas manuales son las de config MÁS las que el admin haya puesto en la
+ * BD, fusionadas por catalogService (la config sigue siendo fuente de verdad,
+ * la BD la amplía).
+ */
 function manualFor(itemKey, day) {
   let hit = null;
-  for (const d of MANUAL) {
+  for (const d of catalogService.manualDiscounts()) {
     if (d.itemKey !== itemKey) continue;
     if (d.from && day < d.from) continue;
     if (d.to && day > d.to) continue;
@@ -76,7 +82,9 @@ function manualFor(itemKey, day) {
  * venden).
  */
 function discountFor(itemKey, day) {
-  const item = ITEMS_BY_KEY[itemKey];
+  // Catálogo FUSIONADO: así una rebaja manual también vale para un cosmético
+  // creado por admin (no solo para los de config).
+  const item = catalogService.itemsByKey()[itemKey];
   if (!item || item.hidden || !(item.price > 0)) return null;
 
   const manual = manualFor(itemKey, day);
